@@ -575,6 +575,26 @@ label{display:block;font-size:.8rem;font-weight:500;color:var(--ink);margin-bott
 .itin-detail-group{display:none}
 .itin-detail-group.active{display:block}
 .itin-venue-pick-row:hover{border-color:var(--brass);background:var(--off-white)}
+
+/* Document-style itinerary (Itinerary tab) */
+.itin-day-doc{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:20px;margin-bottom:18px}
+.itin-day-doc .itin-day-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;padding:0}
+.itin-day-doc .itin-day-header h4{flex:1;margin:0}
+.schedule-add-item-btn-inline{width:auto;margin:0;flex-shrink:0}
+.itin-activity-doc{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--off-white)}
+.itin-activity-doc:last-child{border-bottom:none}
+.itin-activity-doc-body{flex:1;min-width:0}
+.itin-activity-doc-row1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.itin-activity-doc-row1 .itin-desc{font-weight:600;color:var(--text)}
+.itin-activity-doc-notes{font-size:.8rem;color:var(--muted);margin-top:4px;line-height:1.5}
+.itin-type-tag{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
+.itin-type-tag.tag-course{background:#e5efe6;color:#3d6b4a}
+.itin-type-tag.tag-hotel{background:#efe5f5;color:#7a4a9e}
+.itin-type-tag.tag-flight{background:#e3ecf5;color:#3a6ea5}
+.itin-type-tag.tag-transfer,.itin-type-tag.tag-car{background:#f5efe0;color:#a5793a}
+.itin-type-tag.tag-restaurant{background:#f5e6e6;color:#a53a3a}
+.itin-type-tag.tag-activity{background:#e0f2ec;color:#2f8a6f}
+.itin-type-tag.tag-free_time,.itin-type-tag.tag-other{background:#eee;color:#777}
 .cart-item{cursor:grab;position:relative}
 .cart-item.dragging{opacity:.4}
 .cart-drag-handle{color:var(--muted);font-size:.85rem;flex-shrink:0;padding-top:3px;align-self:flex-start}
@@ -1869,8 +1889,9 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
     </div>
 
     <div class="results-tabs" style="margin-bottom:28px">
-      <button class="results-tab active" id="td-tab-explore" onclick="switchTripTab('explore')"><i class="ti ti-map-pin"></i> Explore</button>
-      <button class="results-tab" id="td-tab-itinerary" onclick="switchTripTab('itinerary')"><i class="ti ti-golf"></i> Trip Itinerary</button>
+      <button class="results-tab active" id="td-tab-explore" onclick="switchTripTab('explore')"><i class="ti ti-map-pin"></i> Explore Map</button>
+      <button class="results-tab" id="td-tab-itinerary" onclick="switchTripTab('itinerary')"><i class="ti ti-list"></i> Explore List</button>
+      <button class="results-tab" id="td-tab-itin" onclick="switchTripTab('itin')"><i class="ti ti-calendar-event"></i> Itinerary</button>
       <button class="results-tab" id="td-tab-group" onclick="switchTripTab('group')"><i class="ti ti-users"></i> Group &amp; Booking</button>
       <div id="td-public-note" style="display:none;font-size:.75rem;color:var(--text-muted);padding:8px 0 0;width:100%"><i class="ti ti-lock"></i> Sign in to access group planning, voting and the trip cart</div>
     </div>
@@ -1886,8 +1907,9 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
           <button class="btn btn-sm explore-cat-btn" data-cat="hotel" onclick="switchExploreCategory('hotel')"><i class="ti ti-bed"></i> Stays</button>
           <button class="btn btn-sm explore-cat-btn" data-cat="restaurant" onclick="switchExploreCategory('restaurant')"><i class="ti ti-tools-kitchen-2"></i> Restaurants</button>
           <button class="btn btn-sm explore-cat-btn" data-cat="activity" onclick="switchExploreCategory('activity')"><i class="ti ti-ticket"></i> Activities</button>
+          <button class="btn btn-sm explore-cat-btn" data-cat="flight" onclick="switchExploreCategory('flight')"><i class="ti ti-plane-departure"></i> Flights</button>
         </div>
-        <p class="fs-sm text-muted" style="margin:10px 0 0">Flights are handled on the Trip Itinerary tab's flight calendar — this is for courses, places to stay, restaurants and things to do.</p>
+        <p class="fs-sm text-muted" style="margin:10px 0 0" id="explore-flights-note">This is for courses, places to stay, restaurants and things to do.</p>
       </div>
 
       <div class="explore-split">
@@ -1917,6 +1939,14 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
       </div>
     </div>
 
+    <div id="td-panel-itin" style="display:none">
+      <div class="card" style="margin-bottom:16px">
+        <div class="gp-section-head"><i class="ti ti-calendar-event"></i> Trip Itinerary</div>
+        <p class="fs-sm text-muted" style="margin:0">Drag days and activities to reorder, or drag items from your Trip Cart on the Group &amp; Booking tab straight into a day.</p>
+      </div>
+      <div id="group-schedule-wrap"><p class="fs-sm text-muted">Select a trip option on Explore List to see its schedule.</p></div>
+    </div>
+
     <div id="td-panel-group" style="display:none">
 
       <!-- GROUP NAME -->
@@ -1927,13 +1957,6 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
           <button class="btn btn-primary btn-sm" onclick="saveGroupName()">Save</button>
         </div>
         <p class="fs-sm text-muted" style="margin-top:8px">Shows in your group chat and trip list for everyone on this trip.</p>
-      </div>
-
-      <!-- TRIP SCHEDULE — full width -->
-      <div class="card" style="margin-bottom:20px">
-        <div class="gp-section-head"><i class="ti ti-calendar-event"></i> Trip Schedule</div>
-        <p class="fs-sm text-muted" style="margin:0 0 14px">Drag days and activities to reorder, or drag items from your Trip Cart straight into a day, to turn this into your group's actual plan.</p>
-        <div id="group-schedule-wrap"><p class="fs-sm text-muted">Select a trip option above to see its schedule.</p></div>
       </div>
 
       <!-- CART + BOOKING PROGRESS — full width -->
@@ -6321,27 +6344,35 @@ function drawSchedule(mountEl, tripId, panelLabel, schedule) {
         '<button type="button" class="schedule-reset-btn" onclick="addScheduleDay(this)"><i class="ti ti-plus"></i> Add Day</button>' +
         '<button type="button" class="schedule-reset-btn" onclick="resetSchedule(this)">Reset to AI Suggestion</button>' +
       '</div>' +
-    '</div><div class="itinerary schedule-list">';
+    '</div><div class="itinerary schedule-list itin-doc">';
   schedule.forEach(function(day, dIdx) {
-    html += '<div class="itin-day schedule-mode" draggable="true" data-day-idx="' + dIdx + '">' +
-      '<div class="itin-day-header schedule-mode"><i class="ti ti-arrows-move day-drag-handle"></i><h4>Day ' + day.day + ': ' + escapeHtml(day.title || '') + '</h4></div>' +
+    html += '<div class="itin-day schedule-mode itin-day-doc" draggable="true" data-day-idx="' + dIdx + '">' +
+      '<div class="itin-day-header schedule-mode"><i class="ti ti-arrows-move day-drag-handle"></i><h4>Day ' + day.day + ': ' + escapeHtml(day.title || '') + '</h4>' +
+        '<button type="button" class="schedule-add-item-btn schedule-add-item-btn-inline" onclick="openItinItemModal(this,' + dIdx + ',null)"><i class="ti ti-plus"></i> Add Item</button>' +
+      '</div>' +
       '<div class="itin-day-body" data-day-idx="' + dIdx + '">';
     (day.activities || []).forEach(function(act, aIdx) {
       var meta = ITIN_TYPE_META[act.itemType] || null;
-      html += '<div class="itin-activity schedule-item' + (meta ? ' itin-activity-typed' : '') + '" draggable="true" data-day-idx="' + dIdx + '" data-act-idx="' + aIdx + '">' +
+      var notes = act.details && act.details.notes;
+      html += '<div class="itin-activity schedule-item itin-activity-doc' + (meta ? ' itin-activity-typed' : '') + '" draggable="true" data-day-idx="' + dIdx + '" data-act-idx="' + aIdx + '">' +
         '<i class="ti ti-arrows-move item-drag-handle"></i>' +
-        (meta ? '<i class="ti ' + meta.icon + ' itin-type-icon" title="' + meta.label + '"></i>' : '') +
-        '<span class="itin-time">' + escapeHtml(act.time || '') + '</span>' +
-        '<span class="itin-desc">' + escapeHtml(act.description || '') + '</span>' +
-        (act.price ? '<span class="itin-price">' + fmtPrice(act.price) + '</span>' : '') +
-        '<span class="itin-item-actions">' +
-          '<button type="button" class="itin-item-action-btn" title="Edit" onclick="openItinItemModal(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-pencil"></i></button>' +
-          '<button type="button" class="itin-item-action-btn" title="Duplicate" onclick="duplicateItinItem(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-copy"></i></button>' +
-          '<button type="button" class="itin-item-action-btn" title="Delete" onclick="deleteItinItem(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-trash"></i></button>' +
-        '</span>' +
+        '<div class="itin-activity-doc-body">' +
+          '<div class="itin-activity-doc-row1">' +
+            (meta ? '<i class="ti ' + meta.icon + ' itin-type-icon"></i>' : '') +
+            '<span class="itin-time">' + escapeHtml(act.time || '') + '</span>' +
+            '<span class="itin-desc">' + escapeHtml(act.description || '') + '</span>' +
+            (meta ? '<span class="itin-type-tag tag-' + act.itemType + '">' + meta.label + '</span>' : '') +
+            (act.price ? '<span class="itin-price">' + fmtPrice(act.price) + '</span>' : '') +
+            '<span class="itin-item-actions">' +
+              '<button type="button" class="itin-item-action-btn" title="Edit" onclick="openItinItemModal(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-pencil"></i></button>' +
+              '<button type="button" class="itin-item-action-btn" title="Duplicate" onclick="duplicateItinItem(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-copy"></i></button>' +
+              '<button type="button" class="itin-item-action-btn" title="Delete" onclick="deleteItinItem(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-trash"></i></button>' +
+            '</span>' +
+          '</div>' +
+          (notes ? '<div class="itin-activity-doc-notes">' + escapeHtml(notes) + '</div>' : '') +
+        '</div>' +
       '</div>';
     });
-    html += '<button type="button" class="schedule-add-item-btn" onclick="openItinItemModal(this,' + dIdx + ',null)"><i class="ti ti-plus"></i> Add Item</button>';
     if (!day.activities || !day.activities.length) {
       html += '<p class="schedule-empty-hint">Drag items from your Trip Cart here, or use "Add Item" above</p>';
     }
@@ -8594,11 +8625,14 @@ var exploreMarkers = [];
 var exploreInfoWindow = null;
 var exploreHasSearched = false;
 var exploreLastDestination = '';
+var exploreOriginAirport = ''; // trip's departure airport name, e.g. "Manchester" — resolved to an IATA code via AIRPORT_CODES
+var exploreTravelMonth = ''; // YYYY-MM-01, seeded from the trip's own travel dates when known
 var EXPLORE_CATEGORY_META = {
   course: { icon: 'ti-golf', itemType: 'course', label: 'course' },
   hotel: { icon: 'ti-bed', itemType: 'hotel', label: 'place to stay' },
   restaurant: { icon: 'ti-tools-kitchen-2', itemType: 'restaurant', label: 'restaurant' },
-  activity: { icon: 'ti-ticket', itemType: 'activity', label: 'activity' }
+  activity: { icon: 'ti-ticket', itemType: 'activity', label: 'activity' },
+  flight: { icon: 'ti-plane-departure', itemType: 'flight', label: 'fare' }
 };
 
 function switchExploreCategory(cat) {
@@ -8606,14 +8640,20 @@ function switchExploreCategory(cat) {
   document.querySelectorAll('.explore-cat-btn').forEach(function(b) {
     b.classList.toggle('active', b.getAttribute('data-cat') === cat);
   });
+  var noteEl = document.getElementById('explore-flights-note');
+  if (noteEl) {
+    noteEl.textContent = cat === 'flight'
+      ? 'Real fares from Travelpayouts — cheapest price found per day, not a live list of individual flights. Click Book for live times and seats on Expedia.'
+      : 'This is for courses, places to stay, restaurants and things to do.';
+  }
   var destInput = document.getElementById('explore-destination-input');
   var hasDestination = destInput && destInput.value.trim();
-  // Activities (Viator) only need a destination string, not a resolved
-  // map centre — so this can search even if no course/hotel/restaurant
-  // search has run yet in this session.
-  if (cat === 'activity' && (hasDestination || exploreLastDestination)) {
+  // Activities (Viator) and Flights (Travelpayouts) only need a destination
+  // string, not a resolved map centre — so either can search even if no
+  // course/hotel/restaurant search has run yet in this session.
+  if ((cat === 'activity' || cat === 'flight') && (hasDestination || exploreLastDestination)) {
     runExploreSearch(true);
-  } else if (cat !== 'activity' && exploreCenter) {
+  } else if (cat !== 'activity' && cat !== 'flight' && exploreCenter) {
     runExploreSearch(true);
   }
 }
@@ -8628,6 +8668,47 @@ async function runExploreSearch(keepCenter) {
   }
   exploreHasSearched = true;
   resultsEl.innerHTML = '<div style="text-align:center;padding:30px 0"><div class="loading-spinner"></div></div>';
+
+  if (exploreCategory === 'flight') {
+    try {
+      exploreLastDestination = destination || exploreLastDestination;
+      var originCode = AIRPORT_CODES[exploreOriginAirport] || (exploreOriginAirport.length === 3 ? exploreOriginAirport.toUpperCase() : '');
+      var destCode = '';
+      var destLower = (destination || exploreLastDestination || '').toLowerCase();
+      Object.keys(DEST_CODES).forEach(function(k) { if (!destCode && destLower.indexOf(k.toLowerCase()) !== -1) destCode = DEST_CODES[k]; });
+      if (!originCode || !destCode) {
+        resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">Could not match that route to known airports yet — try a more recognisable destination name (e.g. "Algarve" or "Malaga").</p>';
+        return;
+      }
+      var month = exploreTravelMonth || '';
+      var flRes = await fetch('/.netlify/functions/flights-calendar?origin=' + originCode + '&destination=' + destCode + '&currency=gbp' + (month ? '&month=' + month : ''));
+      var flData = await flRes.json();
+      var prices = (flData.prices || []).slice().sort(function(a, b) { return a.price - b.price; }).slice(0, 20);
+      exploreResults = prices.map(function(p) {
+        var dateObj = new Date(p.date + 'T00:00:00');
+        var dateLabel = dateObj.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+        return {
+          place_id: null, name: originCode + ' \u2192 ' + destCode + ' \u00b7 ' + dateLabel,
+          rating: null, user_ratings_total: null,
+          price_display: fmtPrice(p.price) + (p.directOnly ? ' \u00b7 Direct' : ''),
+          vicinity: 'One-way fare, cheapest found', lat: null, lng: null,
+          photo_reference: null, image_url: null, photos: [], open_now: null,
+          direct_url: buildExpediaFlightsUrl(originCode, destCode, p.date, null, '2', destination),
+          _rawPrice: p.price, _date: p.date
+        };
+      });
+      if (!exploreResults.length) {
+        resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">No fares found for that route this month — try a different destination or check back later.</p>';
+        return;
+      }
+      renderExploreResults();
+      updateExploreMapPins(true);
+    } catch (e) {
+      console.error('runExploreSearch (flight) error:', e);
+      resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">Something went wrong searching flights — please try again.</p>';
+    }
+    return;
+  }
 
   // Activities are deliberately NOT Google Places "tourist attractions" —
   // those are mostly just landmarks/museums with no way to book them.
@@ -8724,6 +8805,24 @@ function renderExploreResults() {
   }).join('');
 }
 
+// One consistent custom pin for every category (course/hotel/restaurant) —
+// built as an inline SVG data URI so it needs no separate image asset.
+// anchor/labelOrigin are tuned so the numbered label sits in the lower half
+// of the circle, clear of the flag glyph above it.
+function exploreMarkerIcon() {
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34">' +
+    '<circle cx="17" cy="17" r="16" fill="#1a3a2a" stroke="#ffffff" stroke-width="2"/>' +
+    '<line x1="14" y1="8" x2="14" y2="19" stroke="#c9a84c" stroke-width="1.6" stroke-linecap="round"/>' +
+    '<path d="M14 8 L21 10.8 L14 13.6 Z" fill="#c9a84c"/>' +
+  '</svg>';
+  return {
+    url: 'data:image/svg+xml,' + encodeURIComponent(svg),
+    scaledSize: new google.maps.Size(34, 34),
+    anchor: new google.maps.Point(17, 17),
+    labelOrigin: new google.maps.Point(21, 24)
+  };
+}
+
 function highlightExploreMarker(idx) {
   exploreMarkers.forEach(function(m, i) { m.setZIndex(i === idx ? 999 : 1); });
 }
@@ -8780,6 +8879,19 @@ function initExploreMap() {
   var searchAreaBtn = document.getElementById('explore-search-area-btn');
   exploreMap.addListener('dragend', function() { if (searchAreaBtn) searchAreaBtn.style.display = 'inline-flex'; });
   exploreMap.addListener('zoom_changed', function() { if (searchAreaBtn && exploreHasSearched) searchAreaBtn.style.display = 'inline-flex'; });
+  // If a search already completed while the map was still loading, the
+  // results list would otherwise sit there with no pins to match it.
+  if (exploreResults.length) updateExploreMapPins(true);
+}
+
+// Called once, right when a trip opens, with the trip's own destination —
+// synchronous and reliable, unlike guessing from storedPanels which may not
+// have loaded yet by the time the Explore tab first renders.
+function seedExploreFromDestination(destination) {
+  var destInput = document.getElementById('explore-destination-input');
+  if (!destInput || exploreHasSearched || !destination) return;
+  destInput.value = destination;
+  runExploreSearch();
 }
 
 function searchExploreMapArea() {
@@ -8817,14 +8929,16 @@ function updateExploreMapPins(recenter) {
   exploreMarkers = [];
 
   var overlayEl = document.getElementById('explore-map-overlay-note');
-  if (exploreCategory === 'activity') {
+  if (exploreCategory === 'activity' || exploreCategory === 'flight') {
     if (!overlayEl) {
       overlayEl = document.createElement('div');
       overlayEl.id = 'explore-map-overlay-note';
       overlayEl.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--off-white);border-radius:var(--r);padding:20px;text-align:center;color:var(--muted);font-size:.85rem';
       document.querySelector('.explore-map-col').appendChild(overlayEl);
     }
-    overlayEl.innerHTML = '<span><i class="ti ti-map-pin-off" style="font-size:1.4rem;display:block;margin-bottom:8px"></i>Activities are sourced from Viator, which doesn\'t give exact map locations — browse the cards instead.</span>';
+    overlayEl.innerHTML = exploreCategory === 'flight'
+      ? '<span><i class="ti ti-map-pin-off" style="font-size:1.4rem;display:block;margin-bottom:8px"></i>Flight fares don\'t have a map location — browse the cards instead.</span>'
+      : '<span><i class="ti ti-map-pin-off" style="font-size:1.4rem;display:block;margin-bottom:8px"></i>Activities are sourced from Viator, which doesn\'t give exact map locations — browse the cards instead.</span>';
     overlayEl.style.display = 'flex';
     return;
   }
@@ -8837,6 +8951,7 @@ function updateExploreMapPins(recenter) {
       position: { lat: r.lat, lng: r.lng },
       map: exploreMap,
       title: r.name,
+      icon: exploreMarkerIcon(),
       label: { text: String(idx + 1), color: '#fff', fontSize: '11px', fontWeight: '600' }
     });
     marker.addListener('click', function() {
@@ -8891,24 +9006,17 @@ function addExploreResultToItinerary(idx) {
 function switchTripTab(tab) {
   document.getElementById('td-panel-itinerary').style.display = tab === 'itinerary' ? 'block' : 'none';
   document.getElementById('td-panel-explore').style.display = tab === 'explore' ? 'block' : 'none';
+  document.getElementById('td-panel-itin').style.display = tab === 'itin' ? 'block' : 'none';
   document.getElementById('td-panel-group').style.display = tab === 'group' ? 'block' : 'none';
   document.getElementById('td-tab-itinerary').classList.toggle('active', tab === 'itinerary');
   document.getElementById('td-tab-explore').classList.toggle('active', tab === 'explore');
+  document.getElementById('td-tab-itin').classList.toggle('active', tab === 'itin');
   document.getElementById('td-tab-group').classList.toggle('active', tab === 'group');
   if (tab === 'explore') {
-    // First visit: seed the destination field from the trip itself and run
-    // an initial search so the tab isn't a blank slate.
-    var destInput = document.getElementById('explore-destination-input');
-    if (destInput && !destInput.value && storedPanels && storedPanels[0]) {
-      destInput.value = storedPanels[0].destination || storedPanels[0].label || '';
-    }
     if (!exploreMap) {
       initExploreMap();
     } else {
       requestAnimationFrame(function() { if (exploreMap) google.maps.event.trigger(exploreMap, 'resize'); });
-    }
-    if (destInput && destInput.value && !exploreHasSearched) {
-      runExploreSearch();
     }
   }
   if (tab === 'group' && activeTripId) {
@@ -8927,10 +9035,12 @@ function switchTripTab(tab) {
       });
     });
   }
+  if (tab === 'itin') {
+    renderGroupSchedule();
+  }
   if (tab === 'group') {
     loadTripCart();
     updateGroupVotesTally();
-    renderGroupSchedule();
     // Inject BTT into group planning if we have a panel
     var bttWrap = document.getElementById('group-btt-wrap');
     if (bttWrap && storedPanels && storedPanels[0]) {
@@ -8945,6 +9055,12 @@ async function openTripDetail(tripId, tripData) {
   activeTripId = tripId;
   showPage('trip');
   switchTripTab('explore');
+  seedExploreFromDestination(tripData.destination_type);
+  exploreOriginAirport = tripData.departure_airport || '';
+  try {
+    var __td = JSON.parse(tripData.travel_dates || '{}');
+    if (__td.depart) exploreTravelMonth = __td.depart.slice(0, 7) + '-01';
+  } catch (e) { /* leave exploreTravelMonth unset — flight search falls back to next month */ }
   document.getElementById('trip-detail-heading').textContent = tripData.group_name || tripData.destination_type || 'Golf Trip';
   document.getElementById('trip-detail-sub').textContent = (tripData.group_size || '?') + ' golfers • ' + formatBudgetDisplay(tripData.budget);
   document.getElementById('td-dest').textContent = tripData.destination_type || '—';

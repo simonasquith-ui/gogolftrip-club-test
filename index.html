@@ -448,12 +448,7 @@ label{display:block;font-size:.8rem;font-weight:500;color:var(--ink);margin-bott
 .explore-map-col{position:sticky;top:16px;height:640px}
 .explore-cat-btn{background:transparent;border:1px solid var(--border);color:var(--muted)}
 .explore-cat-btn.active{background:var(--green);color:var(--gold);border-color:var(--green)}
-.explore-result-card{display:flex;gap:12px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:10px;margin-bottom:10px}
-.explore-result-photo{width:88px;height:88px;border-radius:var(--r);overflow:hidden;flex-shrink:0;background:var(--off-white);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:1.4rem}
-.explore-result-photo img{width:100%;height:100%;object-fit:cover}
-.explore-result-body{flex:1;min-width:0}
-.explore-result-body h4{font-size:.92rem;margin-bottom:2px;color:var(--text)}
-.explore-result-meta{font-size:.78rem;color:var(--muted);margin-bottom:8px}
+.explore-result-card{margin-bottom:16px}
 .explore-result-card.is-highlighted{border-color:var(--brass);box-shadow:0 0 0 1px var(--brass)}
 @media(max-width:860px){.explore-split{grid-template-columns:1fr}.explore-map-col{position:static;height:320px}}
 .results-tab.active::after{content:none}
@@ -8665,17 +8660,25 @@ function renderExploreResults() {
     return;
   }
   resultsEl.innerHTML = exploreResults.map(function(r, idx) {
-    var priceStr = typeof r.price_level === 'number' ? Array(r.price_level + 1).join('£') || '£' : '';
-    var ratingStr = r.rating ? '<i class="ti ti-star-filled" style="color:var(--gold)"></i> ' + r.rating + (r.user_ratings_total ? ' (' + r.user_ratings_total + ')' : '') : '';
-    return '<div class="explore-result-card" id="explore-card-' + idx + '" onmouseenter="highlightExploreMarker(' + idx + ')">' +
-      '<div class="explore-result-photo">' + (r.photo_reference ? '<img loading="lazy" src="/.netlify/functions/place-photo?ref=' + encodeURIComponent(r.photo_reference) + '&maxwidth=200" alt="">' : '<i class="ti ' + meta.icon + '"></i>') + '</div>' +
-      '<div class="explore-result-body">' +
-        '<h4>' + escapeHtml(r.name) + '</h4>' +
-        '<div class="explore-result-meta">' + [ratingStr, priceStr, escapeHtml(r.vicinity || '')].filter(Boolean).join(' &middot; ') + '</div>' +
-        '<div style="display:flex;gap:8px">' +
-          '<button class="btn btn-primary btn-sm" onclick="addExploreResultToItinerary(' + idx + ')"><i class="ti ti-plus"></i> Add</button>' +
-          '<button class="btn btn-ghost btn-sm" id="explore-visit-btn-' + idx + '" onclick="openExploreVenueLink(' + idx + ')"><i class="ti ti-external-link"></i> Visit</button>' +
-        '</div>' +
+    var priceStr = typeof r.price_level === 'number' ? (Array(r.price_level + 1).join('£') || '£') : '';
+    var ratingStr = r.rating ? r.rating + ' &#9733;' + (r.user_ratings_total ? ' (' + r.user_ratings_total + ')' : '') : '';
+    var photoHtml = r.photo_reference
+      ? '<img loading="lazy" src="/.netlify/functions/place-photo?ref=' + encodeURIComponent(r.photo_reference) + '&maxwidth=600" alt="">'
+      : '<i class="ti ' + meta.icon + '"></i>';
+    return '<div class="course-card explore-result-card" id="explore-card-' + idx + '" onmouseenter="highlightExploreMarker(' + idx + ')" style="margin-bottom:16px">' +
+      '<div class="card-photo" style="height:170px">' + photoHtml + '</div>' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">' +
+        '<h4 style="margin:0;flex:1">' + escapeHtml(r.name) + '</h4>' +
+      '</div>' +
+      '<div class="text-muted fs-sm">' + escapeHtml(r.vicinity || '') + '</div>' +
+      '<div class="course-stats">' +
+        (ratingStr ? '<span class="course-stat">' + ratingStr + '</span>' : '') +
+        (priceStr ? '<span class="course-stat">' + priceStr + '</span>' : '') +
+        (r.open_now === true ? '<span class="course-stat" style="color:var(--moss)">Open now</span>' : '') +
+      '</div>' +
+      '<div class="card-links">' +
+        '<button class="card-link" style="cursor:pointer;background:var(--green);color:var(--gold);border-color:var(--green)" onclick="addExploreResultToItinerary(' + idx + ')">&#43; Add to Itinerary</button>' +
+        '<button class="card-link" style="cursor:pointer;background:none" id="explore-visit-btn-' + idx + '" onclick="openExploreVenueLink(' + idx + ')">Visit &#8599;</button>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -8745,7 +8748,7 @@ function buildExploreInfoWindowContent(idx) {
   var photos = (r.photos && r.photos.length) ? r.photos : (r.photo_reference ? [r.photo_reference] : []);
   var photosHtml = photos.length
     ? '<div style="display:flex;gap:4px;margin-bottom:8px">' + photos.map(function(ref) {
-        return '<img loading="lazy" src="/.netlify/functions/place-photo?ref=' + encodeURIComponent(ref) + '&maxwidth=120" style="width:64px;height:64px;object-fit:cover;border-radius:4px" alt="">';
+        return '<img loading="lazy" src="/.netlify/functions/place-photo?ref=' + encodeURIComponent(ref) + '&maxwidth=160" style="width:70px;height:70px;object-fit:cover;border-radius:4px" alt="">';
       }).join('') + '</div>'
     : '';
   var ratingStr = r.rating ? '<i class="ti ti-star-filled" style="color:#B08D52"></i> ' + r.rating + (r.user_ratings_total ? ' (' + r.user_ratings_total + ')' : '') : '';

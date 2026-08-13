@@ -1928,6 +1928,7 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
           <button class="btn btn-sm explore-cat-btn" data-cat="flight" onclick="switchExploreCategory('flight')"><i class="ti ti-plane-departure"></i> Flights</button>
         </div>
         <p class="fs-sm text-muted" style="margin:10px 0 0" id="explore-flights-note">This is for courses, places to stay, restaurants and things to do.</p>
+        <div id="explore-airport-picker" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--off-white)"></div>
       </div>
 
       <div class="explore-split" id="explore-split-wrap">
@@ -5808,6 +5809,48 @@ var DEST_CODES = {
   'Scotland':'EDI','England':'LHR'
 };
 
+// Real coordinates for every airport DEST_CODES points at, keyed by IATA
+// code (several DEST_CODES entries share an airport, e.g. "Costa del Sol"
+// and "Malaga" both mean AGP — this list is deduplicated by code). Used to
+// find the nearest airport to a resolved destination BY DISTANCE, as a
+// fallback when the destination text doesn't match anything in DEST_CODES
+// — that keyword-substring approach only ever works for the specific
+// region/city names already hardcoded in it, so a specific town like "La
+// Cala de Mijas" (real place, near Malaga, just never typed out anywhere in
+// that list) would otherwise fail outright despite being geographically
+// obvious once you have real coordinates to work with.
+var AIRPORT_LOCATIONS = {
+  FAO:{lat:37.0144,lng:-7.9659}, LIS:{lat:38.7813,lng:-9.1359}, OPO:{lat:41.2481,lng:-8.6814}, FNC:{lat:32.6979,lng:-16.7745},
+  AGP:{lat:36.6749,lng:-4.4991}, PMI:{lat:39.5517,lng:2.7388}, TFS:{lat:28.0445,lng:-16.5725}, BIO:{lat:43.3011,lng:-2.9106},
+  MAD:{lat:40.4983,lng:-3.5676}, BCN:{lat:41.2971,lng:2.0785}, RAK:{lat:31.6069,lng:-8.0363}, AGA:{lat:30.3250,lng:-9.4131},
+  CMN:{lat:33.3675,lng:-7.5900}, DUB:{lat:53.4213,lng:-6.2701}, ORK:{lat:51.8413,lng:-8.4911}, KIR:{lat:52.1809,lng:-9.5238},
+  CDG:{lat:49.0097,lng:2.5479}, NCE:{lat:43.6584,lng:7.2159}, BOD:{lat:44.8283,lng:-0.7156}, BIQ:{lat:43.4684,lng:-1.5228},
+  FLR:{lat:43.8100,lng:11.2051}, FCO:{lat:41.8003,lng:12.2389}, CTA:{lat:37.4668,lng:15.0664}, MXP:{lat:45.6306,lng:8.7281},
+  AYT:{lat:36.8987,lng:30.8005}, IST:{lat:41.2753,lng:28.7519}, BJV:{lat:37.2506,lng:27.6643}, DXB:{lat:25.2532,lng:55.3657},
+  AUH:{lat:24.4330,lng:54.6511}, SVQ:{lat:37.4180,lng:-5.8931}, VLC:{lat:39.4893,lng:-0.4816}, IBZ:{lat:38.8729,lng:1.3731},
+  ATH:{lat:37.9364,lng:23.9445}, RHO:{lat:36.4054,lng:28.0862}, HER:{lat:35.3397,lng:25.1803}, KLX:{lat:37.0683,lng:22.0256},
+  SOF:{lat:42.6952,lng:23.4062}, VAR:{lat:43.2321,lng:27.8251}, EDI:{lat:55.9500,lng:-3.3725}, LHR:{lat:51.4700,lng:-0.4543}
+};
+
+function haversineKm(lat1, lng1, lat2, lng2) {
+  var R = 6371;
+  var dLat = (lat2 - lat1) * Math.PI / 180;
+  var dLng = (lng2 - lng1) * Math.PI / 180;
+  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// Returns the N nearest known airports to a point, nearest first — used both
+// to auto-pick a sensible default and to populate the "change airport"
+// dropdown with real, geographically-relevant alternatives rather than the
+// full 38-airport list.
+function nearestAirports(lat, lng, count) {
+  return Object.keys(AIRPORT_LOCATIONS).map(function(code) {
+    var loc = AIRPORT_LOCATIONS[code];
+    return { code: code, km: haversineKm(lat, lng, loc.lat, loc.lng) };
+  }).sort(function(a, b) { return a.km - b.km; }).slice(0, count || 3);
+}
+
 // Resolves {originCode, destCode} IATA codes from the questionnaire's chosen
 // departure airport + a panel's destination name, using the shared maps
 // above. Shared by the Expedia link-builder and the live flight calendar.
@@ -8786,6 +8829,7 @@ var exploreHasSearched = false;
 var exploreLastDestination = '';
 var exploreOriginAirport = ''; // trip's departure airport name, e.g. "Manchester" — resolved to an IATA code via AIRPORT_CODES
 var exploreTravelMonth = ''; // YYYY-MM-01, seeded from the trip's own travel dates when known
+var exploreDestAirportCode = ''; // resolved or user-overridden destination airport for the Flights category
 var EXPLORE_CATEGORY_META = {
   course: { icon: 'ti-golf', itemType: 'course', label: 'course' },
   hotel: { icon: 'ti-bed', itemType: 'hotel', label: 'place to stay' },
@@ -8833,6 +8877,7 @@ function switchExploreCategory(cat) {
   document.getElementById('explore-map-col').style.display = cat === 'flight' ? 'none' : 'block';
   document.getElementById('explore-return-col').style.display = cat === 'flight' ? 'block' : 'none';
   document.getElementById('explore-outbound-label').style.display = cat === 'flight' ? 'block' : 'none';
+  if (cat !== 'flight') document.getElementById('explore-airport-picker').style.display = 'none';
   if (cat !== 'flight' && exploreMap) {
     requestAnimationFrame(function() { google.maps.event.trigger(exploreMap, 'resize'); });
   }
@@ -8848,6 +8893,43 @@ function switchExploreCategory(cat) {
   }
 }
 
+// A short, real IATA code alone means little to most people — pairs each
+// option with a human-readable name pulled from DEST_CODES/AIRPORT_LOCATIONS'
+// own keys where possible, so the dropdown reads as an actual place, not a
+// three-letter code to decode.
+var AIRPORT_CODE_NAMES = {
+  FAO:'Faro', LIS:'Lisbon', OPO:'Porto', FNC:'Madeira', AGP:'Malaga', PMI:'Palma de Mallorca', TFS:'Tenerife South',
+  BIO:'Bilbao', MAD:'Madrid', BCN:'Barcelona', RAK:'Marrakech', AGA:'Agadir', CMN:'Casablanca', DUB:'Dublin',
+  ORK:'Cork', KIR:'Kerry', CDG:'Paris CDG', NCE:'Nice', BOD:'Bordeaux', BIQ:'Biarritz', FLR:'Florence', FCO:'Rome',
+  CTA:'Catania (Sicily)', MXP:'Milan Malpensa', AYT:'Antalya', IST:'Istanbul', BJV:'Bodrum', DXB:'Dubai', AUH:'Abu Dhabi',
+  SVQ:'Seville', VLC:'Valencia', IBZ:'Ibiza', ATH:'Athens', RHO:'Rhodes', HER:'Heraklion (Crete)', KLX:'Kalamata',
+  SOF:'Sofia', VAR:'Varna', EDI:'Edinburgh', LHR:'London Heathrow'
+};
+
+function renderExploreAirportPicker(selectedCode, nearestOptions, originCode) {
+  var el = document.getElementById('explore-airport-picker');
+  if (!el) return;
+  // Make sure the currently-selected code is always in the option list, even
+  // if it came from the DEST_CODES fast path rather than the nearest-N list.
+  var options = nearestOptions.slice();
+  if (!options.some(function(o) { return o.code === selectedCode; })) options.unshift({ code: selectedCode, km: 0 });
+
+  el.innerHTML = '<label class="fs-sm" style="font-weight:600;color:var(--green);display:block;margin-bottom:6px">Flying to:</label>' +
+    '<select id="explore-dest-airport-select" onchange="changeExploreDestAirport(this.value)" style="max-width:280px">' +
+    options.map(function(o) {
+      var label = (AIRPORT_CODE_NAMES[o.code] || o.code) + ' (' + o.code + ')' + (o.km > 1 ? ' \u00b7 ' + Math.round(o.km) + 'km away' : '');
+      return '<option value="' + o.code + '"' + (o.code === selectedCode ? ' selected' : '') + '>' + label + '</option>';
+    }).join('') +
+    '</select>' +
+    '<div class="fs-sm text-muted" style="margin-top:6px">Nearest match to your search — change it above if you meant somewhere else nearby.</div>';
+  el.style.display = 'block';
+}
+
+function changeExploreDestAirport(code) {
+  exploreDestAirportCode = code;
+  runExploreSearch(true);
+}
+
 async function runExploreSearch(keepCenter) {
   var destInput = document.getElementById('explore-destination-input');
   var destination = destInput ? destInput.value.trim() : '';
@@ -8861,15 +8943,53 @@ async function runExploreSearch(keepCenter) {
 
   if (exploreCategory === 'flight') {
     try {
+      if (!keepCenter) exploreDestAirportCode = ''; // a genuinely new destination search — don't keep a stale airport from whatever was searched before
       exploreLastDestination = destination || exploreLastDestination;
       var originCode = AIRPORT_CODES[exploreOriginAirport] || (exploreOriginAirport.length === 3 ? exploreOriginAirport.toUpperCase() : '');
-      var destCode = '';
-      var destLower = (destination || exploreLastDestination || '').toLowerCase();
-      Object.keys(DEST_CODES).forEach(function(k) { if (!destCode && destLower.indexOf(k.toLowerCase()) !== -1) destCode = DEST_CODES[k]; });
-      if (!originCode || !destCode) {
-        resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">Could not match that route to known airports yet — try a more recognisable destination name (e.g. "Algarve" or "Malaga").</p>';
+      if (!originCode) {
+        resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">Could not determine your departure airport for this trip.</p>';
         return;
       }
+
+      var destCode = exploreDestAirportCode;
+      var nearestOptions = [];
+
+      // Resolve a centre point regardless of which path finds destCode —
+      // the airport picker needs real nearby alternatives to offer either
+      // way, not just when the coordinate fallback below was the thing that
+      // actually found the airport.
+      if (!exploreCenter) {
+        try {
+          var geoRes2 = await fetch('/.netlify/functions/geocode-region', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: destination || exploreLastDestination })
+          });
+          var geoData2 = await geoRes2.json();
+          if (geoData2 && geoData2.lat) exploreCenter = { lat: geoData2.lat, lng: geoData2.lng };
+        } catch (e) { /* fine if this fails — DEST_CODES fast path below can still work without it */ }
+      }
+      if (exploreCenter) nearestOptions = nearestAirports(exploreCenter.lat, exploreCenter.lng, 3);
+
+      if (!destCode) {
+        // Fast path: a well-known region/city name already in the hardcoded
+        // list. This alone is what broke for something like "La Cala de
+        // Mijas" — a real place, just never spelled out in that list — so
+        // it's only ever a shortcut now, not the only path.
+        var destLower = (destination || exploreLastDestination || '').toLowerCase();
+        Object.keys(DEST_CODES).forEach(function(k) { if (!destCode && destLower.indexOf(k.toLowerCase()) !== -1) destCode = DEST_CODES[k]; });
+
+        // Real fallback: nearest known airport to the resolved centre by
+        // actual distance, not by name-matching at all.
+        if (!destCode && nearestOptions.length) destCode = nearestOptions[0].code;
+        exploreDestAirportCode = destCode;
+      }
+
+      if (!destCode) {
+        resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">Could not work out an airport for that destination — try being a bit more specific.</p>';
+        return;
+      }
+
+      renderExploreAirportPicker(destCode, nearestOptions, originCode);
+
       var month = exploreTravelMonth || monthStartIso(new Date().getFullYear(), new Date().getMonth() + 1);
       var nextMonthIso = (function() { var p = month.split('-'); return monthStartIso(parseInt(p[0], 10), parseInt(p[1], 10)); })();
 

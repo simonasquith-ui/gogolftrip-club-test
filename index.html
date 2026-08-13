@@ -448,6 +448,14 @@ label{display:block;font-size:.8rem;font-weight:500;color:var(--ink);margin-bott
 .explore-map-col{position:sticky;top:16px;height:640px}
 .explore-cat-btn{background:transparent;border:1px solid var(--border);color:var(--muted)}
 .explore-cat-btn.active{background:var(--green);color:var(--gold);border-color:var(--green)}
+.explore-dest-btn{background:transparent;border:1px solid var(--brass);color:var(--brass)}
+.explore-dest-btn.active{background:var(--brass);color:#fff}
+.explore-flight-row{display:flex;justify-content:space-between;align-items:center;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;text-decoration:none;color:var(--text);transition:border-color var(--tr)}
+.explore-flight-row:hover{border-color:var(--brass)}
+.explore-flight-row.cheapest{border-color:var(--brass);background:#fdf9ef}
+.explore-flight-date{font-weight:600}
+.explore-flight-price{font-family:var(--font-display);font-size:1.1rem;color:var(--green);white-space:nowrap}
+.explore-flight-badge{display:block;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--brass)}
 .explore-result-card{margin-bottom:16px}
 .explore-card-thumbs{display:flex;gap:4px;margin:6px 0}
 .explore-card-thumb{width:44px;height:44px;object-fit:cover;border-radius:4px;cursor:pointer;border:2px solid transparent;opacity:.7;transition:opacity var(--tr)}
@@ -986,12 +994,12 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
   <div style="padding:8px 0;border-bottom:1px solid rgba(176,141,82,.18)">
     <div style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);padding:4px 16px 8px">Plan a Trip</div>
     <a href="#" class="nav-mobile-link" style="border-left:2px solid var(--brass);padding-left:13px" onclick="showPage('questionnaire');closeMobileMenu();return false;"><i class="ti ti-users"></i> Build Around My Group</a>
-    <a href="#" class="nav-mobile-link" style="border-left:2px solid rgba(176,141,82,.45);padding-left:13px" onclick="showPage('venue');closeMobileMenu();return false;"><i class="ti ti-golf"></i> Build Around a Course</a>
+    <a href="#" class="nav-mobile-link" style="border-left:2px solid rgba(176,141,82,.45);padding-left:13px" onclick="showPage('venue');closeMobileMenu();return false;"><i class="ti ti-golf"></i> Course or Location</a>
   </div>
   <a href="#" class="nav-mobile-link" onclick="showPage('landing');closeMobileMenu();return false;">Home</a>
   <a href="#" class="nav-mobile-link" onclick="showPage('seasonal');closeMobileMenu();return false;">Destinations</a>
   <a href="#" class="nav-mobile-link" id="nav-mobile-for-clubs" style="color:var(--brass)" onclick="openClubModal();closeMobileMenu();return false;">For Golf Clubs</a>
-  <a href="#" class="nav-mobile-link" onclick="showPage('venue');closeMobileMenu();return false;">Build Around a Course</a>
+  <a href="#" class="nav-mobile-link" onclick="showPage('venue');closeMobileMenu();return false;">Course or Location</a>
   <a href="https://gogolftrip.co.uk/blog/" class="nav-mobile-link">Blog</a>
   <a href="#" class="nav-mobile-link" onclick="showPage('about');closeMobileMenu();return false;">About Us</a>
   <a href="#" class="nav-mobile-link" id="nav-mobile-trips" onclick="showPage('profile');closeMobileMenu();return false;" style="display:none">My Trips</a>
@@ -1052,7 +1060,7 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
         <div class="feature-card"><div class="feature-icon"><i class="ti ti-plane-departure"></i></div><h3>Multi-Airport Support</h3><p>Groups flying from different cities? Add multiple departure airports and we optimise so everyone gets the best deal.</p></div>
         <div class="feature-card"><div class="feature-icon"><i class="ti ti-golf"></i></div><h3>Compare Budget vs Luxury</h3><p>See Budget, Mid-Range and Luxury options side by side for the same destination so you can pick what suits the group.</p></div>
         <div class="feature-card"><div class="feature-icon"><i class="ti ti-users"></i></div><h3>Group Planning Tools</h3><p>Invite society members, share the itinerary, vote on options and coordinate via the built-in group chat.</p></div>
-        <div class="feature-card accent" onclick="showPage('venue')"><div class="feature-icon"><i class="ti ti-golf"></i></div><h3>Build Around a Course</h3><p>Already found a course you want to play? Drop in the name or link — AI finds nearby hotels, restaurants and flights and builds the trip around it.</p><span class="quiet-link">Try it &#8594;</span></div>
+        <div class="feature-card accent" onclick="showPage('venue')"><div class="feature-icon"><i class="ti ti-golf"></i></div><h3>Course or Location</h3><p>Already found a course you want to play? Drop in the name or link — AI finds nearby hotels, restaurants and flights and builds the trip around it.</p><span class="quiet-link">Try it &#8594;</span></div>
         <div class="feature-card"><div class="feature-icon"><i class="ti ti-calendar-event"></i></div><h3>Seasonal Recommendations</h3><p>Get advice on the best time to visit each destination based on weather, course conditions and pricing windows.</p></div>
         <div class="feature-card"><div class="feature-icon"><i class="ti ti-link"></i></div><h3>Direct Booking Links</h3><p>Every course, hotel and flight links directly to Expedia, Booking.com and GolfNow so you can book in one click.</p></div>
       </div>
@@ -1338,7 +1346,7 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
         <button class="btn btn-primary" onclick="showPage('questionnaire')">Build Around My Group <i class="ti ti-users"></i></button>
-        <button class="btn btn-ghost" onclick="showPage('venue')" style="color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.3)">Build Around a Course</button>
+        <button class="btn btn-ghost" onclick="showPage('venue')" style="color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.3)">Course or Location</button>
       </div>
     </div>
   </div>
@@ -1907,6 +1915,7 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
 
     <div id="td-panel-explore">
       <div class="card" style="margin-bottom:16px">
+        <div id="explore-dest-picker" style="display:none;margin-bottom:12px"></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <input type="text" id="explore-destination-input" placeholder="e.g. Algarve, Portugal" style="flex:1;min-width:200px">
           <button class="btn btn-primary btn-sm" onclick="runExploreSearch()"><i class="ti ti-search"></i> Search</button>
@@ -1921,15 +1930,20 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
         <p class="fs-sm text-muted" style="margin:10px 0 0" id="explore-flights-note">This is for courses, places to stay, restaurants and things to do.</p>
       </div>
 
-      <div class="explore-split">
+      <div class="explore-split" id="explore-split-wrap">
         <div class="explore-results-col">
+          <div class="fs-sm text-muted" id="explore-outbound-label" style="display:none;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;font-size:.72rem">Outbound Flights</div>
           <div id="explore-results-list">
             <p class="fs-sm text-muted" style="padding:12px 0">Search a destination above to see golf courses near it.</p>
           </div>
         </div>
-        <div class="explore-map-col">
+        <div class="explore-map-col" id="explore-map-col">
           <div id="explore-map" style="width:100%;height:100%;min-height:420px;border-radius:var(--r);background:var(--off-white)"></div>
           <button type="button" id="explore-search-area-btn" class="btn btn-sm" style="display:none;position:absolute;top:14px;left:50%;transform:translateX(-50%);box-shadow:0 2px 8px rgba(0,0,0,.2)" onclick="searchExploreMapArea()"><i class="ti ti-search"></i> Search this area</button>
+        </div>
+        <div class="explore-results-col" id="explore-return-col" style="display:none">
+          <div class="fs-sm text-muted" style="font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;font-size:.72rem">Return Flights</div>
+          <div id="explore-return-list"></div>
         </div>
       </div>
     </div>
@@ -2081,9 +2095,9 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
 <div id="page-venue" class="page">
   <div class="page-header">
     <div class="container">
-      <div class="section-label">Build Around a Course</div>
-      <h1>Already Know Where You Want to Play?</h1>
-      <p style="color:rgba(255,255,255,.75);margin-top:8px;max-width:600px">Found a course you want to play? Search by name or paste a link — GolfTrip AI builds the rest around it. Hotels nearby, other courses, restaurants, flights.</p>
+      <div class="section-label">Course or Location</div>
+      <h1>Search a Course or a Location</h1>
+      <p style="color:rgba(255,255,255,.75);margin-top:8px;max-width:600px">Search a specific course, or just an area you fancy — e.g. "Malaga" or "Quinta do Lago". Pick your nearest airport and you'll get the full Explore, Itinerary and Group &amp; Booking experience for that place, same as a fully-planned trip.</p>
     </div>
   </div>
   <div style="padding:60px 0 80px">
@@ -2130,7 +2144,7 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
               <select id="venue-airport-select" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:.88rem;background:var(--white)">
               </select>
             </div>
-            <button class="btn btn-primary" onclick="buildAroundVenue()"><i class="ti ti-sparkles"></i> Build trip around this</button>
+            <button class="btn btn-primary" onclick="buildAroundVenue()"><i class="ti ti-sparkles"></i> Explore this area</button>
             <button class="btn btn-ghost" onclick="addVenueToCart()">&#43; Add to cart</button>
             <button class="btn btn-ghost btn-sm" onclick="clearVenuePreview()" style="margin-left:auto">Change</button>
           </div>
@@ -8775,6 +8789,29 @@ var EXPLORE_CATEGORY_META = {
   flight: { icon: 'ti-plane-departure', itemType: 'flight', label: 'fare' }
 };
 
+// One column of real one-way fares (outbound or return, same code path
+// either way — just pass origin/dest in whichever order). Reuses
+// formatCalDate/buildExpediaFlightsUrl from the existing flight calendar
+// system for consistency with how flights link elsewhere in the app.
+function renderExploreFlightColumn(mountId, prices, originCode, destCode, destNameFallback) {
+  var el = document.getElementById(mountId);
+  if (!el) return;
+  if (!prices.length) {
+    el.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">No fares found for ' + originCode + ' &#8594; ' + destCode + ' this month.</p>';
+    return;
+  }
+  var cheapest = prices.reduce(function(min, p) { return (!min || p.price < min.price) ? p : min; }, null);
+  el.innerHTML = prices.map(function(p) {
+    var isCheapest = cheapest && p.date === cheapest.date;
+    var url = buildExpediaFlightsUrl(originCode, destCode, p.date, null, '2', destNameFallback);
+    return '<a href="' + url + '" target="_blank" rel="noopener" class="explore-flight-row' + (isCheapest ? ' cheapest' : '') + '">' +
+      '<div><div class="explore-flight-date">' + formatCalDate(p.date) + '</div>' +
+      '<div class="fs-sm text-muted">' + originCode + ' &#8594; ' + destCode + (p.directOnly ? ' &middot; Direct' : '') + '</div></div>' +
+      '<div class="explore-flight-price">' + (isCheapest ? '<span class="explore-flight-badge">Cheapest</span>' : '') + fmtPrice(p.price) + '</div>' +
+    '</a>';
+  }).join('');
+}
+
 function switchExploreCategory(cat) {
   exploreCategory = cat;
   document.querySelectorAll('.explore-cat-btn').forEach(function(b) {
@@ -8783,8 +8820,16 @@ function switchExploreCategory(cat) {
   var noteEl = document.getElementById('explore-flights-note');
   if (noteEl) {
     noteEl.textContent = cat === 'flight'
-      ? 'Real fares from Travelpayouts — cheapest price found per day, not a live list of individual flights. Click Book for live times and seats on Expedia.'
+      ? 'Real fares from Travelpayouts — cheapest price found per day, not a live list of individual flights. Click a date for live times and seats on Expedia.'
       : 'This is for courses, places to stay, restaurants and things to do.';
+  }
+  // Flights don't have a map location — swap the map column for a second
+  // results column (return flights) instead of leaving it empty.
+  document.getElementById('explore-map-col').style.display = cat === 'flight' ? 'none' : 'block';
+  document.getElementById('explore-return-col').style.display = cat === 'flight' ? 'block' : 'none';
+  document.getElementById('explore-outbound-label').style.display = cat === 'flight' ? 'block' : 'none';
+  if (cat !== 'flight' && exploreMap) {
+    requestAnimationFrame(function() { google.maps.event.trigger(exploreMap, 'resize'); });
   }
   var destInput = document.getElementById('explore-destination-input');
   var hasDestination = destInput && destInput.value.trim();
@@ -8820,29 +8865,30 @@ async function runExploreSearch(keepCenter) {
         resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">Could not match that route to known airports yet — try a more recognisable destination name (e.g. "Algarve" or "Malaga").</p>';
         return;
       }
-      var month = exploreTravelMonth || '';
-      var flRes = await fetch('/.netlify/functions/flights-calendar?origin=' + originCode + '&destination=' + destCode + '&currency=gbp' + (month ? '&month=' + month : ''));
-      var flData = await flRes.json();
-      var prices = (flData.prices || []).slice().sort(function(a, b) { return a.price - b.price; }).slice(0, 20);
-      exploreResults = prices.map(function(p) {
-        var dateObj = new Date(p.date + 'T00:00:00');
-        var dateLabel = dateObj.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
-        return {
-          place_id: null, name: originCode + ' \u2192 ' + destCode + ' \u00b7 ' + dateLabel,
-          rating: null, user_ratings_total: null,
-          price_display: fmtPrice(p.price) + (p.directOnly ? ' \u00b7 Direct' : ''),
-          vicinity: 'One-way fare, cheapest found', lat: null, lng: null,
-          photo_reference: null, image_url: null, photos: [], open_now: null,
-          direct_url: buildExpediaFlightsUrl(originCode, destCode, p.date, null, '2', destination),
-          _rawPrice: p.price, _date: p.date
-        };
-      });
-      if (!exploreResults.length) {
+      var month = exploreTravelMonth || monthStartIso(new Date().getFullYear(), new Date().getMonth() + 1);
+      var nextMonthIso = (function() { var p = month.split('-'); return monthStartIso(parseInt(p[0], 10), parseInt(p[1], 10)); })();
+
+      // Reuses the exact same outbound/destination-swapped-for-return
+      // fetching this app's flight calendar elsewhere already relies on —
+      // real one-way fares per leg, not a combined round-trip guess, per
+      // Simon's fix: show outbound and return as two separate lists rather
+      // than merging them into one estimate.
+      var legResults = await Promise.all([
+        fetchFlightCalendarMonth(originCode, destCode, month, 'gbp'),
+        fetchFlightCalendarMonth(originCode, destCode, nextMonthIso, 'gbp'),
+        fetchFlightCalendarMonth(destCode, originCode, month, 'gbp'),
+        fetchFlightCalendarMonth(destCode, originCode, nextMonthIso, 'gbp')
+      ]);
+      var outboundPrices = legResults[0].concat(legResults[1]).sort(function(a, b) { return a.date < b.date ? -1 : 1; }).slice(0, 20);
+      var returnPrices = legResults[2].concat(legResults[3]).sort(function(a, b) { return a.date < b.date ? -1 : 1; }).slice(0, 20);
+
+      if (!outboundPrices.length && !returnPrices.length) {
         resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">No fares found for that route this month — try a different destination or check back later.</p>';
+        document.getElementById('explore-return-list').innerHTML = '';
         return;
       }
-      renderExploreResults();
-      updateExploreMapPins(true);
+      renderExploreFlightColumn('explore-results-list', outboundPrices, originCode, destCode, destination);
+      renderExploreFlightColumn('explore-return-list', returnPrices, destCode, originCode, destination);
     } catch (e) {
       console.error('runExploreSearch (flight) error:', e);
       resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">Something went wrong searching flights — please try again.</p>';
@@ -8878,11 +8924,14 @@ async function runExploreSearch(keepCenter) {
   }
 
   try {
-    // Resolve the destination to a centre point first (reuses the existing
-    // single-best-match geocode endpoint), unless we already have a centre
-    // from a previous search or a map pan — "Search this area" skips this.
+    // Resolve the destination to a centre point first — uses the actual
+    // Geocoding API (geocode-region.js), not the Places-Text-Search-based
+    // geocode.js (that one's built for finding a specific named venue and
+    // can land on an oddly-ranked business for a broad regional query).
+    // Skipped if we already have a centre from a previous search or a map
+    // pan — "Search this area" doesn't need to re-resolve anything.
     if (!keepCenter || !exploreCenter) {
-      var geoRes = await fetch('/.netlify/functions/geocode', {
+      var geoRes = await fetch('/.netlify/functions/geocode-region', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: destination })
@@ -9073,6 +9122,41 @@ function seedExploreFromDestination(destination) {
   var destInput = document.getElementById('explore-destination-input');
   if (!destInput || exploreHasSearched || !destination) return;
   destInput.value = destination;
+  runExploreSearch();
+}
+
+// Shown only when this trip is genuinely comparing different destinations
+// (not just Budget/Mid/Luxury tiers of the same place) — same distinction
+// the Explore List tab's own tab bar already uses (panel.destination !==
+// panel.label). Picking one re-seeds and re-runs the current category's
+// search centred on that destination instead.
+function renderExploreDestPicker(panels) {
+  var pickerEl = document.getElementById('explore-dest-picker');
+  if (!pickerEl) return;
+  var isMultiDest = panels.length > 1 && panels.some(function(p) { return p.destination && p.destination !== p.label; });
+  if (!isMultiDest) { pickerEl.style.display = 'none'; return; }
+
+  var seen = {};
+  var uniqueDests = [];
+  panels.forEach(function(p) {
+    if (p.destination && !seen[p.destination]) { seen[p.destination] = true; uniqueDests.push(p.destination); }
+  });
+  if (uniqueDests.length < 2) { pickerEl.style.display = 'none'; return; }
+
+  pickerEl.innerHTML = '<div class="fs-sm text-muted" style="margin-bottom:6px">This trip compares multiple destinations — choose which one to explore:</div>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap">' + uniqueDests.map(function(d, i) {
+      return '<button type="button" class="btn btn-sm explore-dest-btn' + (i === 0 ? ' active' : '') + '" onclick="switchExploreDestination(this,\'' + d.replace(/'/g, "\\'") + '\')">' + escapeHtml(d) + '</button>';
+    }).join('') + '</div>';
+  pickerEl.style.display = 'block';
+}
+
+function switchExploreDestination(btnEl, destination) {
+  document.querySelectorAll('.explore-dest-btn').forEach(function(b) { b.classList.remove('active'); });
+  btnEl.classList.add('active');
+  var destInput = document.getElementById('explore-destination-input');
+  if (destInput) destInput.value = destination;
+  exploreCenter = null; // force a fresh centre resolution for the new destination
+  exploreLastDestination = destination;
   runExploreSearch();
 }
 
@@ -9353,6 +9437,7 @@ async function loadTripItinerary(tripId, tripData) {
 function renderSavedItinerary(panels, tripData, contentEl) {
   storedPanels = panels; // store for PDF export
   currentPanelIdx = 0; // reset so the Group tab's schedule/BTT default to the first tier for this trip
+  renderExploreDestPicker(panels);
   mapInstances = {}; // reset map instances for this trip
   resetMapObserver(); // reset pending inits
   tripVoteCache = {}; // reset vote cache for this trip
@@ -10106,48 +10191,53 @@ function clearVenuePreview() {
   document.getElementById('venue-input').value = '';
 }
 
+// Rewritten: this used to generate a one-off AI list of nearby venues and
+// render it on this same page. Now it creates a real trip and opens it
+// through the exact same Explore / Itinerary / Group & Booking tabs a
+// fully-planned trip gets — "Build Around a Course" is now just a faster
+// entry point into that same experience, anchored on a searched course or
+// location instead of the full questionnaire.
 async function buildAroundVenue() {
   if (!currentVenue) return;
+  if (!currentUser) {
+    openAuthModal('signup');
+    showToast('Create an account first, then build your trip around this.');
+    return;
+  }
   var airportSelect = document.getElementById('venue-airport-select');
-  var selectedAirport = airportSelect ? airportSelect.value : '';
   var selectedAirportName = airportSelect ? (airportSelect.options[airportSelect.selectedIndex] ? airportSelect.options[airportSelect.selectedIndex].text : '') : '';
-  var resultsEl = document.getElementById('venue-trip-results');
-  var listEl = document.getElementById('venue-nearby-list');
-  listEl.innerHTML = '<div style="text-align:center;padding:24px"><div class="loading-spinner" style="width:24px;height:24px;margin:0 auto 8px"></div><p class="fs-sm text-muted">AI is building your trip around ' + (currentVenue.name || 'this venue') + '...</p></div>';
-  resultsEl.style.display = 'block';
-  // Store airport for later use in save
-  currentVenue._departureAirport = selectedAirport;
-  currentVenue._departureAirportName = selectedAirportName;
+  var btn = document.querySelector('#venue-preview button[onclick="buildAroundVenue()"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Building...'; }
+
+  // Prefer the broader area over the exact venue name as the destination —
+  // "Quinta do Lago, Algarve" searches well for hotels/restaurants nearby;
+  // the literal course name alone is often too narrow for those categories.
+  // The Explore tab's own Golf Courses search will still surface this exact
+  // course (and others) once it opens, keyworded from this same text.
+  var destinationText = currentVenue.location || currentVenue.name || 'Golf Trip';
+
   try {
-    var prompt = 'I want to plan a golf trip anchored around this venue: ' +
-      currentVenue.name + ' (' + currentVenue.type + ') in ' + (currentVenue.location || 'unknown location') + '. ' +
-      'Find and return 6-8 nearby complementary venues: ' +
-      '2-3 hotels within 10km, 2-3 other golf courses nearby, 2 restaurants nearby. ' +
-      'Return JSON: {"venues":[{"name","type","location","distance_km","description","price_display","rating","lat","lng","booking_suggestion"}]}. ' +
-      'Use real venues with accurate GPS. distance_km is distance from the anchor venue. type is hotel|course|restaurant.';
-    var res = await fetch('/.netlify/functions/generate-trip', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: prompt, tier: 'anchor', part: 'venues' })
-    });
-    var data = await res.json();
-    var parsed = typeof data.result === 'string' ? JSON.parse(data.result) : data.result;
-    venueResults = parsed.venues || [];
-    // Geocode any results missing lat/lng
-    var geocodePromises = venueResults.map(async function(v) {
-      if (!v.lat || !v.lng) {
-        try {
-          var geo = await searchGooglePlace(v.name, v.type || 'hotel', v.location || '');
-          if (geo && geo.lat) { v.lat = geo.lat; v.lng = geo.lng; }
-        } catch(e) {}
-      }
-      return v;
-    });
-    venueResults = await Promise.all(geocodePromises);
-    renderVenueResults(venueResults);
-    venueResults.forEach(function(v) { saveVenueToDb(v); });
-  } catch(e) {
-    listEl.innerHTML = '<p class="fs-sm text-muted">Could not build trip — ' + e.message + '</p>';
+    var ins = await sbClient.from('trip_requests').insert({
+      user_id: currentUser.id,
+      club_id: userClub ? userClub.id : null,
+      departure_airport: selectedAirportName || 'TBC',
+      travel_dates: JSON.stringify({ depart: '', returnDate: '' }),
+      budget: 'flexible',
+      group_size: 1,
+      rounds_of_golf: 2,
+      destination_type: destinationText,
+      trip_style: 'anchor',
+      notes: 'Built around: ' + (currentVenue.name || 'a searched venue')
+    }).select().single();
+
+    if (!ins.data) throw new Error('Could not create trip record');
+
+    openTripDetail(ins.data.id, ins.data);
+    showToast('Trip created around ' + (currentVenue.name || destinationText) + ' — explore courses, stays and more below.');
+  } catch (e) {
+    showToast('Could not build trip — ' + e.message, true);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Explore this area'; }
   }
 }
 

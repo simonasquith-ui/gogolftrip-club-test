@@ -1,4 +1,5 @@
 // netlify/functions/nearby-search.js
+const { logApiCall } = require('./_usage-log')
 // Returns MULTIPLE results near a point, for the Explore tab's card grid +
 // map. This is deliberately separate from geocode.js, which returns a
 // single best match for a specific named place — different job, different
@@ -84,6 +85,7 @@ exports.handler = async (event) => {
       '&type=' + encodeURIComponent(placesType) +
       '&key=' + apiKey
 
+    logApiCall('google-places-textsearch', category)
     const response = await fetch(url)
     const data = await response.json()
 

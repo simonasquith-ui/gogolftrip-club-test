@@ -4251,10 +4251,17 @@ async function saveTripResults() {
     currentTripRequestId = ins.data.id;
 
     var parsed = { panels: storedPanels };
-    await sbClient.from('trip_results').insert({
+    var resultsIns = await sbClient.from('trip_results').insert({
       trip_request_id: ins.data.id,
       ai_response: parsed
     });
+    // This used to go unchecked — if this insert failed for any reason
+    // (RLS, a network blip, malformed data), the code carried on regardless
+    // and still showed "✓ Saved!", leaving a trip_requests row with no
+    // itinerary attached to it at all. That's the exact "No Itinerary
+    // Saved" empty state on a trip that clearly has real details — the
+    // itinerary never actually made it into the database, silently.
+    if (resultsIns.error) throw new Error('Trip was created, but saving the itinerary failed: ' + resultsIns.error.message);
 
     await sbClient.from('trip_members').insert({
       trip_request_id: ins.data.id,
@@ -4271,9 +4278,14 @@ async function saveTripResults() {
         b.style.border = 'none';
       }
     });
-    showToast('Trip saved to My Trips');
+    showToast('Trip saved — opening Explore, Itinerary and Group & Booking for it now.');
     tripVoteCache = {};
     await loadVotesForTrip(ins.data.id);
+    // Used to just sit here — the person had no way to reach the full
+    // Explore/Itinerary/Group & Booking tabs without leaving for My Trips
+    // and reopening the trip from there. Landing straight in it here is
+    // exactly the same thing a moment sooner.
+    openTripDetail(ins.data.id, ins.data);
 
   } catch(e) {
     console.error('saveTripResults error:', e);
@@ -5054,7 +5066,11 @@ async function generateTrip() {
     });
 
     if (currentUser && currentTripRequestId) {
-      try { await sbClient.from('trip_results').insert({ trip_request_id: currentTripRequestId, ai_response: parsed }); } catch(e) {}
+      var autoResultsIns = await sbClient.from('trip_results').insert({ trip_request_id: currentTripRequestId, ai_response: parsed }).catch(function(e) { return { error: e }; });
+      if (autoResultsIns && autoResultsIns.error) {
+        console.error('Auto-save of trip_results failed:', autoResultsIns.error);
+        showToast('This trip generated fine, but saving its itinerary failed — try Save Trip again.', true);
+      }
       tripVoteCache = {};
       await loadVotesForTrip(currentTripRequestId);
     }

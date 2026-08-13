@@ -443,6 +443,19 @@ label{display:block;font-size:.8rem;font-weight:500;color:var(--ink);margin-bott
 .results-tab{flex:1;padding:14px 8px;border:none;background:transparent;border-radius:0;cursor:pointer;font-family:var(--font-display);font-size:.95rem;font-weight:500;color:var(--muted);transition:color var(--tr);text-align:center;position:relative;min-width:0;box-shadow:inset 0 -1px 0 transparent}
 .results-tab:hover{color:var(--ink)}
 .results-tab.active{background:transparent;color:var(--moss);font-weight:500;box-shadow:inset 0 -2px 0 var(--brass)}
+.explore-split{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.explore-results-col{max-height:640px;overflow-y:auto;padding-right:4px}
+.explore-map-col{position:sticky;top:16px;height:640px}
+.explore-cat-btn{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.explore-cat-btn.active{background:var(--green);color:var(--gold);border-color:var(--green)}
+.explore-result-card{display:flex;gap:12px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:10px;margin-bottom:10px}
+.explore-result-photo{width:88px;height:88px;border-radius:var(--r);overflow:hidden;flex-shrink:0;background:var(--off-white);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:1.4rem}
+.explore-result-photo img{width:100%;height:100%;object-fit:cover}
+.explore-result-body{flex:1;min-width:0}
+.explore-result-body h4{font-size:.92rem;margin-bottom:2px;color:var(--text)}
+.explore-result-meta{font-size:.78rem;color:var(--muted);margin-bottom:8px}
+.explore-result-card.is-highlighted{border-color:var(--brass);box-shadow:0 0 0 1px var(--brass)}
+@media(max-width:860px){.explore-split{grid-template-columns:1fr}.explore-map-col{position:static;height:320px}}
 .results-tab.active::after{content:none}
 .results-nav-wrap{display:flex;align-items:center;gap:10px;margin-bottom:18px}
 .results-nav-arrow{width:34px;height:34px;border-radius:var(--r);background:transparent;color:var(--moss);border:1px solid var(--line);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;box-shadow:none}
@@ -566,6 +579,7 @@ label{display:block;font-size:.8rem;font-weight:500;color:var(--ink);margin-bott
 .schedule-add-item-btn:hover{border-color:var(--brass);color:var(--brass)}
 .itin-detail-group{display:none}
 .itin-detail-group.active{display:block}
+.itin-venue-pick-row:hover{border-color:var(--brass);background:var(--off-white)}
 .cart-item{cursor:grab;position:relative}
 .cart-item.dragging{opacity:.4}
 .cart-drag-handle{color:var(--muted);font-size:.85rem;flex-shrink:0;padding-top:3px;align-self:flex-start}
@@ -1861,6 +1875,7 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
 
     <div class="results-tabs" style="margin-bottom:28px">
       <button class="results-tab active" id="td-tab-itinerary" onclick="switchTripTab('itinerary')"><i class="ti ti-golf"></i> Trip Itinerary</button>
+      <button class="results-tab" id="td-tab-explore" onclick="switchTripTab('explore')"><i class="ti ti-map-pin"></i> Explore</button>
       <button class="results-tab" id="td-tab-group" onclick="switchTripTab('group')"><i class="ti ti-users"></i> Group &amp; Booking</button>
       <div id="td-public-note" style="display:none;font-size:.75rem;color:var(--text-muted);padding:8px 0 0;width:100%"><i class="ti ti-lock"></i> Sign in to access group planning, voting and the trip cart</div>
     </div>
@@ -1876,6 +1891,34 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
         <h3>No Itinerary Saved</h3>
         <p>The full AI itinerary for this trip was not saved. Generate a new trip to see full details.</p>
         <button class="btn btn-primary mt-16" onclick="showPage('questionnaire')">Generate New Trip</button>
+      </div>
+    </div>
+
+    <div id="td-panel-explore" style="display:none">
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <input type="text" id="explore-destination-input" placeholder="e.g. Algarve, Portugal" style="flex:1;min-width:200px">
+          <button class="btn btn-primary btn-sm" onclick="runExploreSearch()"><i class="ti ti-search"></i> Search</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap" id="explore-category-tabs">
+          <button class="btn btn-sm explore-cat-btn active" data-cat="course" onclick="switchExploreCategory('course')"><i class="ti ti-golf"></i> Golf Courses</button>
+          <button class="btn btn-sm explore-cat-btn" data-cat="hotel" onclick="switchExploreCategory('hotel')"><i class="ti ti-bed"></i> Stays</button>
+          <button class="btn btn-sm explore-cat-btn" data-cat="restaurant" onclick="switchExploreCategory('restaurant')"><i class="ti ti-tools-kitchen-2"></i> Restaurants</button>
+          <button class="btn btn-sm explore-cat-btn" data-cat="activity" onclick="switchExploreCategory('activity')"><i class="ti ti-ticket"></i> Activities</button>
+        </div>
+        <p class="fs-sm text-muted" style="margin:10px 0 0">Flights are handled on the Trip Itinerary tab's flight calendar — this is for courses, places to stay, restaurants and things to do.</p>
+      </div>
+
+      <div class="explore-split">
+        <div class="explore-results-col">
+          <div id="explore-results-list">
+            <p class="fs-sm text-muted" style="padding:12px 0">Search a destination above to see golf courses near it.</p>
+          </div>
+        </div>
+        <div class="explore-map-col">
+          <div id="explore-map" style="width:100%;height:100%;min-height:420px;border-radius:var(--r);background:var(--off-white)"></div>
+          <button type="button" id="explore-search-area-btn" class="btn btn-sm" style="display:none;position:absolute;top:14px;left:50%;transform:translateX(-50%);box-shadow:0 2px 8px rgba(0,0,0,.2)" onclick="searchExploreMapArea()"><i class="ti ti-search"></i> Search this area</button>
+        </div>
       </div>
     </div>
 
@@ -2839,6 +2882,13 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
     </div>
 
     <div id="itin-group-course" class="itin-detail-group">
+      <div class="form-group">
+        <label>Course</label>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="btn btn-ghost btn-sm" style="flex:1" onclick="searchItinVenue('course')"><i class="ti ti-search"></i> Search for a different course</button>
+        </div>
+        <div id="itin-venue-results-course" style="margin-top:8px"></div>
+      </div>
       <div class="form-group" style="display:flex;gap:16px">
         <div style="flex:1"><label>Players</label><input type="number" id="itin-course-players" min="1" placeholder="e.g. 16"></div>
         <div style="flex:1"><label>Handicap Requirement</label><input type="text" id="itin-course-handicap" placeholder="e.g. 24 max"></div>
@@ -2847,6 +2897,10 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
     </div>
 
     <div id="itin-group-hotel" class="itin-detail-group">
+      <div class="form-group">
+        <button type="button" class="btn btn-ghost btn-sm" style="width:100%" onclick="searchItinVenue('hotel')"><i class="ti ti-search"></i> Search for a different hotel</button>
+        <div id="itin-venue-results-hotel" style="margin-top:8px"></div>
+      </div>
       <div class="form-group" style="display:flex;gap:16px">
         <div style="flex:1"><label>Room Type</label><input type="text" id="itin-hotel-roomtype" placeholder="e.g. Twin"></div>
         <div style="flex:1"><label>Number of Rooms</label><input type="number" id="itin-hotel-numrooms" min="1" placeholder="e.g. 8"></div>
@@ -6469,6 +6523,7 @@ function addCartItemToScheduleDay(mountEl, dayIdx, cartId) {
 var itinModalMountEl = null;
 var itinModalDayIdx = null;
 var itinModalActIdx = null;
+var itinModalPickedVenue = null; // {lat, lng, place_id} from a course/hotel search pick — folded into details on save
 
 var ITIN_TYPE_GROUPS = {
   course: ['itin-group-course'],
@@ -6488,6 +6543,58 @@ function onItinItemTypeChange() {
   document.querySelectorAll('.itin-detail-group').forEach(function(g) {
     g.classList.toggle('active', groups.indexOf(g.id) !== -1);
   });
+}
+
+// Real search-and-swap for the "Day 1 Golf → Edit → change course" flow —
+// reuses the same nearby-search backend the Explore tab uses, keyworded to
+// whatever's currently in the title field. If the item already has a real
+// lat/lng (e.g. it was added via Explore, or a previous swap), search
+// around THAT point rather than re-geocoding the title text — much more
+// accurate for "show me other courses like this one nearby".
+async function searchItinVenue(type) {
+  var titleInput = document.getElementById('itin-item-title');
+  var query = (titleInput.value || '').trim();
+  if (!query) { showToast('Type a name or area to search first.', true); return; }
+  var resultsEl = document.getElementById('itin-venue-results-' + type);
+  resultsEl.innerHTML = '<div style="text-align:center;padding:10px 0"><div class="loading-spinner" style="width:20px;height:20px;margin:0 auto"></div></div>';
+  try {
+    var center = itinModalPickedVenue;
+    if (!center && itinModalMountEl && itinModalActIdx !== null) {
+      var existingAct = itinModalMountEl._scheduleData[itinModalDayIdx].activities[itinModalActIdx];
+      var d = existingAct && existingAct.details;
+      if (d && d.lat && d.lng) center = { lat: d.lat, lng: d.lng };
+    }
+    if (!center) {
+      var geoRes = await fetch('/.netlify/functions/geocode', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query }) });
+      var geoData = await geoRes.json();
+      if (geoData && geoData.lat) center = { lat: geoData.lat, lng: geoData.lng };
+    }
+    if (!center) { resultsEl.innerHTML = '<p class="fs-sm text-muted">Could not find that area — try including a city or region.</p>'; return; }
+
+    var res = await fetch('/.netlify/functions/nearby-search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lat: center.lat, lng: center.lng, category: type, keyword: query }) });
+    var data = await res.json();
+    var results = data.results || [];
+    if (!results.length) { resultsEl.innerHTML = '<p class="fs-sm text-muted">No matches found nearby.</p>'; return; }
+    window['__itinVenueCandidates_' + type] = results;
+    resultsEl.innerHTML = results.slice(0, 6).map(function(r, i) {
+      return '<div class="itin-venue-pick-row" onclick="pickItinVenue(\'' + type + '\',' + i + ')" style="cursor:pointer;padding:8px;border:1px solid var(--border);border-radius:var(--r);margin-bottom:6px;font-size:.85rem">' +
+        '<strong>' + escapeHtml(r.name) + '</strong>' + (r.rating ? ' &middot; <i class="ti ti-star-filled" style="color:var(--gold)"></i> ' + r.rating : '') +
+        (r.vicinity ? '<div class="text-muted" style="font-size:.78rem">' + escapeHtml(r.vicinity) + '</div>' : '') +
+      '</div>';
+    }).join('');
+  } catch (e) {
+    console.error('searchItinVenue error:', e);
+    resultsEl.innerHTML = '<p class="fs-sm text-muted">Search failed — please try again.</p>';
+  }
+}
+
+function pickItinVenue(type, idx) {
+  var results = window['__itinVenueCandidates_' + type] || [];
+  var r = results[idx];
+  if (!r) return;
+  document.getElementById('itin-item-title').value = r.name;
+  itinModalPickedVenue = { lat: r.lat, lng: r.lng, place_id: r.place_id };
+  document.getElementById('itin-venue-results-' + type).innerHTML = '<p class="fs-sm" style="color:var(--green);padding:4px 0"><i class="ti ti-check"></i> ' + escapeHtml(r.name) + ' selected</p>';
 }
 
 // mountEl isn't passed by reference through inline onclick strings — it's
@@ -6524,6 +6631,8 @@ function openItinItemModal(btnEl, dayIdx, actIdx) {
 
   document.getElementById('itin-modal-title').textContent = act ? 'Edit Itinerary Item' : 'Add Itinerary Item';
   document.getElementById('itin-modal-msg').style.display = 'none';
+  itinModalPickedVenue = null;
+  ['course', 'hotel'].forEach(function(t) { var el = document.getElementById('itin-venue-results-' + t); if (el) el.innerHTML = ''; });
   onItinItemTypeChange();
   document.getElementById('itin-item-modal').classList.add('open');
 }
@@ -6546,7 +6655,17 @@ function saveItinItemFromModal() {
   var type = document.getElementById('itin-item-type').value;
   var priceVal = parseFloat(document.getElementById('itin-item-price').value);
 
+  // Preserve any existing lat/lng/place_id (e.g. this item was added via
+  // Explore, or swapped before) unless a fresh search-and-pick just
+  // happened — editing the price or notes shouldn't silently drop a venue's
+  // location.
+  var existingDetails = (itinModalActIdx !== null && mountEl._scheduleData[itinModalDayIdx].activities[itinModalActIdx].details) || {};
   var details = { notes: document.getElementById('itin-item-notes').value.trim() };
+  if (existingDetails.lat && existingDetails.lng) {
+    details.lat = existingDetails.lat;
+    details.lng = existingDetails.lng;
+    details.place_id = existingDetails.place_id;
+  }
   if (type === 'course') {
     details.players = parseInt(document.getElementById('itin-course-players').value, 10) || null;
     details.handicapReq = document.getElementById('itin-course-handicap').value.trim();
@@ -6564,6 +6683,11 @@ function saveItinItemFromModal() {
   } else if (type === 'transfer' || type === 'car') {
     details.from = document.getElementById('itin-route-from').value.trim();
     details.to = document.getElementById('itin-route-to').value.trim();
+  }
+  if (itinModalPickedVenue) {
+    details.lat = itinModalPickedVenue.lat;
+    details.lng = itinModalPickedVenue.lng;
+    details.place_id = itinModalPickedVenue.place_id;
   }
 
   var newAct = {
@@ -8461,9 +8585,213 @@ async function saveGroupName() {
   }
 }
 
+/* === EXPLORE TAB — map-synced browsing for courses/stays/restaurants/activities ===
+   Search a destination, browse real nearby places as a card grid with a
+   synced map, and add any of them straight into the active trip's day-by-day
+   schedule — same schedule object the Group & Booking tab's drag-and-drop
+   builder uses (#group-schedule-wrap), so an item added here shows up there
+   immediately with no separate sync step. */
+var exploreCategory = 'course';
+var exploreResults = [];
+var exploreCenter = null;
+var exploreMap = null;
+var exploreMarkers = [];
+var exploreHasSearched = false;
+var EXPLORE_CATEGORY_META = {
+  course: { icon: 'ti-golf', itemType: 'course', label: 'course' },
+  hotel: { icon: 'ti-bed', itemType: 'hotel', label: 'place to stay' },
+  restaurant: { icon: 'ti-tools-kitchen-2', itemType: 'restaurant', label: 'restaurant' },
+  activity: { icon: 'ti-ticket', itemType: 'activity', label: 'activity' }
+};
+
+function switchExploreCategory(cat) {
+  exploreCategory = cat;
+  document.querySelectorAll('.explore-cat-btn').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-cat') === cat);
+  });
+  if (exploreCenter) runExploreSearch(true);
+}
+
+async function runExploreSearch(keepCenter) {
+  var destInput = document.getElementById('explore-destination-input');
+  var destination = destInput ? destInput.value.trim() : '';
+  var resultsEl = document.getElementById('explore-results-list');
+  if (!destination && !keepCenter) {
+    showToast('Enter a destination to search.', true);
+    return;
+  }
+  exploreHasSearched = true;
+  resultsEl.innerHTML = '<div style="text-align:center;padding:30px 0"><div class="loading-spinner"></div></div>';
+
+  try {
+    // Resolve the destination to a centre point first (reuses the existing
+    // single-best-match geocode endpoint), unless we already have a centre
+    // from a previous search or a map pan — "Search this area" skips this.
+    if (!keepCenter || !exploreCenter) {
+      var geoRes = await fetch('/.netlify/functions/geocode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: destination })
+      });
+      var geoData = await geoRes.json();
+      if (!geoData || geoData.error || !geoData.lat) {
+        resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">Could not find that destination — try being more specific.</p>';
+        return;
+      }
+      exploreCenter = { lat: geoData.lat, lng: geoData.lng };
+    }
+
+    var res = await fetch('/.netlify/functions/nearby-search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lat: exploreCenter.lat, lng: exploreCenter.lng, category: exploreCategory })
+    });
+    var data = await res.json();
+    exploreResults = data.results || [];
+    renderExploreResults();
+    updateExploreMapPins(true);
+  } catch (e) {
+    console.error('runExploreSearch error:', e);
+    resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">Something went wrong searching — please try again.</p>';
+  }
+}
+
+function renderExploreResults() {
+  var resultsEl = document.getElementById('explore-results-list');
+  var meta = EXPLORE_CATEGORY_META[exploreCategory];
+  if (!exploreResults.length) {
+    resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">No ' + meta.label + 's found near here — try a different destination or search a wider area on the map.</p>';
+    return;
+  }
+  resultsEl.innerHTML = exploreResults.map(function(r, idx) {
+    var priceStr = typeof r.price_level === 'number' ? Array(r.price_level + 1).join('£') || '£' : '';
+    var ratingStr = r.rating ? '<i class="ti ti-star-filled" style="color:var(--gold)"></i> ' + r.rating + (r.user_ratings_total ? ' (' + r.user_ratings_total + ')' : '') : '';
+    return '<div class="explore-result-card" id="explore-card-' + idx + '" onmouseenter="highlightExploreMarker(' + idx + ')">' +
+      '<div class="explore-result-photo">' + (r.photo_reference ? '<img loading="lazy" src="/.netlify/functions/place-photo?ref=' + encodeURIComponent(r.photo_reference) + '&maxwidth=200" alt="">' : '<i class="ti ' + meta.icon + '"></i>') + '</div>' +
+      '<div class="explore-result-body">' +
+        '<h4>' + escapeHtml(r.name) + '</h4>' +
+        '<div class="explore-result-meta">' + [ratingStr, priceStr, escapeHtml(r.vicinity || '')].filter(Boolean).join(' &middot; ') + '</div>' +
+        '<button class="btn btn-primary btn-sm" onclick="addExploreResultToItinerary(' + idx + ')"><i class="ti ti-plus"></i> Add to itinerary</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function highlightExploreMarker(idx) {
+  exploreMarkers.forEach(function(m, i) { m.setZIndex(i === idx ? 999 : 1); });
+}
+
+function initExploreMap() {
+  var el = document.getElementById('explore-map');
+  if (!el) return;
+  if (!window.google || !window.google.maps || !window.google.maps.Map) {
+    // Maps script may not have loaded yet if this is the very first map
+    // touched on the page — retry briefly rather than failing silently.
+    setTimeout(initExploreMap, 300);
+    return;
+  }
+  exploreMap = new google.maps.Map(el, {
+    center: exploreCenter || { lat: 38.72, lng: -9.14 }, // Lisbon-ish default before any search
+    zoom: 11,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: false
+  });
+  var searchAreaBtn = document.getElementById('explore-search-area-btn');
+  exploreMap.addListener('dragend', function() { if (searchAreaBtn) searchAreaBtn.style.display = 'inline-flex'; });
+  exploreMap.addListener('zoom_changed', function() { if (searchAreaBtn && exploreHasSearched) searchAreaBtn.style.display = 'inline-flex'; });
+}
+
+function searchExploreMapArea() {
+  if (!exploreMap) return;
+  var c = exploreMap.getCenter();
+  exploreCenter = { lat: c.lat(), lng: c.lng() };
+  document.getElementById('explore-search-area-btn').style.display = 'none';
+  runExploreSearch(true);
+}
+
+function updateExploreMapPins(recenter) {
+  if (!exploreMap) return;
+  exploreMarkers.forEach(function(m) { m.setMap(null); });
+  exploreMarkers = [];
+  var bounds = new google.maps.LatLngBounds();
+  exploreResults.forEach(function(r, idx) {
+    var marker = new google.maps.Marker({
+      position: { lat: r.lat, lng: r.lng },
+      map: exploreMap,
+      title: r.name,
+      label: { text: String(idx + 1), color: '#fff', fontSize: '11px', fontWeight: '600' }
+    });
+    marker.addListener('click', function() {
+      var card = document.getElementById('explore-card-' + idx);
+      if (card) { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); card.classList.add('is-highlighted'); setTimeout(function() { card.classList.remove('is-highlighted'); }, 1500); }
+    });
+    exploreMarkers.push(marker);
+    bounds.extend({ lat: r.lat, lng: r.lng });
+  });
+  if (recenter && exploreResults.length) exploreMap.fitBounds(bounds);
+  document.getElementById('explore-search-area-btn').style.display = 'none';
+}
+
+// Adds a result straight into the trip's actual schedule — round-robins
+// across existing days (day with fewest items gets it) rather than always
+// stacking everything onto Day 1. Falls back to the Trip Cart if there's no
+// schedule mounted yet (e.g. no AI itinerary generated for this trip).
+function addExploreResultToItinerary(idx) {
+  var r = exploreResults[idx];
+  if (!r) return;
+  var meta = EXPLORE_CATEGORY_META[exploreCategory];
+  var mountEl = document.getElementById('group-schedule-wrap');
+  var schedule = mountEl && mountEl._scheduleData;
+
+  if (!schedule || !schedule.length) {
+    addToCart(meta.itemType, r.name, r.vicinity || '', '', 0);
+    showToast(r.name + ' added to your Trip Cart — drag it into a day once you have a schedule.');
+    return;
+  }
+
+  var targetIdx = 0;
+  schedule.forEach(function(day, i) {
+    if ((day.activities || []).length < (schedule[targetIdx].activities || []).length) targetIdx = i;
+  });
+
+  schedule[targetIdx].activities = schedule[targetIdx].activities || [];
+  schedule[targetIdx].activities.push({
+    time: '',
+    description: r.name,
+    itemType: meta.itemType,
+    price: null,
+    details: { notes: r.vicinity || '', place_id: r.place_id, lat: r.lat, lng: r.lng }
+  });
+
+  drawSchedule(mountEl, mountEl._tripId, mountEl._panelLabel, schedule);
+  saveSchedule(mountEl._tripId, mountEl._panelLabel, schedule, mountEl.querySelector('.schedule-save-note'));
+  showToast(r.name + ' added to Day ' + schedule[targetIdx].day);
+}
+
 function switchTripTab(tab) {
   document.getElementById('td-panel-itinerary').style.display = tab === 'itinerary' ? 'block' : 'none';
+  document.getElementById('td-panel-explore').style.display = tab === 'explore' ? 'block' : 'none';
   document.getElementById('td-panel-group').style.display = tab === 'group' ? 'block' : 'none';
+  document.getElementById('td-tab-itinerary').classList.toggle('active', tab === 'itinerary');
+  document.getElementById('td-tab-explore').classList.toggle('active', tab === 'explore');
+  document.getElementById('td-tab-group').classList.toggle('active', tab === 'group');
+  if (tab === 'explore') {
+    // First visit: seed the destination field from the trip itself and run
+    // an initial search so the tab isn't a blank slate.
+    var destInput = document.getElementById('explore-destination-input');
+    if (destInput && !destInput.value && storedPanels && storedPanels[0]) {
+      destInput.value = storedPanels[0].destination || storedPanels[0].label || '';
+    }
+    if (!exploreMap) {
+      initExploreMap();
+    } else {
+      requestAnimationFrame(function() { if (exploreMap) google.maps.event.trigger(exploreMap, 'resize'); });
+    }
+    if (destInput && destInput.value && !exploreHasSearched) {
+      runExploreSearch();
+    }
+  }
   if (tab === 'group' && activeTripId) {
     try { initPuttChallenge(activeTripId); } catch (e) { console.warn('Putting challenge failed to init:', e); }
   } else if (puttChallenge) {
@@ -8492,8 +8820,6 @@ function switchTripTab(tab) {
       bttWrap.innerHTML = buildBTT(storedPanels[activePanelIdx] || storedPanels[0], activePanelIdx, null);
     }
   }
-  document.getElementById('td-tab-itinerary').classList.toggle('active', tab === 'itinerary');
-  document.getElementById('td-tab-group').classList.toggle('active', tab === 'group');
 }
 
 async function openTripDetail(tripId, tripData) {

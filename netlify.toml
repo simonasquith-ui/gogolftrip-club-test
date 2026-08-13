@@ -1,0 +1,17 @@
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[functions."generate-trip"]
+  timeout = 30
+
+# Club portal pages are client-rendered from index.html based on the slug
+# in the URL — without this, a direct visit or refresh on /club/anything
+# would 404 instead of loading the app.
+[[redirects]]
+  from = "/club/*"
+  to = "/index.html"
+  status = 200

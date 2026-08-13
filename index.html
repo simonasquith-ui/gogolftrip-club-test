@@ -5619,15 +5619,25 @@ function updateGroupVotesTally() {
 function renderGroupSchedule() {
   var wrap = document.getElementById('group-schedule-wrap');
   if (!wrap) return;
-  if (!storedPanels || !storedPanels.length) {
-    wrap.innerHTML = '<p class="fs-sm text-muted">No itinerary available for this trip yet.</p>';
-    return;
+  var idx = 0;
+  var panel = null;
+  if (storedPanels && storedPanels.length) {
+    idx = (storedPanels[currentPanelIdx]) ? currentPanelIdx : 0;
+    panel = storedPanels[idx];
   }
-  var idx = (storedPanels[currentPanelIdx]) ? currentPanelIdx : 0;
-  var panel = storedPanels[idx];
   if (!panel) {
-    wrap.innerHTML = '<p class="fs-sm text-muted">No itinerary available for this trip yet.</p>';
-    return;
+    // No AI-generated panels at all — this is the normal case for a trip
+    // created via "Build Around a Course or Location", which skips AI
+    // generation entirely. This used to hard-stop here with "No itinerary
+    // available", which also broke Explore's "+ Add to Itinerary": with no
+    // schedule ever rendered, mountEl._scheduleData was never set, so
+    // addExploreResultToItinerary silently fell back to adding things to
+    // the Trip Cart instead — items looked like they vanished, because they
+    // were never on the Itinerary tab to begin with. Falling through to a
+    // real empty panel here (matching the "always render an editable
+    // schedule" behaviour loadOrInitSchedule already has for the case where
+    // panels exist but their itinerary is empty) fixes both at once.
+    panel = { label: '0', itinerary: [] };
   }
   // Always render an editable schedule, even with no AI itinerary — it starts
   // with one empty day the group can build on by dragging Trip Cart items in.
@@ -6854,6 +6864,32 @@ function closeItinDetailView() {
   document.getElementById('itin-detail-modal').classList.remove('open');
 }
 
+// Items added via Explore carry their own photo/rating/price already —
+// items that came straight from the AI-generated day plan never did, since
+// the plan only ever stored {time, description}, not the richer data that
+// lives separately on panel.courses/hotels/restaurants. This bridges the
+// gap by matching on name against whichever panel this schedule belongs to
+// (checked first) or any panel (fallback), so the details view can show the
+// same richness either way, not a stripped-down version for one path.
+function findRichPanelMatch(itemType, name) {
+  if (!name || !storedPanels || !storedPanels.length) return null;
+  var arrayKey = itemType === 'course' ? 'courses' : itemType === 'hotel' ? 'hotels' : itemType === 'restaurant' ? 'restaurants' : null;
+  if (!arrayKey) return null;
+  var nameLower = name.toLowerCase();
+  var mountEl = document.getElementById('group-schedule-wrap');
+  var preferredLabel = mountEl && mountEl._panelLabel;
+  var orderedPanels = storedPanels.slice().sort(function(a, b) {
+    return ((a.label === preferredLabel) ? 0 : 1) - ((b.label === preferredLabel) ? 0 : 1);
+  });
+  for (var i = 0; i < orderedPanels.length; i++) {
+    var arr = orderedPanels[i][arrayKey];
+    if (!arr) continue;
+    var found = arr.filter(function(item) { return (item.name || '').toLowerCase() === nameLower; })[0];
+    if (found) return found;
+  }
+  return null;
+}
+
 function openItinDetailView(dayIdx, actIdx) {
   var mountEl = document.getElementById('group-schedule-wrap');
   if (!mountEl || !mountEl._scheduleData) return;
@@ -6861,19 +6897,48 @@ function openItinDetailView(dayIdx, actIdx) {
   if (!act) return;
   var d = act.details || {};
   var meta = ITIN_TYPE_META[act.itemType] || null;
+  var rich = findRichPanelMatch(act.itemType, act.description) || {};
+  var location = rich.location || rich.area || '';
 
   var photos = (d.photos && d.photos.length) ? d.photos : (d.photo_reference ? [d.photo_reference] : []);
+
+  var statsHtml = '';
+  var priceStr = d.price_display || (act.price ? fmtPrice(act.price) : '');
+  var description = rich.description || '';
+  var bookingLinksHtml = '';
+
+  if (act.itemType === 'course') {
+    var stats = [];
+    if (rich.par) stats.push('Par ' + rich.par);
+    if (rich.yardage) stats.push(rich.yardage + ' yds');
+    if (rich.slope_rating) stats.push('Slope ' + rich.slope_rating);
+    if (rich.course_rating) stats.push('CR ' + rich.course_rating);
+    if (stats.length) statsHtml = '<div class="course-stats" style="margin:0 0 10px">' + stats.map(function(s) { return '<span class="course-stat">' + s + '</span>'; }).join('') + '</div>';
+    if (!priceStr && rich.green_fee) priceStr = fmtPrice(rich.green_fee) + ' green fee' + (rich.green_fee_range ? ' &middot; ' + rich.green_fee_range : '');
+    if (rich.designer) description += (description ? ' ' : '') + 'Designed by ' + rich.designer + '.';
+    var tt = buildTeeTimes(act.description, location, '');
+    bookingLinksHtml = '<a class="btn btn-ghost btn-sm" href="' + tt.url + '" target="_blank" rel="noopener">' + tt.label + ' <i class="ti ti-external-link"></i></a>';
+  } else if (act.itemType === 'hotel') {
+    if (!priceStr && rich.price_per_night) priceStr = fmtPrice(rich.price_per_night) + '/night' + (rich.price_range ? ' &middot; ' + rich.price_range : '');
+    var hotelSearchUrl = 'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(act.description + ' ' + location);
+    bookingLinksHtml = '<a class="btn btn-ghost btn-sm" href="' + hotelSearchUrl + '" target="_blank" rel="noopener">Find a Stay <i class="ti ti-external-link"></i></a>';
+  } else if (act.itemType === 'restaurant') {
+    if (rich.rating && !d.rating) d.rating = rich.rating;
+    var mapsSearchUrl = 'https://www.google.com/maps/search/' + encodeURIComponent(act.description + ' ' + location);
+    bookingLinksHtml = '<a class="btn btn-ghost btn-sm" href="' + mapsSearchUrl + '" target="_blank" rel="noopener">Google Maps <i class="ti ti-external-link"></i></a>';
+  }
+  if (!description) description = rich.why_recommended ? '' : ''; // (why_recommended rendered separately below, kept distinct from the main description line)
+
   var heroHtml = photos.length
     ? '<img id="itin-detail-hero" src="/.netlify/functions/place-photo?ref=' + encodeURIComponent(photos[0]) + '&maxwidth=600" style="width:100%;height:200px;object-fit:cover;border-radius:var(--r);margin-bottom:14px" alt="">'
-    : '';
+    : '<div id="itin-detail-hero-wrap" class="card-photo" style="height:200px;margin-bottom:14px"><i class="ti ' + (meta ? meta.icon : 'ti-photo') + '"></i></div>';
   var thumbsHtml = photos.length > 1
     ? '<div style="display:flex;gap:6px;margin:-10px 0 14px">' + photos.map(function(ref) {
         return '<img loading="lazy" onclick="document.getElementById(\'itin-detail-hero\').src=this.src.replace(\'maxwidth=100\',\'maxwidth=600\')" src="/.netlify/functions/place-photo?ref=' + encodeURIComponent(ref) + '&maxwidth=100" style="width:52px;height:52px;object-fit:cover;border-radius:4px;cursor:pointer" alt="">';
       }).join('') + '</div>'
     : '';
 
-  // Type-specific fields, matching what's captured in the Add/Edit modal —
-  // shown here read-only rather than as editable inputs.
+  // Type-specific fields captured via the Add/Edit modal — shown read-only.
   var specifics = [];
   if (act.itemType === 'course') {
     if (d.players) specifics.push(['Players', d.players]);
@@ -6900,7 +6965,6 @@ function openItinDetailView(dayIdx, actIdx) {
     : '';
 
   var ratingStr = d.rating ? '<i class="ti ti-star-filled" style="color:var(--brass)"></i> ' + d.rating : '';
-  var priceStr = d.price_display || (act.price ? fmtPrice(act.price) : '');
 
   var panelLabel = mountEl._panelLabel || '0';
   var voteHtml = makeVoteBtn(activeTripId, act.itemType, act.description, panelLabel);
@@ -6912,15 +6976,46 @@ function openItinDetailView(dayIdx, actIdx) {
       '<h2 style="margin:0;flex:1">' + escapeHtml(act.description || '') + '</h2>' +
       (meta ? '<span class="itin-type-tag tag-' + act.itemType + '" style="flex-shrink:0;margin-top:6px">' + meta.label + '</span>' : '') +
     '</div>' +
-    ((ratingStr || priceStr) ? '<div class="fs-sm text-muted" style="margin-bottom:14px">' + [ratingStr, priceStr].filter(Boolean).join(' &middot; ') + '</div>' : '') +
+    (location ? '<div class="text-muted fs-sm" style="margin-bottom:8px">' + escapeHtml(location) + '</div>' : '') +
+    statsHtml +
+    ((ratingStr || priceStr) ? '<div class="fs-sm text-muted" style="margin-bottom:12px">' + [ratingStr, priceStr].filter(Boolean).join(' &middot; ') + '</div>' : '') +
     specificsHtml +
-    (d.notes ? '<p class="fs-sm" style="margin-bottom:16px">' + escapeHtml(d.notes) + '</p>' : '') +
-    '<div style="display:flex;gap:10px;align-items:center">' +
+    (description ? '<p class="fs-sm" style="margin-bottom:10px">' + escapeHtml(description) + '</p>' : '') +
+    (rich.why_recommended ? '<p class="fs-sm text-muted" style="margin-bottom:16px"><strong>Why recommended:</strong> ' + escapeHtml(rich.why_recommended) + '</p>' : '') +
+    (!description && !rich.why_recommended && d.notes ? '<p class="fs-sm" style="margin-bottom:16px">' + escapeHtml(d.notes) + '</p>' : '') +
+    '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">' +
       voteHtml +
+      bookingLinksHtml +
       (d.place_id ? '<button class="btn btn-ghost btn-sm" onclick="openItinDetailVisitLink(\'' + d.place_id + '\')">Visit <i class="ti ti-external-link"></i></button>' : (d.direct_url ? '<a class="btn btn-ghost btn-sm" href="' + d.direct_url + '" target="_blank" rel="noopener">Visit <i class="ti ti-external-link"></i></a>' : '')) +
     '</div>';
 
   document.getElementById('itin-detail-modal').classList.add('open');
+
+  // No photo already stored (the common case for anything that came from
+  // the AI-generated day plan rather than Explore) — do the exact same
+  // on-demand lookup the main panel cards use (same cache, same endpoint),
+  // and quietly swap it in once it resolves rather than blocking the modal
+  // on it.
+  if (!photos.length && act.description) {
+    var photoQuery = act.description + ' ' + (location || exploreLastDestination || '');
+    if (venuePhotoCache.hasOwnProperty(photoQuery)) {
+      if (venuePhotoCache[photoQuery]) patchItinDetailPhoto(venuePhotoCache[photoQuery]);
+    } else {
+      fetch('/.netlify/functions/geocode', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: photoQuery })
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        var ref = (data && data.photo_reference) || null;
+        venuePhotoCache[photoQuery] = ref;
+        if (ref) patchItinDetailPhoto(ref);
+      }).catch(function() { /* leave the icon placeholder as-is */ });
+    }
+  }
+}
+
+function patchItinDetailPhoto(photoRef) {
+  var wrap = document.getElementById('itin-detail-hero-wrap');
+  if (!wrap || !document.body.contains(wrap)) return; // modal may have closed by the time this resolves
+  wrap.outerHTML = '<img id="itin-detail-hero" loading="lazy" src="/.netlify/functions/place-photo?ref=' + encodeURIComponent(photoRef) + '&maxwidth=600" style="width:100%;height:200px;object-fit:cover;border-radius:var(--r);margin-bottom:14px" alt="">';
 }
 
 function openItinDetailVisitLink(placeId) {
@@ -8945,7 +9040,13 @@ async function runExploreSearch(keepCenter) {
     try {
       if (!keepCenter) exploreDestAirportCode = ''; // a genuinely new destination search — don't keep a stale airport from whatever was searched before
       exploreLastDestination = destination || exploreLastDestination;
-      var originCode = AIRPORT_CODES[exploreOriginAirport] || (exploreOriginAirport.length === 3 ? exploreOriginAirport.toUpperCase() : '');
+      // The parenthetical-extraction fallback exists for trips created
+      // before this was fixed at the source (buildAroundVenue was saving
+      // "Manchester (MAN)" — the dropdown's display text — instead of just
+      // "MAN"). New trips won't hit that branch; this just stops already-
+      // broken ones from staying broken without needing a database fix.
+      var originMatch = exploreOriginAirport.match(/\(([A-Z]{3})\)/);
+      var originCode = AIRPORT_CODES[exploreOriginAirport] || (exploreOriginAirport.length === 3 ? exploreOriginAirport.toUpperCase() : '') || (originMatch ? originMatch[1] : '');
       if (!originCode) {
         resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">Could not determine your departure airport for this trip.</p>';
         return;
@@ -9166,11 +9267,25 @@ function backfillMissingExplorePhotos() {
 // built as an inline SVG data URI so it needs no separate image asset.
 // anchor/labelOrigin are tuned so the numbered label sits in the lower half
 // of the circle, clear of the flag glyph above it.
-function exploreMarkerIcon() {
+// Shared with the itin-type-tag pill colours already used on the Itinerary
+// tab — same colour means the same thing everywhere in the app, not a
+// separate palette invented just for map pins.
+var EXPLORE_PIN_COLORS = { course: '#3d6b4a', hotel: '#7a4a9e', restaurant: '#a53a3a', activity: '#2f8a6f' };
+var EXPLORE_PIN_GLYPHS = {
+  course: '<line x1="14" y1="8" x2="14" y2="19" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/><path d="M14 8 L21 10.8 L14 13.6 Z" fill="#fff"/>',
+  hotel: '<rect x="8" y="16" width="18" height="7" rx="1.5" fill="#fff"/><rect x="8" y="12" width="6" height="4" rx="1" fill="#fff"/><line x1="8" y1="23" x2="8" y2="26" stroke="#fff" stroke-width="1.6"/><line x1="26" y1="23" x2="26" y2="26" stroke="#fff" stroke-width="1.6"/>',
+  restaurant: '<path d="M12 9 h8 l-1 6 a3 3 0 0 1-6 0z" fill="#fff"/><line x1="16" y1="15" x2="16" y2="21" stroke="#fff" stroke-width="1.6"/><line x1="12.5" y1="21" x2="19.5" y2="21" stroke="#fff" stroke-width="1.6"/>',
+  activity: '<path d="M16 8 L19 15 L24 16 L19 17 L16 24 L13 17 L8 16 L13 15 Z" fill="#fff"/>'
+};
+
+// One consistent shape per category — a course, hotel, restaurant or
+// activity should look like itself on the map, not just a different number.
+function exploreMarkerIcon(itemType) {
+  var color = EXPLORE_PIN_COLORS[itemType] || '#1a3a2a';
+  var glyph = EXPLORE_PIN_GLYPHS[itemType] || EXPLORE_PIN_GLYPHS.course;
   var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34">' +
-    '<circle cx="17" cy="17" r="16" fill="#1a3a2a" stroke="#ffffff" stroke-width="2"/>' +
-    '<line x1="14" y1="8" x2="14" y2="19" stroke="#c9a84c" stroke-width="1.6" stroke-linecap="round"/>' +
-    '<path d="M14 8 L21 10.8 L14 13.6 Z" fill="#c9a84c"/>' +
+    '<circle cx="17" cy="17" r="16" fill="' + color + '" stroke="#ffffff" stroke-width="2"/>' +
+    glyph +
   '</svg>';
   return {
     url: 'data:image/svg+xml,' + encodeURIComponent(svg),
@@ -9222,17 +9337,21 @@ function getExploreCommittedItems() {
   return items;
 }
 
+// Same colour+shape per type as the browsing pins above, so a course looks
+// like a course whether you're still browsing or already committed to it —
+// the gold ring (instead of white) is the only thing that changes, marking
+// "this one's already in your itinerary" without hiding what type it is.
 function exploreCommittedMarkerIcon(itemType) {
-  var meta = ITIN_TYPE_META[itemType];
-  var iconChar = itemType === 'hotel' ? 'B' : itemType === 'restaurant' ? 'R' : itemType === 'activity' ? 'A' : 'G';
-  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">' +
-    '<circle cx="15" cy="15" r="13" fill="#c9a84c" stroke="#ffffff" stroke-width="2"/>' +
-    '<text x="15" y="20" font-family="Arial" font-size="13" font-weight="700" fill="#1a3a2a" text-anchor="middle">' + iconChar + '</text>' +
+  var color = EXPLORE_PIN_COLORS[itemType] || '#1a3a2a';
+  var glyph = EXPLORE_PIN_GLYPHS[itemType] || EXPLORE_PIN_GLYPHS.course;
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34">' +
+    '<circle cx="17" cy="17" r="16" fill="' + color + '" stroke="#c9a84c" stroke-width="3"/>' +
+    glyph +
   '</svg>';
   return {
     url: 'data:image/svg+xml,' + encodeURIComponent(svg),
-    scaledSize: new google.maps.Size(30, 30),
-    anchor: new google.maps.Point(15, 15)
+    scaledSize: new google.maps.Size(34, 34),
+    anchor: new google.maps.Point(17, 17)
   };
 }
 
@@ -9476,7 +9595,7 @@ function updateExploreMapPins(recenter) {
       position: { lat: r.lat, lng: r.lng },
       map: exploreMap,
       title: r.name,
-      icon: exploreMarkerIcon(),
+      icon: exploreMarkerIcon(EXPLORE_CATEGORY_META[exploreCategory].itemType),
       label: { text: String(idx + 1), color: '#fff', fontSize: '11px', fontWeight: '600' }
     });
     marker.exploreResultIdx = idx; // results without coordinates get skipped above, so array position alone can't be trusted to match exploreResults' idx
@@ -10468,7 +10587,11 @@ async function buildAroundVenue() {
     return;
   }
   var airportSelect = document.getElementById('venue-airport-select');
-  var selectedAirportName = airportSelect ? (airportSelect.options[airportSelect.selectedIndex] ? airportSelect.options[airportSelect.selectedIndex].text : '') : '';
+  var selectedAirportCode = airportSelect ? airportSelect.value : '';
+  if (!selectedAirportCode) {
+    showToast('Please pick your departure airport first.', true);
+    return;
+  }
   var btn = document.querySelector('#venue-preview button[onclick="buildAroundVenue()"]');
   if (btn) { btn.disabled = true; btn.textContent = 'Building...'; }
 
@@ -10483,7 +10606,7 @@ async function buildAroundVenue() {
     var ins = await sbClient.from('trip_requests').insert({
       user_id: currentUser.id,
       club_id: userClub ? userClub.id : null,
-      departure_airport: selectedAirportName || 'TBC',
+      departure_airport: selectedAirportCode,
       travel_dates: JSON.stringify({ depart: '', returnDate: '' }),
       budget: 'flexible',
       group_size: 1,

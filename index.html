@@ -579,9 +579,8 @@ label{display:block;font-size:.8rem;font-weight:500;color:var(--ink);margin-bott
 .itin-type-icon{color:var(--brass);font-size:.9rem;flex-shrink:0;padding-top:3px}
 .itin-desc{flex:1}
 .itin-price{color:var(--muted);font-size:.8rem;font-weight:600;flex-shrink:0;padding-top:2px}
-.itin-item-actions{display:flex;gap:4px;flex-shrink:0;opacity:0;transition:opacity var(--tr)}
-.itin-activity:hover .itin-item-actions{opacity:1}
-.itin-item-action-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:3px 5px;border-radius:var(--r);font-size:.8rem;line-height:1}
+.itin-item-actions{display:flex;gap:6px;flex-shrink:0}
+.itin-item-action-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px 6px;border-radius:var(--r);font-size:.95rem;line-height:1;transition:color var(--tr)}
 .itin-item-action-btn:hover{color:var(--moss);background:var(--off-white)}
 .schedule-add-item-btn{background:none;border:1px dashed var(--line);color:var(--muted);font-size:.76rem;font-weight:600;padding:8px 12px;border-radius:var(--r);cursor:pointer;width:100%;margin-top:8px;text-align:center}
 .schedule-add-item-btn:hover{border-color:var(--brass);color:var(--brass)}
@@ -592,6 +591,8 @@ label{display:block;font-size:.8rem;font-weight:500;color:var(--ink);margin-bott
 /* Document-style itinerary (Itinerary tab) */
 .itin-day-doc{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:20px;margin-bottom:18px}
 .itin-day-doc .itin-day-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;padding:0}
+.itin-day-header-text{flex:1}
+.itin-day-eyebrow{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:2px}
 .itin-day-doc .itin-day-header h4{flex:1;margin:0}
 .schedule-add-item-btn-inline{width:auto;margin:0;flex-shrink:0}
 .itin-activity-doc{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--off-white)}
@@ -6458,6 +6459,17 @@ function getItinSpecificsPairs(act) {
   return specifics;
 }
 
+// Same cross-reference the details modal uses, applied here too so a
+// description shows directly on the itinerary row rather than needing a
+// click-through — this is exactly the kind of thing that should look the
+// same wherever it appears, not a fuller version in one place and a
+// stripped-down one in another.
+function getItinDescriptionText(act) {
+  var d = act.details || {};
+  var rich = findRichPanelMatch(act.itemType, act.description) || {};
+  return rich.description || rich.why_recommended || d.notes || '';
+}
+
 function drawSchedule(mountEl, tripId, panelLabel, schedule) {
   var html = '<div class="schedule-toolbar">' +
       '<span class="schedule-hint"><i class="ti ti-arrows-move"></i> Drag days/activities to reorder, or drag items straight from your Trip Cart below into a day — changes save automatically.</span>' +
@@ -6470,13 +6482,18 @@ function drawSchedule(mountEl, tripId, panelLabel, schedule) {
   schedule.forEach(function(day, dIdx) {
     var dayTitle = (day.title && day.title !== 'Day ' + day.day) ? ': ' + escapeHtml(day.title) : '';
     html += '<div class="itin-day schedule-mode itin-day-doc" draggable="true" data-day-idx="' + dIdx + '">' +
-      '<div class="itin-day-header schedule-mode"><i class="ti ti-arrows-move day-drag-handle"></i><h4>Day ' + day.day + dayTitle + '</h4>' +
+      '<div class="itin-day-header schedule-mode">' +
+        '<i class="ti ti-arrows-move day-drag-handle"></i>' +
+        '<div class="itin-day-header-text">' +
+          '<div class="itin-day-eyebrow">DAY ' + day.day + '</div>' +
+          '<h4>Day ' + day.day + dayTitle + '</h4>' +
+        '</div>' +
         '<button type="button" class="schedule-add-item-btn schedule-add-item-btn-inline" onclick="openItinItemModal(this,' + dIdx + ',null)"><i class="ti ti-plus"></i> Add Item</button>' +
       '</div>' +
       '<div class="itin-day-body" data-day-idx="' + dIdx + '">';
     (day.activities || []).forEach(function(act, aIdx) {
       var meta = ITIN_TYPE_META[act.itemType] || null;
-      var notes = act.details && act.details.notes;
+      var descriptionText = getItinDescriptionText(act);
       var specPairs = getItinSpecificsPairs(act);
       var specChipsHtml = specPairs.length
         ? '<div class="itin-activity-doc-specifics">' + specPairs.map(function(p) {
@@ -6507,7 +6524,7 @@ function drawSchedule(mountEl, tripId, panelLabel, schedule) {
             '</span>' +
           '</div>' +
           specChipsHtml +
-          (notes ? '<div class="itin-activity-doc-notes">' + escapeHtml(notes) + '</div>' : '') +
+          (descriptionText ? '<div class="itin-activity-doc-notes">' + escapeHtml(descriptionText) + '</div>' : '') +
         '</div>' +
       '</div>';
     });
@@ -9295,7 +9312,8 @@ function renderExploreResults() {
       '</div>' +
       '<div class="card-links">' +
         '<button class="card-link" style="cursor:pointer;background:var(--green);color:var(--gold);border-color:var(--green)" onclick="addExploreResultToItinerary(' + idx + ')">&#43; Add to Itinerary</button>' +
-        '<button class="card-link" style="cursor:pointer;background:none" id="explore-visit-btn-' + idx + '" onclick="openExploreVenueLink(' + idx + ')">Visit &#8599;</button>' +
+        (exploreCategory === 'hotel' ? buildExploreFindStayDropdown(r.name, r.vicinity) :
+          '<button class="card-link" style="cursor:pointer;background:none" id="explore-visit-btn-' + idx + '" onclick="openExploreVenueLink(' + idx + ')">Visit &#8599;</button>') +
       '</div>' +
     '</div>';
   }).join('');
@@ -9495,6 +9513,26 @@ async function updateExploreDriveTimes(items) {
   }
 }
 
+// Hotels specifically get a choice of provider, same as the main AI panel's
+// hotel cards already do (toggleStayMenu) — one generic "Visit" link
+// doesn't make sense for a hotel the way it does for a course or
+// restaurant, since a hotel search rarely has one obvious booking site.
+// Reuses the exact same affiliate-tracked link builders, not a separate,
+// unaffiliated set just for Explore.
+function buildExploreFindStayDropdown(name, location) {
+  var bookingUrl = wrapBookingUrl(location || '', 'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(name + ' ' + (location || '')) + '&dest_type=property');
+  var vrboUrl = buildVrboUrl(name + ' ' + (location || ''), 2, '', '');
+  var expediaUrl = buildExpediaHotelUrl(location || '', name, '', '', '2');
+  return '<div class="card-link stay-dropdown" onclick="toggleStayMenu(this,event)">' +
+    '<i class="ti ti-bed"></i> Find a Stay <i class="ti ti-chevron-down"></i>' +
+    '<div class="stay-dropdown-menu">' +
+      '<a href="' + bookingUrl + '" target="_blank" rel="noopener"><i class="ti ti-building"></i> Booking.com</a>' +
+      '<a href="' + vrboUrl + '" target="_blank" rel="noopener"><i class="ti ti-home"></i> Vrbo</a>' +
+      '<a href="' + expediaUrl + '" target="_blank" rel="noopener"><i class="ti ti-building-skyscraper"></i> Expedia</a>' +
+    '</div>' +
+  '</div>';
+}
+
 function highlightExploreMarker(idx) {
   exploreMarkers.forEach(function(m, i) { m.setZIndex(i === idx ? 999 : 1); });
 }
@@ -9622,15 +9660,26 @@ function buildExploreInfoWindowContent(idx) {
       }).join('') + '</div>'
     : '';
   var ratingStr = r.rating ? '<i class="ti ti-star-filled" style="color:#B08D52"></i> ' + r.rating + (r.user_ratings_total ? ' (' + r.user_ratings_total + ')' : '') : '';
+  // Google's InfoWindow is too tight for the full dropdown the cards use —
+  // three short inline links fit fine instead, same three real providers.
+  var visitAreaHtml = exploreCategory === 'hotel'
+    ? '<div style="display:flex;gap:6px;font-size:.68rem">' +
+        '<a href="' + wrapBookingUrl(r.vicinity || '', 'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(r.name + ' ' + (r.vicinity || '')) + '&dest_type=property') + '" target="_blank" rel="noopener" style="color:#1a3a2a">Booking.com</a>' +
+        '<span style="color:#ccc">&middot;</span>' +
+        '<a href="' + buildVrboUrl(r.name + ' ' + (r.vicinity || ''), 2, '', '') + '" target="_blank" rel="noopener" style="color:#1a3a2a">Vrbo</a>' +
+        '<span style="color:#ccc">&middot;</span>' +
+        '<a href="' + buildExpediaHotelUrl(r.vicinity || '', r.name, '', '', '2') + '" target="_blank" rel="noopener" style="color:#1a3a2a">Expedia</a>' +
+      '</div>'
+    : '<button onclick="openExploreVenueLink(' + idx + ')" style="background:transparent;color:#1a3a2a;border:1px solid #1a3a2a;border-radius:3px;padding:6px 8px;font-size:.75rem;cursor:pointer">Visit</button>';
   return '<div style="font-family:inherit;max-width:280px;margin:-14px -14px -12px">' +
     heroHtml +
     '<div style="padding:0 6px">' +
       thumbsHtml +
       '<div style="font-weight:600;margin:4px 0 2px;color:#1a3a2a">' + escapeHtml(r.name) + '</div>' +
       ((ratingStr || r.vicinity) ? '<div style="font-size:.78rem;color:#5A6B5F;margin-bottom:8px">' + [ratingStr, escapeHtml(r.vicinity || '')].filter(Boolean).join(' &middot; ') + '</div>' : '') +
-      '<div style="display:flex;gap:6px;padding-bottom:8px">' +
-        '<button onclick="addExploreResultToItinerary(' + idx + ')" style="flex:1;background:#1a3a2a;color:#c9a84c;border:none;border-radius:3px;padding:6px 8px;font-size:.75rem;cursor:pointer;font-weight:600">+ Add</button>' +
-        '<button onclick="openExploreVenueLink(' + idx + ')" style="background:transparent;color:#1a3a2a;border:1px solid #1a3a2a;border-radius:3px;padding:6px 8px;font-size:.75rem;cursor:pointer">Visit</button>' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding-bottom:8px">' +
+        '<button onclick="addExploreResultToItinerary(' + idx + ')" style="flex-shrink:0;background:#1a3a2a;color:#c9a84c;border:none;border-radius:3px;padding:6px 8px;font-size:.75rem;cursor:pointer;font-weight:600">+ Add</button>' +
+        visitAreaHtml +
       '</div>' +
     '</div>' +
   '</div>';

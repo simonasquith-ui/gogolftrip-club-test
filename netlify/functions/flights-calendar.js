@@ -1,3 +1,4 @@
+const { logApiCall } = require('./_usage-log')
 // Proxies Travelpayouts' month-matrix endpoint so the API token never reaches
 // the browser. Client calls:
 // /.netlify/functions/flights-calendar?origin=MAN&destination=FAO&month=2026-09-01&currency=gbp
@@ -71,6 +72,7 @@ exports.handler = async (event) => {
       '&show_to_affiliates=false' +
       '&token=' + apiToken
 
+    logApiCall('travelpayouts', origin + '-' + destination)
     const response = await fetch(url)
     if (!response.ok) {
       return {

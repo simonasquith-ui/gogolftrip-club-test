@@ -8,11 +8,32 @@
 // category is one of: 'course' | 'hotel' | 'restaurant' | 'activity'
 // and maps to a Google Places "type" under the hood.
 
+// category → Places "type" (secondary filter) and a query string that does
+// the real work of precision here. Nearby Search's type=golf_course alone
+// pulls in golf-resort villa/property complexes that only carry golf_course
+// as one of several secondary tags — Text Search's relevance ranking on the
+// query text strongly favours places that are actually named/described as
+// a golf course over those.
 const CATEGORY_TO_PLACES_TYPE = {
   course: 'golf_course',
   hotel: 'lodging',
   restaurant: 'restaurant',
   activity: 'tourist_attraction'
+}
+const CATEGORY_QUERY = {
+  course: 'golf course',
+  hotel: 'hotel',
+  restaurant: 'restaurant',
+  activity: 'things to do'
+}
+// Courses are sparser and often spread across a whole destination region
+// (e.g. "the Algarve") rather than clustered in one town — a wider default
+// radius surfaces meaningfully more real options than the other categories need.
+const CATEGORY_RADIUS = {
+  course: 40000,
+  hotel: 15000,
+  restaurant: 8000,
+  activity: 15000
 }
 
 exports.handler = async (event) => {
@@ -43,6 +64,7 @@ exports.handler = async (event) => {
 
     const { lat, lng, category, keyword, radius } = JSON.parse(event.body || '{}')
     const placesType = CATEGORY_TO_PLACES_TYPE[category]
+    const baseQuery = CATEGORY_QUERY[category]
     if (!lat || !lng || !placesType) {
       return {
         statusCode: 400,
@@ -51,11 +73,15 @@ exports.handler = async (event) => {
       }
     }
 
-    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json' +
-      '?location=' + encodeURIComponent(lat + ',' + lng) +
-      '&radius=' + encodeURIComponent(radius || 15000) + // ~9 miles default — wide enough for "near this destination" without pulling in a whole country
+    // e.g. "golf course" normally, or "Pine Valley golf course" when the
+    // itinerary item search-and-swap passes a specific name as keyword.
+    const query = keyword ? (keyword + ' ' + baseQuery) : baseQuery
+
+    const url = 'https://maps.googleapis.com/maps/api/place/textsearch/json' +
+      '?query=' + encodeURIComponent(query) +
+      '&location=' + encodeURIComponent(lat + ',' + lng) +
+      '&radius=' + encodeURIComponent(radius || CATEGORY_RADIUS[category]) +
       '&type=' + encodeURIComponent(placesType) +
-      (keyword ? '&keyword=' + encodeURIComponent(keyword) : '') +
       '&key=' + apiKey
 
     const response = await fetch(url)
@@ -77,7 +103,7 @@ exports.handler = async (event) => {
         rating: p.rating || null,
         user_ratings_total: p.user_ratings_total || 0,
         price_level: typeof p.price_level === 'number' ? p.price_level : null, // 0-4, Google's own scale — not all place types return this
-        vicinity: p.vicinity || '',
+        vicinity: p.formatted_address || p.vicinity || '',
         lat: p.geometry && p.geometry.location ? p.geometry.location.lat : null,
         lng: p.geometry && p.geometry.location ? p.geometry.location.lng : null,
         photo_reference: photoRefs[0] || null, // kept for the card thumbnail — first photo only

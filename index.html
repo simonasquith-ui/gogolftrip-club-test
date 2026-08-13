@@ -8596,6 +8596,7 @@ var exploreResults = [];
 var exploreCenter = null;
 var exploreMap = null;
 var exploreMarkers = [];
+var exploreInfoWindow = null;
 var exploreHasSearched = false;
 var EXPLORE_CATEGORY_META = {
   course: { icon: 'ti-golf', itemType: 'course', label: 'course' },
@@ -8671,7 +8672,10 @@ function renderExploreResults() {
       '<div class="explore-result-body">' +
         '<h4>' + escapeHtml(r.name) + '</h4>' +
         '<div class="explore-result-meta">' + [ratingStr, priceStr, escapeHtml(r.vicinity || '')].filter(Boolean).join(' &middot; ') + '</div>' +
-        '<button class="btn btn-primary btn-sm" onclick="addExploreResultToItinerary(' + idx + ')"><i class="ti ti-plus"></i> Add to itinerary</button>' +
+        '<div style="display:flex;gap:8px">' +
+          '<button class="btn btn-primary btn-sm" onclick="addExploreResultToItinerary(' + idx + ')"><i class="ti ti-plus"></i> Add</button>' +
+          '<button class="btn btn-ghost btn-sm" id="explore-visit-btn-' + idx + '" onclick="openExploreVenueLink(' + idx + ')"><i class="ti ti-external-link"></i> Visit</button>' +
+        '</div>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -8679,6 +8683,31 @@ function renderExploreResults() {
 
 function highlightExploreMarker(idx) {
   exploreMarkers.forEach(function(m, i) { m.setZIndex(i === idx ? 999 : 1); });
+}
+
+// Opens the tab BEFORE the async lookup resolves, not after — browsers
+// block window.open() calls that happen outside the direct chain of a user
+// gesture, and an await in between counts as "outside." Filling in the
+// real destination once we have it keeps this working reliably.
+async function openExploreVenueLink(idx) {
+  var r = exploreResults[idx];
+  if (!r) return;
+  var newTab = window.open('', '_blank');
+  if (!newTab) { showToast('Please allow pop-ups to open this link.', true); return; }
+  newTab.opener = null;
+  var fallbackUrl = 'https://www.google.com/maps/place/?q=place_id:' + r.place_id;
+  try {
+    var res = await fetch('/.netlify/functions/place-details', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ place_id: r.place_id })
+    });
+    var data = await res.json();
+    newTab.location = data.website || data.url || fallbackUrl;
+  } catch (e) {
+    console.error('openExploreVenueLink error:', e);
+    newTab.location = fallbackUrl;
+  }
 }
 
 function initExploreMap() {
@@ -8710,10 +8739,32 @@ function searchExploreMapArea() {
   runExploreSearch(true);
 }
 
+function buildExploreInfoWindowContent(idx) {
+  var r = exploreResults[idx];
+  if (!r) return '';
+  var photos = (r.photos && r.photos.length) ? r.photos : (r.photo_reference ? [r.photo_reference] : []);
+  var photosHtml = photos.length
+    ? '<div style="display:flex;gap:4px;margin-bottom:8px">' + photos.map(function(ref) {
+        return '<img loading="lazy" src="/.netlify/functions/place-photo?ref=' + encodeURIComponent(ref) + '&maxwidth=120" style="width:64px;height:64px;object-fit:cover;border-radius:4px" alt="">';
+      }).join('') + '</div>'
+    : '';
+  var ratingStr = r.rating ? '<i class="ti ti-star-filled" style="color:#B08D52"></i> ' + r.rating + (r.user_ratings_total ? ' (' + r.user_ratings_total + ')' : '') : '';
+  return '<div style="font-family:inherit;max-width:220px">' +
+    photosHtml +
+    '<div style="font-weight:600;margin-bottom:2px;color:#1a3a2a">' + escapeHtml(r.name) + '</div>' +
+    ((ratingStr || r.vicinity) ? '<div style="font-size:.78rem;color:#5A6B5F;margin-bottom:8px">' + [ratingStr, escapeHtml(r.vicinity || '')].filter(Boolean).join(' &middot; ') + '</div>' : '') +
+    '<div style="display:flex;gap:6px">' +
+      '<button onclick="addExploreResultToItinerary(' + idx + ')" style="flex:1;background:#1a3a2a;color:#c9a84c;border:none;border-radius:3px;padding:6px 8px;font-size:.75rem;cursor:pointer;font-weight:600">+ Add</button>' +
+      '<button onclick="openExploreVenueLink(' + idx + ')" style="background:transparent;color:#1a3a2a;border:1px solid #1a3a2a;border-radius:3px;padding:6px 8px;font-size:.75rem;cursor:pointer">Visit</button>' +
+    '</div>' +
+  '</div>';
+}
+
 function updateExploreMapPins(recenter) {
   if (!exploreMap) return;
   exploreMarkers.forEach(function(m) { m.setMap(null); });
   exploreMarkers = [];
+  if (!exploreInfoWindow) exploreInfoWindow = new google.maps.InfoWindow();
   var bounds = new google.maps.LatLngBounds();
   exploreResults.forEach(function(r, idx) {
     var marker = new google.maps.Marker({
@@ -8723,6 +8774,8 @@ function updateExploreMapPins(recenter) {
       label: { text: String(idx + 1), color: '#fff', fontSize: '11px', fontWeight: '600' }
     });
     marker.addListener('click', function() {
+      exploreInfoWindow.setContent(buildExploreInfoWindowContent(idx));
+      exploreInfoWindow.open(exploreMap, marker);
       var card = document.getElementById('explore-card-' + idx);
       if (card) { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); card.classList.add('is-highlighted'); setTimeout(function() { card.classList.remove('is-highlighted'); }, 1500); }
     });

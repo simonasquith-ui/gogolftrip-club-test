@@ -1,3 +1,4 @@
+const { logApiCall } = require('./_usage-log')
 // Proxies Google's Place Photo endpoint so the API key never reaches the
 // browser. Client calls: /.netlify/functions/place-photo?ref=<photo_reference>&maxwidth=400
 // and gets the actual image bytes back directly (safe to use as an <img src>).
@@ -40,6 +41,7 @@ exports.handler = async (event) => {
       '&photo_reference=' + encodeURIComponent(ref) +
       '&key=' + apiKey
 
+    logApiCall('google-places-photo')
     const response = await fetch(url)
     if (!response.ok) {
       return {

@@ -1869,27 +1869,13 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
     </div>
 
     <div class="results-tabs" style="margin-bottom:28px">
-      <button class="results-tab active" id="td-tab-itinerary" onclick="switchTripTab('itinerary')"><i class="ti ti-golf"></i> Trip Itinerary</button>
-      <button class="results-tab" id="td-tab-explore" onclick="switchTripTab('explore')"><i class="ti ti-map-pin"></i> Explore</button>
+      <button class="results-tab active" id="td-tab-explore" onclick="switchTripTab('explore')"><i class="ti ti-map-pin"></i> Explore</button>
+      <button class="results-tab" id="td-tab-itinerary" onclick="switchTripTab('itinerary')"><i class="ti ti-golf"></i> Trip Itinerary</button>
       <button class="results-tab" id="td-tab-group" onclick="switchTripTab('group')"><i class="ti ti-users"></i> Group &amp; Booking</button>
       <div id="td-public-note" style="display:none;font-size:.75rem;color:var(--text-muted);padding:8px 0 0;width:100%"><i class="ti ti-lock"></i> Sign in to access group planning, voting and the trip cart</div>
     </div>
 
-    <div id="td-panel-itinerary">
-      <div id="td-itinerary-loading" style="text-align:center;padding:40px 0;display:none">
-        <div class="loading-spinner"></div>
-        <p class="text-muted mt-8">Loading your trip details...</p>
-      </div>
-      <div id="td-itinerary-content"></div>
-      <div id="td-itinerary-empty" class="empty-state" style="display:none">
-        <div class="es-icon"><i class="ti ti-calendar-event"></i></div>
-        <h3>No Itinerary Saved</h3>
-        <p>The full AI itinerary for this trip was not saved. Generate a new trip to see full details.</p>
-        <button class="btn btn-primary mt-16" onclick="showPage('questionnaire')">Generate New Trip</button>
-      </div>
-    </div>
-
-    <div id="td-panel-explore" style="display:none">
+    <div id="td-panel-explore">
       <div class="card" style="margin-bottom:16px">
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <input type="text" id="explore-destination-input" placeholder="e.g. Algarve, Portugal" style="flex:1;min-width:200px">
@@ -1914,6 +1900,20 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
           <div id="explore-map" style="width:100%;height:100%;min-height:420px;border-radius:var(--r);background:var(--off-white)"></div>
           <button type="button" id="explore-search-area-btn" class="btn btn-sm" style="display:none;position:absolute;top:14px;left:50%;transform:translateX(-50%);box-shadow:0 2px 8px rgba(0,0,0,.2)" onclick="searchExploreMapArea()"><i class="ti ti-search"></i> Search this area</button>
         </div>
+      </div>
+    </div>
+
+    <div id="td-panel-itinerary" style="display:none">
+      <div id="td-itinerary-loading" style="text-align:center;padding:40px 0;display:none">
+        <div class="loading-spinner"></div>
+        <p class="text-muted mt-8">Loading your trip details...</p>
+      </div>
+      <div id="td-itinerary-content"></div>
+      <div id="td-itinerary-empty" class="empty-state" style="display:none">
+        <div class="es-icon"><i class="ti ti-calendar-event"></i></div>
+        <h3>No Itinerary Saved</h3>
+        <p>The full AI itinerary for this trip was not saved. Generate a new trip to see full details.</p>
+        <button class="btn btn-primary mt-16" onclick="showPage('questionnaire')">Generate New Trip</button>
       </div>
     </div>
 
@@ -5272,10 +5272,10 @@ function buildTeeTimes(courseName, destination, playDate) {
     // affiliate tracking yet since Simon isn't approved on their partner
     // program — once approved, add the tracking param here the same way
     // Expedia/CJ do below.
-    return { url: 'https://www.leadingcourses.com/search?q=' + query, label: 'Book Tee Time', provider: 'Leading Courses' };
+    return { url: 'https://www.leadingcourses.com/search?q=' + query, label: 'Book', provider: 'Leading Courses' };
   }
 
-  return { url: buildGolfNowSearchUrl(courseName, destination, playDate), label: 'Book on GolfNow', provider: 'GolfNow' };
+  return { url: buildGolfNowSearchUrl(courseName, destination, playDate), label: 'Book', provider: 'GolfNow' };
 }
 
 function buildDestTeeTimes(destination, playDate) {
@@ -6216,7 +6216,7 @@ async function loadActivities(destination, idx) {
         '</div>' +
         (a.price ? '<div style="color:var(--gold);font-weight:600;margin-top:6px;font-size:.9rem">From &#163;' + Math.round(a.price) + '</div>' : '') +
         '<div style="margin-top:10px">' +
-          '<a href="' + a.url + '" target="_blank" rel="noopener" class="card-link" style="display:inline-flex;align-items:center;gap:5px"><i class="ti ti-beach"></i> View on Viator</a>' +
+          '<a href="' + a.url + '" target="_blank" rel="noopener" class="card-link" style="display:inline-flex;align-items:center;gap:5px"><i class="ti ti-beach"></i> Visit</a>' +
         '</div>' +
       '</div>';
     });
@@ -6989,7 +6989,7 @@ function buildBTT(panel, idx, qData) {
       '</div>' +
       '<a href="' + buildDestTeeTimes(panel.destination || dest, bttCheckin) + '" target="_blank" class="btt-btn btt-teetimes">' +
         '<div class="btt-icon"><i class="ti ti-golf"></i></div>' +
-        '<div><div class="btt-label">Tee Times</div><div class="btt-action">Book on GolfNow</div></div>' +
+        '<div><div class="btt-label">Tee Times</div><div class="btt-action">Book</div></div>' +
       '</a>' +
     '</div>' +
     '<div class="btt-total">' +
@@ -8593,6 +8593,7 @@ var exploreMap = null;
 var exploreMarkers = [];
 var exploreInfoWindow = null;
 var exploreHasSearched = false;
+var exploreLastDestination = '';
 var EXPLORE_CATEGORY_META = {
   course: { icon: 'ti-golf', itemType: 'course', label: 'course' },
   hotel: { icon: 'ti-bed', itemType: 'hotel', label: 'place to stay' },
@@ -8605,19 +8606,55 @@ function switchExploreCategory(cat) {
   document.querySelectorAll('.explore-cat-btn').forEach(function(b) {
     b.classList.toggle('active', b.getAttribute('data-cat') === cat);
   });
-  if (exploreCenter) runExploreSearch(true);
+  var destInput = document.getElementById('explore-destination-input');
+  var hasDestination = destInput && destInput.value.trim();
+  // Activities (Viator) only need a destination string, not a resolved
+  // map centre — so this can search even if no course/hotel/restaurant
+  // search has run yet in this session.
+  if (cat === 'activity' && (hasDestination || exploreLastDestination)) {
+    runExploreSearch(true);
+  } else if (cat !== 'activity' && exploreCenter) {
+    runExploreSearch(true);
+  }
 }
 
 async function runExploreSearch(keepCenter) {
   var destInput = document.getElementById('explore-destination-input');
   var destination = destInput ? destInput.value.trim() : '';
   var resultsEl = document.getElementById('explore-results-list');
-  if (!destination && !keepCenter) {
+  if (!destination && !exploreLastDestination && !keepCenter) {
     showToast('Enter a destination to search.', true);
     return;
   }
   exploreHasSearched = true;
   resultsEl.innerHTML = '<div style="text-align:center;padding:30px 0"><div class="loading-spinner"></div></div>';
+
+  // Activities are deliberately NOT Google Places "tourist attractions" —
+  // those are mostly just landmarks/museums with no way to book them.
+  // Viator is what the rest of this app already uses for bookable things
+  // to do, so Explore's Activities tab uses the exact same source — every
+  // result here has a real, affiliate-tracked booking link, not a guess.
+  if (exploreCategory === 'activity') {
+    try {
+      var actRes = await fetch('/.netlify/functions/get-activities?destination=' + encodeURIComponent(destination || exploreLastDestination || ''));
+      var actData = await actRes.json();
+      exploreLastDestination = destination || exploreLastDestination;
+      exploreResults = (actData.activities || []).map(function(a) {
+        return {
+          place_id: null, name: a.title, rating: a.rating, user_ratings_total: null,
+          price_display: a.price ? ('From £' + a.price) : '', vicinity: '',
+          lat: null, lng: null, photo_reference: null, image_url: a.image, photos: [],
+          open_now: null, direct_url: a.url
+        };
+      });
+      renderExploreResults();
+      updateExploreMapPins(true);
+    } catch (e) {
+      console.error('runExploreSearch (activity) error:', e);
+      resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">Something went wrong searching — please try again.</p>';
+    }
+    return;
+  }
 
   try {
     // Resolve the destination to a centre point first (reuses the existing
@@ -8636,6 +8673,7 @@ async function runExploreSearch(keepCenter) {
       }
       exploreCenter = { lat: geoData.lat, lng: geoData.lng };
     }
+    exploreLastDestination = destination || exploreLastDestination;
 
     var res = await fetch('/.netlify/functions/nearby-search', {
       method: 'POST',
@@ -8643,7 +8681,10 @@ async function runExploreSearch(keepCenter) {
       body: JSON.stringify({ lat: exploreCenter.lat, lng: exploreCenter.lng, category: exploreCategory })
     });
     var data = await res.json();
-    exploreResults = data.results || [];
+    exploreResults = (data.results || []).map(function(r) {
+      var priceStr = typeof r.price_level === 'number' ? (Array(r.price_level + 1).join('£') || '£') : '';
+      return Object.assign({}, r, { price_display: priceStr, image_url: null, direct_url: null });
+    });
     renderExploreResults();
     updateExploreMapPins(true);
   } catch (e) {
@@ -8660,11 +8701,10 @@ function renderExploreResults() {
     return;
   }
   resultsEl.innerHTML = exploreResults.map(function(r, idx) {
-    var priceStr = typeof r.price_level === 'number' ? (Array(r.price_level + 1).join('£') || '£') : '';
     var ratingStr = r.rating ? r.rating + ' &#9733;' + (r.user_ratings_total ? ' (' + r.user_ratings_total + ')' : '') : '';
-    var photoHtml = r.photo_reference
-      ? '<img loading="lazy" src="/.netlify/functions/place-photo?ref=' + encodeURIComponent(r.photo_reference) + '&maxwidth=600" alt="">'
-      : '<i class="ti ' + meta.icon + '"></i>';
+    var photoHtml = r.image_url
+      ? '<img loading="lazy" src="' + r.image_url + '" alt="">'
+      : (r.photo_reference ? '<img loading="lazy" src="/.netlify/functions/place-photo?ref=' + encodeURIComponent(r.photo_reference) + '&maxwidth=600" alt="">' : '<i class="ti ' + meta.icon + '"></i>');
     return '<div class="course-card explore-result-card" id="explore-card-' + idx + '" onmouseenter="highlightExploreMarker(' + idx + ')" style="margin-bottom:16px">' +
       '<div class="card-photo" style="height:170px">' + photoHtml + '</div>' +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">' +
@@ -8673,7 +8713,7 @@ function renderExploreResults() {
       '<div class="text-muted fs-sm">' + escapeHtml(r.vicinity || '') + '</div>' +
       '<div class="course-stats">' +
         (ratingStr ? '<span class="course-stat">' + ratingStr + '</span>' : '') +
-        (priceStr ? '<span class="course-stat">' + priceStr + '</span>' : '') +
+        (r.price_display ? '<span class="course-stat">' + escapeHtml(r.price_display) + '</span>' : '') +
         (r.open_now === true ? '<span class="course-stat" style="color:var(--moss)">Open now</span>' : '') +
       '</div>' +
       '<div class="card-links">' +
@@ -8698,6 +8738,14 @@ async function openExploreVenueLink(idx) {
   var newTab = window.open('', '_blank');
   if (!newTab) { showToast('Please allow pop-ups to open this link.', true); return; }
   newTab.opener = null;
+
+  // Viator activities already carry their own real, affiliate-tracked URL
+  // straight from get-activities.js — no lookup needed, just go there.
+  if (r.direct_url) {
+    newTab.location = r.direct_url;
+    return;
+  }
+
   var fallbackUrl = 'https://www.google.com/maps/place/?q=place_id:' + r.place_id;
   try {
     var res = await fetch('/.netlify/functions/place-details', {
@@ -8767,6 +8815,21 @@ function updateExploreMapPins(recenter) {
   if (!exploreMap) return;
   exploreMarkers.forEach(function(m) { m.setMap(null); });
   exploreMarkers = [];
+
+  var overlayEl = document.getElementById('explore-map-overlay-note');
+  if (exploreCategory === 'activity') {
+    if (!overlayEl) {
+      overlayEl = document.createElement('div');
+      overlayEl.id = 'explore-map-overlay-note';
+      overlayEl.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--off-white);border-radius:var(--r);padding:20px;text-align:center;color:var(--muted);font-size:.85rem';
+      document.querySelector('.explore-map-col').appendChild(overlayEl);
+    }
+    overlayEl.innerHTML = '<span><i class="ti ti-map-pin-off" style="font-size:1.4rem;display:block;margin-bottom:8px"></i>Activities are sourced from Viator, which doesn\'t give exact map locations — browse the cards instead.</span>';
+    overlayEl.style.display = 'flex';
+    return;
+  }
+  if (overlayEl) overlayEl.style.display = 'none';
+
   if (!exploreInfoWindow) exploreInfoWindow = new google.maps.InfoWindow();
   var bounds = new google.maps.LatLngBounds();
   exploreResults.forEach(function(r, idx) {
@@ -8881,7 +8944,7 @@ function switchTripTab(tab) {
 async function openTripDetail(tripId, tripData) {
   activeTripId = tripId;
   showPage('trip');
-  switchTripTab('itinerary');
+  switchTripTab('explore');
   document.getElementById('trip-detail-heading').textContent = tripData.group_name || tripData.destination_type || 'Golf Trip';
   document.getElementById('trip-detail-sub').textContent = (tripData.group_size || '?') + ' golfers • ' + formatBudgetDisplay(tripData.budget);
   document.getElementById('td-dest').textContent = tripData.destination_type || '—';

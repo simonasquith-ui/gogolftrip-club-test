@@ -590,17 +590,19 @@ label{display:block;font-size:.8rem;font-weight:500;color:var(--ink);margin-bott
 
 /* Document-style itinerary (Itinerary tab) */
 .itin-day-doc{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:20px;margin-bottom:18px}
+.itin-day-doc .itin-day-body{padding:0;margin-top:14px}
 .itin-day-doc .itin-day-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;padding:0}
 .itin-day-header-text{flex:1}
 .itin-day-eyebrow{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:2px}
 .itin-day-doc .itin-day-header h4{flex:1;margin:0}
 .schedule-add-item-btn-inline{width:auto;margin:0;flex-shrink:0}
-.itin-activity-doc{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--off-white)}
-.itin-activity-doc:last-child{border-bottom:none}
+.itin-activity-doc{display:flex;gap:14px;align-items:flex-start;padding:16px;margin-bottom:12px;background:var(--white);border:1px solid var(--border);border-radius:var(--rl)}
+.itin-activity-doc:last-child{margin-bottom:0}
 .itin-activity-doc-body{flex:1;min-width:0}
+.itin-activity-doc-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;align-self:center;padding-left:4px}
 .itin-activity-doc-row1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.itin-activity-doc-row1 .itin-desc{font-weight:600;color:var(--text)}
-.itin-activity-doc-notes{font-size:.8rem;color:var(--muted);margin-top:4px;line-height:1.5}
+.itin-activity-doc-row1 .itin-desc{font-weight:700;color:var(--text);font-size:1.02rem}
+.itin-activity-doc-notes{font-size:.85rem;color:var(--muted);margin-top:6px;line-height:1.55}
 .itin-type-tag{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
 .itin-type-tag.tag-course{background:#e5efe6;color:#3d6b4a}
 .itin-type-tag.tag-hotel{background:#efe5f5;color:#7a4a9e}
@@ -6532,15 +6534,15 @@ function drawSchedule(mountEl, tripId, panelLabel, schedule) {
             '<span class="itin-desc itin-desc-link" onclick="openItinDetailView(' + dIdx + ',' + aIdx + ')">' + escapeHtml(act.description || '') + '</span>' +
             (meta ? '<span class="itin-type-tag tag-' + act.itemType + '">' + meta.label + '</span>' : '') +
             (act.price ? '<span class="itin-price">' + fmtPrice(act.price) + '</span>' : '') +
-            '<span class="itin-item-actions">' +
-              '<select class="itin-move-to-select" title="Move to another day" onchange="moveItinItemToDay(this,' + dIdx + ',' + aIdx + ')">' + moveOptions + '</select>' +
-              '<button type="button" class="itin-item-action-btn" title="Edit" onclick="openItinItemModal(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-pencil"></i></button>' +
-              '<button type="button" class="itin-item-action-btn" title="Duplicate" onclick="duplicateItinItem(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-copy"></i></button>' +
-              '<button type="button" class="itin-item-action-btn" title="Delete" onclick="deleteItinItem(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-trash"></i></button>' +
-            '</span>' +
           '</div>' +
           specChipsHtml +
           (descriptionText ? '<div class="itin-activity-doc-notes">' + escapeHtml(descriptionText) + '</div>' : '') +
+        '</div>' +
+        '<div class="itin-activity-doc-actions">' +
+          '<select class="itin-move-to-select" title="Move to another day" onchange="moveItinItemToDay(this,' + dIdx + ',' + aIdx + ')">' + moveOptions + '</select>' +
+          '<button type="button" class="itin-item-action-btn" title="Edit" onclick="openItinItemModal(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-pencil"></i></button>' +
+          '<button type="button" class="itin-item-action-btn" title="Duplicate" onclick="duplicateItinItem(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-copy"></i></button>' +
+          '<button type="button" class="itin-item-action-btn" title="Delete" onclick="deleteItinItem(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-trash"></i></button>' +
         '</div>' +
       '</div>';
     });

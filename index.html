@@ -450,10 +450,11 @@ label{display:block;font-size:.8rem;font-weight:500;color:var(--ink);margin-bott
 .explore-cat-btn.active{background:var(--green);color:var(--gold);border-color:var(--green)}
 .explore-dest-btn{background:transparent;border:1px solid var(--brass);color:var(--brass)}
 .explore-dest-btn.active{background:var(--brass);color:#fff}
-.explore-flight-row{display:flex;justify-content:space-between;align-items:center;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;text-decoration:none;color:var(--text);transition:border-color var(--tr)}
-.explore-flight-row:hover{border-color:var(--brass)}
+.explore-flight-row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px}
 .explore-flight-row.cheapest{border-color:var(--brass);background:#fdf9ef}
-.explore-flight-date{font-weight:600}
+.explore-flight-row-link{flex:1;min-width:0;text-decoration:none;color:var(--text)}
+.explore-flight-row-link:hover .explore-flight-date{color:var(--brass)}
+.explore-flight-date{font-weight:600;transition:color var(--tr)}
 .explore-flight-price{font-family:var(--font-display);font-size:1.1rem;color:var(--green);white-space:nowrap}
 .explore-flight-badge{display:block;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--brass)}
 .explore-result-card{margin-bottom:16px}
@@ -612,6 +613,11 @@ label{display:block;font-size:.8rem;font-weight:500;color:var(--ink);margin-bott
 .itin-desc-link{cursor:pointer;text-decoration:underline;text-decoration-color:transparent;transition:text-decoration-color var(--tr)}
 .itin-desc-link:hover{text-decoration-color:var(--brass)}
 .itin-move-to-select{font-size:.7rem;border:1px solid var(--border);border-radius:var(--r);background:var(--white);color:var(--muted);padding:3px 4px;max-width:90px}
+.itin-time{cursor:pointer;border-radius:4px;padding:1px 4px;transition:background var(--tr)}
+.itin-time:hover{background:var(--off-white)}
+.itin-time-unset{color:var(--brass);font-style:italic;font-weight:400;text-transform:none;letter-spacing:0}
+.itin-activity-doc-specifics{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.itin-specifics-chip{background:var(--off-white);color:var(--text);font-size:.72rem;padding:3px 9px;border-radius:10px;border:1px solid var(--border)}
 .cart-item{cursor:grab;position:relative}
 .cart-item.dragging{opacity:.4}
 .cart-drag-handle{color:var(--muted);font-size:.85rem;flex-shrink:0;padding-top:3px;align-self:flex-start}
@@ -6424,6 +6430,34 @@ var ITIN_TYPE_META = {
   other: { icon: 'ti-map-pin', label: 'Other' }
 };
 
+// Single source of truth for "what are this item's type-specific details" —
+// used both for the compact chips on the itinerary row and the fuller grid
+// in the details modal, so the two can never drift out of sync by having
+// separately-maintained lists of the same fields.
+function getItinSpecificsPairs(act) {
+  var d = act.details || {};
+  var specifics = [];
+  if (act.itemType === 'course') {
+    if (d.players) specifics.push(['Players', d.players]);
+    if (d.handicapReq) specifics.push(['Handicap requirement', d.handicapReq]);
+    if (d.buggy) specifics.push(['Buggy', 'Included']);
+  } else if (act.itemType === 'hotel') {
+    if (d.roomType) specifics.push(['Room type', d.roomType]);
+    if (d.numRooms) specifics.push(['Rooms', d.numRooms]);
+    if (d.pricePerRoom) specifics.push(['Price per room', fmtPrice(d.pricePerRoom)]);
+    if (d.pricePerPerson) specifics.push(['Price per person', fmtPrice(d.pricePerPerson)]);
+    if (d.breakfast) specifics.push(['Breakfast', 'Included']);
+    if (d.transfersIncluded) specifics.push(['Transfers', 'Included']);
+  } else if (act.itemType === 'flight') {
+    if (d.airline) specifics.push(['Airline', d.airline]);
+    if (d.flightNumber) specifics.push(['Flight number', d.flightNumber]);
+  } else if (act.itemType === 'transfer' || act.itemType === 'car') {
+    if (d.from) specifics.push(['From', d.from]);
+    if (d.to) specifics.push(['To', d.to]);
+  }
+  return specifics;
+}
+
 function drawSchedule(mountEl, tripId, panelLabel, schedule) {
   var html = '<div class="schedule-toolbar">' +
       '<span class="schedule-hint"><i class="ti ti-arrows-move"></i> Drag days/activities to reorder, or drag items straight from your Trip Cart below into a day — changes save automatically.</span>' +
@@ -6434,14 +6468,21 @@ function drawSchedule(mountEl, tripId, panelLabel, schedule) {
       '</div>' +
     '</div><div class="itinerary schedule-list itin-doc">';
   schedule.forEach(function(day, dIdx) {
+    var dayTitle = (day.title && day.title !== 'Day ' + day.day) ? ': ' + escapeHtml(day.title) : '';
     html += '<div class="itin-day schedule-mode itin-day-doc" draggable="true" data-day-idx="' + dIdx + '">' +
-      '<div class="itin-day-header schedule-mode"><i class="ti ti-arrows-move day-drag-handle"></i><h4>Day ' + day.day + ': ' + escapeHtml(day.title || '') + '</h4>' +
+      '<div class="itin-day-header schedule-mode"><i class="ti ti-arrows-move day-drag-handle"></i><h4>Day ' + day.day + dayTitle + '</h4>' +
         '<button type="button" class="schedule-add-item-btn schedule-add-item-btn-inline" onclick="openItinItemModal(this,' + dIdx + ',null)"><i class="ti ti-plus"></i> Add Item</button>' +
       '</div>' +
       '<div class="itin-day-body" data-day-idx="' + dIdx + '">';
     (day.activities || []).forEach(function(act, aIdx) {
       var meta = ITIN_TYPE_META[act.itemType] || null;
       var notes = act.details && act.details.notes;
+      var specPairs = getItinSpecificsPairs(act);
+      var specChipsHtml = specPairs.length
+        ? '<div class="itin-activity-doc-specifics">' + specPairs.map(function(p) {
+            return '<span class="itin-specifics-chip">' + (p[1] === 'Included' ? escapeHtml(p[0]) : escapeHtml(p[0]) + ': ' + escapeHtml(String(p[1]))) + '</span>';
+          }).join('') + '</div>'
+        : '';
       var thumbRef = act.details && (act.details.photo_reference || (act.details.photos && act.details.photos[0]));
       var thumbHtml = thumbRef
         ? '<img class="itin-activity-thumb" loading="lazy" src="/.netlify/functions/place-photo?ref=' + encodeURIComponent(thumbRef) + '&maxwidth=120" alt="" onclick="openItinDetailView(' + dIdx + ',' + aIdx + ')">'
@@ -6454,7 +6495,7 @@ function drawSchedule(mountEl, tripId, panelLabel, schedule) {
         thumbHtml +
         '<div class="itin-activity-doc-body">' +
           '<div class="itin-activity-doc-row1">' +
-            '<span class="itin-time">' + escapeHtml(act.time || '') + '</span>' +
+            '<span class="itin-time' + (act.time ? '' : ' itin-time-unset') + '" onclick="openItinItemModal(this,' + dIdx + ',' + aIdx + ')" title="Click to set time">' + (act.time ? escapeHtml(act.time) : 'Set time') + '</span>' +
             '<span class="itin-desc itin-desc-link" onclick="openItinDetailView(' + dIdx + ',' + aIdx + ')">' + escapeHtml(act.description || '') + '</span>' +
             (meta ? '<span class="itin-type-tag tag-' + act.itemType + '">' + meta.label + '</span>' : '') +
             (act.price ? '<span class="itin-price">' + fmtPrice(act.price) + '</span>' : '') +
@@ -6465,6 +6506,7 @@ function drawSchedule(mountEl, tripId, panelLabel, schedule) {
               '<button type="button" class="itin-item-action-btn" title="Delete" onclick="deleteItinItem(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-trash"></i></button>' +
             '</span>' +
           '</div>' +
+          specChipsHtml +
           (notes ? '<div class="itin-activity-doc-notes">' + escapeHtml(notes) + '</div>' : '') +
         '</div>' +
       '</div>';
@@ -6665,6 +6707,11 @@ function onItinItemTypeChange() {
   document.querySelectorAll('.itin-detail-group').forEach(function(g) {
     g.classList.toggle('active', groups.indexOf(g.id) !== -1);
   });
+  // Only for a brand-new item — switching the type while editing an
+  // existing one shouldn't silently overwrite a time that was already set.
+  if (itinModalActIdx === null && EXPLORE_DEFAULT_TIMES[type]) {
+    document.getElementById('itin-item-time').value = EXPLORE_DEFAULT_TIMES[type];
+  }
 }
 
 // Real search-and-swap for the "Day 1 Golf → Edit → change course" flow —
@@ -6734,7 +6781,7 @@ function openItinItemModal(btnEl, dayIdx, actIdx) {
 
   document.getElementById('itin-item-type').value = (act && act.itemType) || 'course';
   document.getElementById('itin-item-title').value = (act && act.description) || '';
-  document.getElementById('itin-item-time').value = (act && act.time) || '';
+  document.getElementById('itin-item-time').value = (act && act.time) || EXPLORE_DEFAULT_TIMES[(act && act.itemType) || 'course'] || '';
   document.getElementById('itin-item-price').value = (act && act.price) || '';
   document.getElementById('itin-item-notes').value = d.notes || '';
   document.getElementById('itin-course-players').value = d.players || '';
@@ -6939,25 +6986,9 @@ function openItinDetailView(dayIdx, actIdx) {
     : '';
 
   // Type-specific fields captured via the Add/Edit modal — shown read-only.
-  var specifics = [];
-  if (act.itemType === 'course') {
-    if (d.players) specifics.push(['Players', d.players]);
-    if (d.handicapReq) specifics.push(['Handicap requirement', d.handicapReq]);
-    if (d.buggy) specifics.push(['Buggy', 'Included']);
-  } else if (act.itemType === 'hotel') {
-    if (d.roomType) specifics.push(['Room type', d.roomType]);
-    if (d.numRooms) specifics.push(['Rooms', d.numRooms]);
-    if (d.pricePerRoom) specifics.push(['Price per room', fmtPrice(d.pricePerRoom)]);
-    if (d.pricePerPerson) specifics.push(['Price per person', fmtPrice(d.pricePerPerson)]);
-    if (d.breakfast) specifics.push(['Breakfast', 'Included']);
-    if (d.transfersIncluded) specifics.push(['Transfers', 'Included']);
-  } else if (act.itemType === 'flight') {
-    if (d.airline) specifics.push(['Airline', d.airline]);
-    if (d.flightNumber) specifics.push(['Flight number', d.flightNumber]);
-  } else if (act.itemType === 'transfer' || act.itemType === 'car') {
-    if (d.from) specifics.push(['From', d.from]);
-    if (d.to) specifics.push(['To', d.to]);
-  }
+  // Sourced from the same getItinSpecificsPairs() the compact itinerary row
+  // uses, so the two views can never show different things for the same item.
+  var specifics = getItinSpecificsPairs(act);
   var specificsHtml = specifics.length
     ? '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">' + specifics.map(function(s) {
         return '<div><div class="fs-sm text-muted" style="text-transform:uppercase;font-size:.65rem;letter-spacing:.06em">' + s[0] + '</div><div style="font-weight:600">' + escapeHtml(String(s[1])) + '</div></div>';
@@ -8937,7 +8968,7 @@ var EXPLORE_CATEGORY_META = {
 // either way — just pass origin/dest in whichever order). Reuses
 // formatCalDate/buildExpediaFlightsUrl from the existing flight calendar
 // system for consistency with how flights link elsewhere in the app.
-function renderExploreFlightColumn(mountId, prices, originCode, destCode, destNameFallback) {
+function renderExploreFlightColumn(mountId, prices, originCode, destCode, destNameFallback, isReturn) {
   var el = document.getElementById(mountId);
   if (!el) return;
   if (!prices.length) {
@@ -8948,12 +8979,54 @@ function renderExploreFlightColumn(mountId, prices, originCode, destCode, destNa
   el.innerHTML = prices.map(function(p) {
     var isCheapest = cheapest && p.date === cheapest.date;
     var url = buildExpediaFlightsUrl(originCode, destCode, p.date, null, '2', destNameFallback);
-    return '<a href="' + url + '" target="_blank" rel="noopener" class="explore-flight-row' + (isCheapest ? ' cheapest' : '') + '">' +
-      '<div><div class="explore-flight-date">' + formatCalDate(p.date) + '</div>' +
-      '<div class="fs-sm text-muted">' + originCode + ' &#8594; ' + destCode + (p.directOnly ? ' &middot; Direct' : '') + '</div></div>' +
+    return '<div class="explore-flight-row' + (isCheapest ? ' cheapest' : '') + '">' +
+      '<a href="' + url + '" target="_blank" rel="noopener" class="explore-flight-row-link">' +
+        '<div class="explore-flight-date">' + formatCalDate(p.date) + '</div>' +
+        '<div class="fs-sm text-muted">' + originCode + ' &#8594; ' + destCode + (p.directOnly ? ' &middot; Direct' : '') + '</div>' +
+      '</a>' +
       '<div class="explore-flight-price">' + (isCheapest ? '<span class="explore-flight-badge">Cheapest</span>' : '') + fmtPrice(p.price) + '</div>' +
-    '</a>';
+      '<button class="btn btn-primary btn-sm" title="Add to itinerary" onclick="addExploreFlightToItinerary(\'' + p.date + '\',' + p.price + ',\'' + originCode + '\',\'' + destCode + '\',' + (isReturn ? 'true' : 'false') + ')"><i class="ti ti-plus"></i></button>' +
+    '</div>';
   }).join('');
+}
+
+// Outbound always leads Day 1, return always closes the last day — real
+// flight TIMES aren't something Travelpayouts' fare data includes (it's
+// cheapest-price-per-date only), so 06:00/18:00 are placeholder defaults
+// that keep the ordering sensible; edit the item afterwards for the real
+// time once it's booked.
+function addExploreFlightToItinerary(date, price, originCode, destCode, isReturn) {
+  var mountEl = document.getElementById('group-schedule-wrap');
+  var schedule = mountEl && mountEl._scheduleData;
+  var dateLabel = new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  var flightItem = {
+    time: isReturn ? '18:00' : '06:00',
+    description: originCode + ' \u2192 ' + destCode + ' (' + dateLabel + ')',
+    itemType: 'flight',
+    price: price,
+    details: { notes: '' }
+  };
+
+  if (!schedule || !schedule.length) {
+    addToCart('flight', flightItem.description, '', fmtPrice(price), price);
+    showToast('Flight added to your Trip Cart — drag it into a day once you have a schedule.');
+    return;
+  }
+
+  if (isReturn) {
+    var lastDay = schedule[schedule.length - 1];
+    lastDay.activities = lastDay.activities || [];
+    lastDay.activities.push(flightItem);
+  } else {
+    var firstDay = schedule[0];
+    firstDay.activities = firstDay.activities || [];
+    firstDay.activities.unshift(flightItem);
+  }
+
+  drawSchedule(mountEl, mountEl._tripId, mountEl._panelLabel, schedule);
+  saveSchedule(mountEl._tripId, mountEl._panelLabel, schedule, mountEl.querySelector('.schedule-save-note'));
+  updateExploreCommittedPins();
+  showToast('Flight added to ' + (isReturn ? 'the end of your last day' : 'the start of Day 1'));
 }
 
 function switchExploreCategory(cat) {
@@ -9113,8 +9186,8 @@ async function runExploreSearch(keepCenter) {
         document.getElementById('explore-return-list').innerHTML = '';
         return;
       }
-      renderExploreFlightColumn('explore-results-list', outboundPrices, originCode, destCode, destination);
-      renderExploreFlightColumn('explore-return-list', returnPrices, destCode, originCode, destination);
+      renderExploreFlightColumn('explore-results-list', outboundPrices, originCode, destCode, destination, false);
+      renderExploreFlightColumn('explore-return-list', returnPrices, destCode, originCode, destination, true);
       updateExploreCommittedPins(); // map itself is hidden for Flights, but the drive-times panel lives outside it and should stay in sync
     } catch (e) {
       console.error('runExploreSearch (flight) error:', e);
@@ -9616,6 +9689,14 @@ function updateExploreMapPins(recenter) {
 // across existing days (day with fewest items gets it) rather than always
 // stacking everything onto Day 1. Falls back to the Trip Cart if there's no
 // schedule mounted yet (e.g. no AI itinerary generated for this trip).
+// Sensible starting point per type — a hotel check-in and a tee time are
+// genuinely different times of day, so one blanket default wouldn't make
+// sense. Still just a starting point: fully editable afterwards, and this
+// is exactly what was missing before — items added from Explore had no
+// time at all, only ones the AI happened to generate did, which is why the
+// itinerary looked inconsistent (some rows with a time, most without).
+var EXPLORE_DEFAULT_TIMES = { course: '09:00', hotel: '15:00', restaurant: '19:30', activity: '11:00' };
+
 function addExploreResultToItinerary(idx) {
   var r = exploreResults[idx];
   if (!r) return;
@@ -9636,7 +9717,7 @@ function addExploreResultToItinerary(idx) {
 
   schedule[targetIdx].activities = schedule[targetIdx].activities || [];
   schedule[targetIdx].activities.push({
-    time: '',
+    time: EXPLORE_DEFAULT_TIMES[meta.itemType] || '',
     description: r.name,
     itemType: meta.itemType,
     price: null,

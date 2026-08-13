@@ -41,7 +41,7 @@ exports.handler = async (event) => {
 
     const url = 'https://maps.googleapis.com/maps/api/place/details/json' +
       '?place_id=' + encodeURIComponent(place_id) +
-      '&fields=website,url' + // minimal field mask — keeps this call in Places' cheapest tier
+      '&fields=website,url,photos' + // added photos — Search results sometimes come back with an empty photos array for a place that Details still has full photo coverage for (lodging listings in particular seem prone to this)
       '&key=' + apiKey
 
     const response = await fetch(url)
@@ -53,16 +53,19 @@ exports.handler = async (event) => {
         headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
         // Fail soft with a manually-built Maps link — always works even if
         // this lookup itself fails, so the button never dead-ends.
-        body: JSON.stringify({ website: null, url: 'https://www.google.com/maps/place/?q=place_id:' + place_id })
+        body: JSON.stringify({ website: null, url: 'https://www.google.com/maps/place/?q=place_id:' + place_id, photos: [] })
       }
     }
+
+    const photos = ((data.result && data.result.photos) || []).slice(0, 5).map(function (ph) { return ph.photo_reference })
 
     return {
       statusCode: 200,
       headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
       body: JSON.stringify({
         website: (data.result && data.result.website) || null,
-        url: (data.result && data.result.url) || ('https://www.google.com/maps/place/?q=place_id:' + place_id)
+        url: (data.result && data.result.url) || ('https://www.google.com/maps/place/?q=place_id:' + place_id),
+        photos: photos
       })
     }
 

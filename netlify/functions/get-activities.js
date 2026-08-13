@@ -87,12 +87,24 @@ exports.handler = async (event) => {
       )) || null;
       const rating = (p.reviews && (p.reviews.combinedAverageRating || p.reviews.averageRating)) || null;
       const price = (p.pricing && (p.pricing.summary && p.pricing.summary.fromPrice)) || p.fromPrice || null;
+
+      // Best-effort location extraction — NOT verified against a live
+      // response (that would need a real Viator API call to confirm field
+      // names), tried against a few shapes their docs describe across
+      // product/logistics objects. Check the debug log below in Netlify's
+      // function logs against a real search to see which (if any) path
+      // actually matches and tighten this once confirmed.
+      const startLoc = p.logistics && p.logistics.start && p.logistics.start[0] && p.logistics.start[0].location;
+      const lat = (p.location && p.location.latitude) || (startLoc && startLoc.latitude) || (p.meetingPoint && p.meetingPoint.location && p.meetingPoint.location.latitude) || null;
+      const lng = (p.location && p.location.longitude) || (startLoc && startLoc.longitude) || (p.meetingPoint && p.meetingPoint.location && p.meetingPoint.location.longitude) || null;
+
       return {
         title: p.title || p.name || 'Activity',
         image: image,
         rating: rating,
         price: price,
-        url: p.productUrl || p.webURL || null // includes Viator's own tracking params — do not modify
+        url: p.productUrl || p.webURL || null, // includes Viator's own tracking params — do not modify
+        lat: lat, lng: lng
       };
     }).filter(function (a) { return a.url; });
 

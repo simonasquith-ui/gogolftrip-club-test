@@ -1,4 +1,5 @@
 // netlify/functions/drive-time.js
+const { logApiCall } = require('./_usage-log')
 // Real driving time/distance between two points, via Google's Distance
 // Matrix API. Used to show "12 mins" between a course and where you're
 // staying, etc. — one pair per call, kept simple since there are only ever
@@ -45,6 +46,7 @@ exports.handler = async (event) => {
       '&mode=driving&units=imperial' +
       '&key=' + apiKey
 
+    logApiCall('google-distance-matrix')
     const response = await fetch(url)
     const data = await response.json()
 

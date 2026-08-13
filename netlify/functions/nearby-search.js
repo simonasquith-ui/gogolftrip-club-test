@@ -70,6 +70,7 @@ exports.handler = async (event) => {
     }
 
     const results = (data.results || []).slice(0, 20).map(function (p) {
+      var photoRefs = (p.photos || []).slice(0, 3).map(function (ph) { return ph.photo_reference })
       return {
         place_id: p.place_id,
         name: p.name,
@@ -79,7 +80,8 @@ exports.handler = async (event) => {
         vicinity: p.vicinity || '',
         lat: p.geometry && p.geometry.location ? p.geometry.location.lat : null,
         lng: p.geometry && p.geometry.location ? p.geometry.location.lng : null,
-        photo_reference: (p.photos && p.photos[0] && p.photos[0].photo_reference) || null,
+        photo_reference: photoRefs[0] || null, // kept for the card thumbnail — first photo only
+        photos: photoRefs, // up to 3 — used by the map pin's photo popup
         open_now: p.opening_hours ? !!p.opening_hours.open_now : null
       }
     }).filter(function (r) { return r.lat && r.lng })

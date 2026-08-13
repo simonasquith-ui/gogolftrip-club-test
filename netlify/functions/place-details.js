@@ -1,4 +1,5 @@
 // netlify/functions/place-details.js
+const { logApiCall } = require('./_usage-log')
 // Looks up a single place's website (if it has one) and Google's own Maps
 // page for it. Deliberately NOT called for every result in a search — that
 // would be 20 extra Places API calls per search for links most people never
@@ -44,6 +45,7 @@ exports.handler = async (event) => {
       '&fields=website,url,photos' + // added photos — Search results sometimes come back with an empty photos array for a place that Details still has full photo coverage for (lodging listings in particular seem prone to this)
       '&key=' + apiKey
 
+    logApiCall('google-places-details')
     const response = await fetch(url)
     const data = await response.json()
 

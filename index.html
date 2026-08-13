@@ -10279,6 +10279,31 @@ document.addEventListener('click', function(e) {
   if (modal && e.target === modal) closeClubModal();
 });
 
+// TEMPORARY TEST-MODE BYPASS — remove this whole block before this file
+// ever goes near the live gogolftrip.co.uk site. Gated on hostname so it
+// physically cannot fire on the production domain even if this code gets
+// copied back by mistake: it only runs when Stripe isn't configured AND
+// we're not on gogolftrip.co.uk. Does exactly what stripe-webhook.js does
+// on a real successful payment (activate the club, add the admin as a
+// member) — just without a real charge.
+async function testModeSkipClubPayment(clubName) {
+  var baseSlug = clubName.trim().toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').slice(0, 60) || 'club';
+  var slug = baseSlug + '-' + Math.random().toString(36).slice(2, 6);
+  var ins = await sbClient.from('clubs').insert({
+    name: clubName.trim(),
+    slug: slug,
+    admin_user_id: currentUser.id,
+    plan_status: 'active' // real flow starts 'pending' until Stripe confirms — test mode skips straight to active
+  }).select('id').single();
+  if (ins.error || !ins.data) throw new Error(ins.error ? ins.error.message : 'Could not create club');
+  await sbClient.from('club_members').upsert({ club_id: ins.data.id, user_id: currentUser.id, role: 'admin' }, { onConflict: 'club_id,user_id' });
+  await loadUserPlan();
+  updateNav(currentUser);
+  closeClubModal();
+  showClubLinkModal(ins.data.id, clubName.trim());
+  showToast('Test mode: club created without payment (Stripe not set up on this site).');
+}
+
 async function startClubCheckout() {
   if (!currentUser) { closeClubModal(); openAuthModal('signup'); return; }
   var nameInput = document.getElementById('club-name-input');
@@ -10301,11 +10326,17 @@ async function startClubCheckout() {
     var data = await res.json();
     if (data.url) {
       window.location.href = data.url;
-    } else {
-      throw new Error(data.error || 'Could not create checkout session');
+      return;
     }
+    var stripeNotConfigured = data.error && /not configured/i.test(data.error);
+    if (stripeNotConfigured && window.location.hostname !== 'gogolftrip.co.uk' && window.location.hostname !== 'www.gogolftrip.co.uk') {
+      await testModeSkipClubPayment(clubName);
+      return;
+    }
+    throw new Error(data.error || 'Could not create checkout session');
   } catch(e) {
     showToast('Payment error: ' + e.message, true);
+  } finally {
     if (btn) { btn.disabled = false; btn.textContent = 'Set Up My Club'; }
   }
 }
@@ -10343,6 +10374,25 @@ document.addEventListener('click', function(e) {
   if (modal && e.target === modal) closePricingModal();
 });
 
+// Same test-mode bypass as testModeSkipClubPayment, for the individual
+// £4.99/mo plan. Hostname-gated the same way — cannot fire on the live
+// domain. TEMPORARY — remove before this file goes near gogolftrip.co.uk.
+async function testModeSkipIndividualPayment(plan) {
+  var upsert = await sbClient.from('user_plans').upsert({
+    user_id: currentUser.id,
+    plan: plan,
+    status: 'active',
+    started_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'user_id' });
+  if (upsert.error) throw new Error(upsert.error.message);
+  await loadUserPlan();
+  updateNav(currentUser);
+  closePricingModal();
+  renderProfilePlan();
+  showToast('Test mode: plan activated without payment (Stripe not set up on this site).');
+}
+
 async function startCheckout(plan) {
   if (!currentUser) {
     closePricingModal();
@@ -10365,12 +10415,18 @@ async function startCheckout(plan) {
     var data = await res.json();
     if (data.url) {
       window.location.href = data.url;
-    } else {
-      throw new Error(data.error || 'Could not create checkout session');
+      return;
     }
+    var stripeNotConfigured = data.error && /not configured/i.test(data.error);
+    if (stripeNotConfigured && window.location.hostname !== 'gogolftrip.co.uk' && window.location.hostname !== 'www.gogolftrip.co.uk') {
+      await testModeSkipIndividualPayment(plan);
+      return;
+    }
+    throw new Error(data.error || 'Could not create checkout session');
   } catch(e) {
     showToast('Payment error: ' + e.message, true);
-    if (btn) { btn.disabled = false; btn.textContent = plan === 'pro' ? 'Get Pro' : 'Get Society'; }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = plan === 'individual' ? 'Get Individual' : (plan === 'pro' ? 'Get Pro' : 'Get Society'); }
   }
 }
 

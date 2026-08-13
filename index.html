@@ -582,6 +582,10 @@ label{display:block;font-size:.8rem;font-weight:500;color:var(--ink);margin-bott
 .itin-item-actions{display:flex;gap:6px;flex-shrink:0}
 .itin-item-action-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px 6px;border-radius:var(--r);font-size:.95rem;line-height:1;transition:color var(--tr)}
 .itin-item-action-btn:hover{color:var(--moss);background:var(--off-white)}
+.itin-item-action-btn[disabled]{opacity:.3;cursor:default;pointer-events:none}
+.itin-day-move-btns{display:flex;gap:2px;flex-shrink:0}
+.itin-day-move-btns .itin-item-action-btn{color:rgba(255,255,255,.6)}
+.itin-day-move-btns .itin-item-action-btn:hover{color:#fff;background:rgba(255,255,255,.12)}
 .schedule-add-item-btn{background:none;border:1px dashed var(--line);color:var(--muted);font-size:.76rem;font-weight:600;padding:8px 12px;border-radius:var(--r);cursor:pointer;width:100%;margin-top:8px;text-align:center}
 .schedule-add-item-btn:hover{border-color:var(--brass);color:var(--brass)}
 .itin-detail-group{display:none}
@@ -599,7 +603,11 @@ label{display:block;font-size:.8rem;font-weight:500;color:var(--ink);margin-bott
 .itin-activity-doc{display:flex;gap:14px;align-items:flex-start;padding:16px;margin-bottom:12px;background:var(--white);border:1px solid var(--border);border-radius:var(--rl)}
 .itin-activity-doc:last-child{margin-bottom:0}
 .itin-activity-doc-body{flex:1;min-width:0}
-.itin-activity-doc-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;align-self:center;padding-left:4px}
+.itin-activity-doc-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;align-self:center;padding-left:4px;flex-wrap:wrap;justify-content:flex-end}
+/* The move-to dropdown + edit/copy/delete icons otherwise squeeze the
+   activity title into a sliver on phone widths — drop them to their own
+   full-width row instead of sharing the row with the title. */
+@media(max-width:520px){.itin-activity-doc{flex-wrap:wrap}.itin-activity-doc-actions{flex-basis:100%;justify-content:flex-end;margin-top:8px;padding-left:0}}
 .itin-activity-doc-row1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .itin-activity-doc-row1 .itin-desc{font-weight:700;color:var(--text);font-size:1.02rem}
 .itin-activity-doc-notes{font-size:.85rem;color:var(--muted);margin-top:6px;line-height:1.55}
@@ -654,6 +662,11 @@ label{display:block;font-size:.8rem;font-weight:500;color:var(--ink);margin-bott
 .vote-panel h3{color:var(--moss);margin-bottom:16px;font-family:var(--font-display);font-weight:500;font-size:1.1rem}
 .gp-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
 @media(max-width:600px){.gp-grid{grid-template-columns:1fr}}
+/* Feedback FAB collides with right-aligned buttons/inputs on narrow
+   screens (e.g. Explore's Search button sits in roughly the same spot
+   once the trip header pushes it down) — shrink to an icon-only circle
+   on mobile so it has a much smaller footprint to collide with. */
+@media(max-width:600px){#feedback-fab{padding:12px;border-radius:50%}.feedback-fab-label{display:none}}
 .cart-item{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
 .cart-item:last-child{border-bottom:none;padding-bottom:0}
 .cart-icon{width:22px;height:22px;border-radius:0;background:none!important;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.05rem;color:var(--brass);line-height:1}
@@ -711,6 +724,22 @@ label{display:block;font-size:.8rem;font-weight:500;color:var(--ink);margin-bott
 .invite-section{margin-top:22px;padding-top:22px;border-top:1px solid var(--line)}
 .invite-link-box{display:flex;gap:8px;margin-top:8px}
 .invite-link-box input{font-size:.8rem;background:var(--paper)}
+.club-onb-dot{width:22px;height:3px;border-radius:2px;background:rgba(255,255,255,.25)}
+.club-onb-dot.active{background:var(--brass)}
+.pricing-faq-item{margin-bottom:16px;text-align:left}
+.pricing-faq-item:last-child{margin-bottom:0}
+.pricing-faq-q{color:#fff;font-size:.85rem;font-weight:600;margin-bottom:4px}
+.pricing-faq-a{color:rgba(255,255,255,.6);font-size:.8rem;line-height:1.6}
+.gp-group-section-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--brass);margin:28px 0 12px;padding-top:20px;border-top:1px solid var(--border)}
+.finalize-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.finalize-summary-val{font-size:1.15rem;font-weight:600;color:var(--green);font-family:var(--font-display)}
+.finalize-member-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.finalize-members-editor{max-height:260px;overflow-y:auto;border:1px solid var(--line);border-radius:var(--r);padding:4px 12px}
+.finalize-member-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.finalize-member-row:last-child{border-bottom:none}
+.finalize-member-name{flex:1;font-size:.88rem}
+.finalize-member-share{font-weight:600;color:var(--moss)}
+.finalize-member-row input[type=number]{width:90px}
 .admin-login{max-width:400px;margin:100px auto;background:var(--surface);border-radius:var(--rl);border:1px solid var(--line);padding:40px}
 .admin-login h2{color:var(--moss);margin-bottom:24px;font-family:var(--font-display);font-weight:500;text-align:center}
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-bottom:48px;background:var(--line);border:1px solid var(--line)}
@@ -781,7 +810,7 @@ tr:last-child td{border-bottom:none}
 .swipe-btn-like:hover{border-color:#7fbf8f;color:#7fbf8f}
 .swipe-progress{font-size:.72rem;color:rgba(255,255,255,.45);margin-top:14px}
 .swipe-empty{padding:60px 10px;color:rgba(255,255,255,.6);font-size:.9rem}
-#toast{position:fixed;bottom:24px;right:24px;z-index:500;display:flex;flex-direction:column;gap:8px}
+#toast{position:fixed;bottom:80px;right:24px;z-index:500;display:flex;flex-direction:column;gap:8px}
 .toast-item{background:var(--moss-dark);color:#fff;padding:13px 20px;border-radius:var(--r);font-size:.85rem;font-weight:400;box-shadow:none;animation:slideIn .3s ease;border:1px solid rgba(255,255,255,.14);border-left:2px solid var(--brass)}
 .toast-item.error{background:var(--moss-dark);border-left-color:#c0574c}
 @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
@@ -1800,6 +1829,14 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
       <div class="stat-card"><div class="sc-val" id="cd-member-count">&#8212;</div><div class="sc-lbl">Members</div></div>
       <div class="stat-card"><div class="sc-val" id="cd-trip-count">&#8212;</div><div class="sc-lbl">Trips Planned</div></div>
       <div class="stat-card"><div class="sc-val" id="cd-plan-status">&#8212;</div><div class="sc-lbl">Subscription</div></div>
+      <div class="stat-card"><div class="sc-val" id="cd-engagement">&#8212;</div><div class="sc-lbl">Members Who've Joined a Trip</div></div>
+    </div>
+
+    <div class="admin-table-card" style="margin-bottom:24px">
+      <h3>Trip Activity</h3>
+      <p class="fs-sm text-muted" style="margin-bottom:4px">Most popular destination: <strong id="cd-top-destination" style="color:var(--brass)">&#8212;</strong></p>
+      <p class="fs-sm text-muted" style="margin-bottom:16px">Trips created per month</p>
+      <div id="cd-trips-chart" style="display:flex;align-items:flex-end;gap:14px;height:120px;padding-top:20px"></div>
     </div>
 
     <div class="profile-card" style="margin-bottom:24px">
@@ -1964,6 +2001,10 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
     </div>
 
     <div id="td-panel-itinerary" style="display:none">
+      <div class="card" style="margin-bottom:16px">
+        <div class="gp-section-head"><i class="ti ti-list"></i> Explore List</div>
+        <p class="fs-sm text-muted" style="margin:0">AI-suggested courses, hotels and restaurants to browse and compare — vote on favourites or add them to your Trip Cart. This isn't your final plan; build that on the Itinerary tab.</p>
+      </div>
       <div id="td-itinerary-loading" style="text-align:center;padding:40px 0;display:none">
         <div class="loading-spinner"></div>
         <p class="text-muted mt-8">Loading your trip details...</p>
@@ -1979,14 +2020,15 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
 
     <div id="td-panel-itin" style="display:none">
       <div class="card" style="margin-bottom:16px">
-        <div class="gp-section-head"><i class="ti ti-calendar-event"></i> Trip Itinerary</div>
-        <p class="fs-sm text-muted" style="margin:0">Drag days and activities to reorder, or drag items from your Trip Cart on the Group &amp; Booking tab straight into a day.</p>
+        <div class="gp-section-head"><i class="ti ti-calendar-event"></i> Itinerary</div>
+        <p class="fs-sm text-muted" style="margin:0">Your actual day-by-day plan — add and edit items here. Drag days and activities to reorder (or use the &uarr;&darr; buttons on touch devices), or drag items from your Trip Cart on the Group &amp; Booking tab straight into a day.</p>
       </div>
       <div id="group-schedule-wrap"><p class="fs-sm text-muted">Select a trip option on Explore List to see its schedule.</p></div>
     </div>
 
     <div id="td-panel-group" style="display:none">
 
+      <div class="gp-group-section-label" style="margin-top:0;padding-top:0;border-top:none">Your Trip</div>
       <!-- GROUP NAME -->
       <div class="card" style="margin-bottom:20px">
         <div class="gp-section-head"><i class="ti ti-tag"></i> Group Name</div>
@@ -1997,6 +2039,7 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
         <p class="fs-sm text-muted" style="margin-top:8px">Shows in your group chat and trip list for everyone on this trip.</p>
       </div>
 
+      <div class="gp-group-section-label">Plan &amp; Pay</div>
       <!-- CART + BOOKING PROGRESS — full width -->
       <div class="card" style="margin-bottom:20px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
@@ -2018,6 +2061,17 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
         </div>
       </div>
 
+      <!-- FINALIZE & PAYMENT — full width -->
+      <div class="card" style="margin-bottom:20px" id="finalize-card">
+        <div class="gp-section-head"><i class="ti ti-receipt"></i> Finalize &amp; Payment</div>
+        <p class="fs-sm text-muted" style="margin-bottom:14px">Once your itinerary has priced items, the organiser can lock in a split method and start collecting deposits.</p>
+        <div id="finalize-content"><p class="fs-sm text-muted">Loading…</p></div>
+      </div>
+
+      <!-- BTT wrap kept for compatibility -->
+      <div id="group-btt-wrap" style="margin-bottom:20px"></div>
+
+      <div class="gp-group-section-label">Decide Together</div>
       <!-- VOTES TALLY — full width -->
       <div class="card" style="margin-bottom:20px">
         <h3 style="color:var(--green);font-family:'Fraunces',serif;font-size:1rem;margin:0 0 12px"><i class="ti ti-star-filled"></i> Group Votes</h3>
@@ -2025,15 +2079,14 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
         <div id="group-votes-tally"><p class="fs-sm text-muted">No votes yet.</p></div>
       </div>
 
-      <!-- BTT wrap kept for compatibility -->
-      <div id="group-btt-wrap" style="margin-bottom:20px"></div>
-
+      <div class="gp-group-section-label">Just For Fun</div>
       <!-- PUTTING CHALLENGE — full width -->
       <div class="card" style="margin-bottom:20px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
           <h3 style="color:var(--green);font-family:'Fraunces',serif;font-size:1rem;margin:0"><i class="ti ti-golf"></i> Putting Challenge</h3>
           <span class="fs-sm text-muted" id="pc-subhead">Same hole for everyone on this trip — lowest strokes wins</span>
         </div>
+        <p class="fs-sm text-muted" style="margin:0 0 14px">A bit of fun while you plan — doesn't affect your itinerary or costs.</p>
         <div id="pc-upgrade-prompt" style="display:none">
           <p class="fs-sm text-muted" style="margin-bottom:12px">Compete with your group on a shared putting hole — upgrade or join via your golf club to unlock this.</p>
           <button class="btn btn-primary btn-sm" onclick="openPricingModal()">Upgrade Plan</button>
@@ -2054,6 +2107,7 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
         </div>
       </div>
 
+      <div class="gp-group-section-label">People</div>
       <!-- BOTTOM GRID: members+status LEFT, chat RIGHT -->
       <div class="gp-grid">
 
@@ -2162,21 +2216,6 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
             <button class="btn btn-primary" onclick="buildAroundVenue()"><i class="ti ti-sparkles"></i> Explore this area</button>
             <button class="btn btn-ghost" onclick="addVenueToCart()">&#43; Add to cart</button>
             <button class="btn btn-ghost btn-sm" onclick="clearVenuePreview()" style="margin-left:auto">Change</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Built trip results (shown after building) -->
-      <div id="venue-trip-results" style="display:none">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <h3 style="color:var(--green)"><i class="ti ti-map-pin"></i> Built Around Your Venue</h3>
-          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('venue-trip-results').style.display='none'">Start over</button>
-        </div>
-        <div id="venue-nearby-list"></div>
-        <div id="venue-add-all-wrap" style="margin-top:16px;display:none">
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-primary" style="flex:1" onclick="addAllVenueResults()">&#43; Add all to cart</button>
-            <button class="btn btn-secondary" style="flex:1" onclick="saveVenueTrip()" id="venue-save-btn"><i class="ti ti-check"></i> Save This Trip</button>
           </div>
         </div>
       </div>
@@ -2826,12 +2865,14 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
     </div>
   </div>
   <div class="admin-body"><div class="container">
-    <div class="admin-login" id="admin-login-form">
-      <h2>Admin Login</h2>
-      <div class="form-group"><label>Email</label><input type="email" id="admin-email" value="admin@golftrip.com"></div>
-      <div class="form-group"><label>Password</label><input type="password" id="admin-password"></div>
-      <div id="admin-login-msg" class="auth-msg" style="display:none"></div>
-      <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="adminLogin()">Login</button>
+    <div class="admin-login" id="admin-signin-prompt" style="display:none">
+      <h2>Sign In Required</h2>
+      <p class="fs-sm text-muted" style="margin-bottom:16px">Sign in with your GoGolfTrip account to access the admin dashboard.</p>
+      <button class="btn btn-primary" style="width:100%" onclick="openAuthModal('signin')">Sign In</button>
+    </div>
+    <div class="admin-login" id="admin-denied" style="display:none">
+      <h2>Not Authorized</h2>
+      <p class="fs-sm text-muted">This account doesn't have admin access.</p>
     </div>
     <div id="admin-dashboard" style="display:none">
       <div class="stats-grid">
@@ -2845,6 +2886,13 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
         <div class="admin-table-card"><h3>Plan Distribution</h3><table><thead><tr><th>Plan</th><th>Users</th></tr></thead><tbody id="admin-plan-table"></tbody></table></div>
         <div class="admin-table-card"><h3>Top Airports</h3><table><thead><tr><th>Airport</th><th>Trips</th></tr></thead><tbody id="admin-airport-table"></tbody></table></div>
         <div class="admin-table-card"><h3>Most Chosen Tier</h3><table><thead><tr><th>Tier</th><th>Selections</th></tr></thead><tbody id="admin-tier-table"></tbody></table></div>
+      </div>
+
+      <div class="admin-table-card" style="margin-top:24px">
+        <h3>Club Funnel</h3>
+        <p class="fs-sm text-muted" style="margin-bottom:4px">Clubs created per month</p>
+        <div id="admin-clubs-chart" style="display:flex;align-items:flex-end;gap:14px;height:110px;padding-top:16px;margin-bottom:20px"></div>
+        <table><thead><tr><th>Club</th><th>Created</th><th>Members</th><th>Trips Created</th><th>Status</th></tr></thead><tbody id="admin-clubs-table"><tr><td colspan="5">Loading&#8230;</td></tr></tbody></table>
       </div>
     </div>
   </div></div>
@@ -2997,6 +3045,34 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
     <button class="btn btn-primary" style="width:100%" onclick="saveItinItemFromModal()" id="itin-save-btn">Save Item</button>
   </div>
 </div>
+
+<!-- FINALIZE & GET COSTS MODAL — organiser picks a split method and locks in costs -->
+<div class="modal-overlay" id="finalize-modal">
+  <div class="modal" style="max-width:560px">
+    <button class="modal-close" onclick="closeFinalizeModal()"><i class="ti ti-x"></i></button>
+    <h2>Finalize &amp; Get Costs</h2>
+    <p class="fs-sm" style="margin-bottom:16px">Itinerary total: <strong id="finalize-total-display">£0</strong></p>
+    <div class="form-group">
+      <label>Split method</label>
+      <select id="finalize-method" onchange="onFinalizeMethodChange()">
+        <option value="even">Even split — same amount for everyone</option>
+        <option value="by_room">By room — split each room's cost between its occupants</option>
+        <option value="custom">Custom amounts — set each person's total yourself</option>
+      </select>
+    </div>
+    <div class="form-group" style="display:flex;gap:16px">
+      <div style="flex:1"><label>Deposit (%)</label><input type="number" id="finalize-deposit-pct" min="0" max="100" value="20"></div>
+      <div style="flex:1"><label>Balance due date</label><input type="date" id="finalize-due-date"></div>
+    </div>
+    <div class="form-group">
+      <label>Per-person breakdown</label>
+      <div id="finalize-members-editor" class="finalize-members-editor"></div>
+      <p class="fs-sm" id="finalize-sum-check" style="display:none;margin-top:8px"></p>
+    </div>
+    <p class="fs-sm text-muted" style="margin-bottom:12px">Only members marked "Going" are included. Payment status stays simulated — you'll mark deposits/payments as paid manually once you've collected them.</p>
+    <button class="btn btn-primary" style="width:100%" onclick="confirmFinalize()">Lock In Costs</button>
+  </div>
+</div>
 <script>
 /* === SUPABASE INIT === */
 const SUPABASE_URL = 'https://ddordyjwkdwqaarplwmc.supabase.co';
@@ -3039,7 +3115,9 @@ let currentTripRequestId = null;
 let currentTripData = null;
 let storedPanels = []; // panels stored for PDF export
 let activeTripId = null;
+let activeTripData = null;
 let chatPollInterval = null;
+var FINALIZE_STATE = { members: [], method: 'even', total: 0 }; // scratch state for the Finalize & Get Costs modal
 let activeCurrency = 'GBP';
 let compareMode = 'tiers';
 let selectedDests = [];
@@ -3134,7 +3212,7 @@ function showPage(name, skipHistory) {
     var season = getCurrentSeason();
     initSeasonalPage(season);
   }
-  if (name === 'admin') { document.getElementById('admin-login-form').style.display = 'block'; document.getElementById('admin-dashboard').style.display = 'none'; }
+  if (name === 'admin') { checkAdminAccess(); }
   if (name !== 'trip' && chatPollInterval) { clearInterval(chatPollInterval); chatPollInterval = null; }
 
   // Give routed pages a real URL and working back button
@@ -3278,10 +3356,11 @@ async function loadUserPlan() {
 async function loadUserDisplayInfo() {
   if (!currentUser) return;
   try {
-    var r = await sbClient.from('users').select('name, avatar_url').eq('id', currentUser.id).single();
+    var r = await sbClient.from('users').select('name, avatar_url, is_admin').eq('id', currentUser.id).single();
     if (r.data) {
       currentUser.display_name = r.data.name || null;
       currentUser.avatar_url = r.data.avatar_url || null;
+      currentUser.is_admin = !!r.data.is_admin;
     }
   } catch (e) { /* fall back silently to email/initials */ }
 }
@@ -3358,7 +3437,7 @@ function updateNav(user) {
     if (mobileAuth) mobileAuth.style.display = 'none';
     if (mobileUser) mobileUser.style.display = 'block';
     if (mobileTrips) mobileTrips.style.display = 'block';
-    if (user.email === 'admin@golftrip.com') adminLink.style.display = 'flex';
+    if (user.is_admin) adminLink.style.display = 'flex';
     else adminLink.style.display = 'none';
   } else {
     authBtns.style.display = 'flex'; navUser.style.display = 'none'; myTrips.style.display = 'none'; adminLink.style.display = 'none';
@@ -3377,8 +3456,6 @@ if (document.readyState === 'loading') {
 
 // Venue result buttons delegation
 document.addEventListener('click', function(e) {
-  var btn = e.target.closest('[data-venue-idx]');
-  if (btn) { addSingleVenueResult(parseInt(btn.getAttribute('data-venue-idx'))); return; }
   var card = e.target.closest('[data-venue-prefill]');
   if (card) { prefillVenueSearch(card.getAttribute('data-venue-prefill')); return; }
 });
@@ -3634,6 +3711,7 @@ sbClient.auth.onAuthStateChange(async function(event, session) {
   if (currentUser) { startNotifPolling(); } else { stopNotifPolling(); }
   if (currentUser) {
     closeAuthModal();
+    if (document.getElementById('page-admin') && document.getElementById('page-admin').classList.contains('active')) checkAdminAccess();
     if (pendingJoinId) {
       processJoin(pendingJoinId, currentUser);
     }
@@ -4621,7 +4699,7 @@ function buildPanelSection(section, panel, idx, qData) {
         (c.why_recommended?'<p class="fs-sm" style="margin-top:8px">'+c.why_recommended+'</p>':'') +
         '<div class="card-links">' +
           '<a href="'+gn+'" target="_blank" class="card-link">'+gnLabel+'</a>' +
-          '<button class="card-link add-to-cart-btn" style="cursor:pointer;background:none;border:1.5px solid var(--gold);color:var(--gold)" data-cart-type="course" data-cart-name="'+(c.name||'').replace(/"/g,'&quot;')+'" data-cart-sub="'+(c.location||'').replace(/"/g,'&quot;')+'" data-cart-price="Est. '+fmtPrice(c.green_fee||0)+'/round" data-cart-pricenum="'+(c.green_fee||0)+'">&#43; Cart</button>' +
+          '<button class="card-link add-to-cart-btn" style="cursor:pointer;background:none;border:1.5px solid var(--gold);color:var(--gold)" data-cart-type="course" data-cart-name="'+(c.name||'').replace(/"/g,'&quot;')+'" data-cart-sub="'+(c.location||'').replace(/"/g,'&quot;')+'" data-cart-price="Est. '+fmtPrice(c.green_fee||0)+'/round" data-cart-pricenum="'+(c.green_fee||0)+'">&#43; Add to Trip Cart</button>' +
         '</div>' +
       '</div>';
     });
@@ -4655,7 +4733,7 @@ function buildPanelSection(section, panel, idx, qData) {
               (expediaUrl ? '<a href="'+expediaUrl+'" target="_blank"><i class="ti ti-building-skyscraper"></i> Expedia</a>' : '') +
             '</div>' +
           '</div>' +
-          '<button class="card-link add-to-cart-btn" style="cursor:pointer;background:none;border:1.5px solid var(--gold);color:var(--gold)" data-cart-type="hotel" data-cart-name="'+(h.name||'').replace(/"/g,'&quot;')+'" data-cart-sub="'+(h.area||'').replace(/"/g,'&quot;')+'" data-cart-price="Est. '+fmtPrice(h.price_per_night||0)+'/night" data-cart-pricenum="'+(h.price_per_night||0)+'">&#43; Cart</button>' +
+          '<button class="card-link add-to-cart-btn" style="cursor:pointer;background:none;border:1.5px solid var(--gold);color:var(--gold)" data-cart-type="hotel" data-cart-name="'+(h.name||'').replace(/"/g,'&quot;')+'" data-cart-sub="'+(h.area||'').replace(/"/g,'&quot;')+'" data-cart-price="Est. '+fmtPrice(h.price_per_night||0)+'/night" data-cart-pricenum="'+(h.price_per_night||0)+'">&#43; Add to Trip Cart</button>' +
         '</div>' +
       '</div>';
     });
@@ -5372,6 +5450,14 @@ function fmtPrice(gbp) {
   var rate = RATES[activeCurrency] || 1;
   var sym = SYMS[activeCurrency] || '\u00a3';
   return sym + Math.round(parseFloat(gbp) * rate).toLocaleString('en-GB');
+}
+
+// Google's price_level is a 0-4 relative price TIER, not a real amount \u2014
+// showing it as repeated "\u00a3" characters reads exactly like a currency
+// figure, so we render it as a plain tier label instead.
+var PRICE_LEVEL_LABELS = ['Budget friendly', 'Budget friendly', 'Mid-range', 'Upscale', 'Luxury'];
+function priceLevelLabel(level) {
+  return (typeof level === 'number' && PRICE_LEVEL_LABELS[level]) ? PRICE_LEVEL_LABELS[level] : '';
 }
 
 // ── TRIP CART ───────────────────────────────────────────────
@@ -6106,7 +6192,7 @@ function buildPanel(panel, idx, qData, mapPrefix) {
             'data-cart-name="' + (c.name||'').replace(/"/g,'&quot;') + '" ' +
             'data-cart-sub="' + (c.location||'').replace(/"/g,'&quot;') + '" ' +
             'data-cart-price="Est. ' + fmtPrice(c.green_fee||0) + '/round" ' +
-            'data-cart-pricenum="' + (c.green_fee||0) + '">&#43; Cart</button>' +
+            'data-cart-pricenum="' + (c.green_fee||0) + '">&#43; Add to Trip Cart</button>' +
           (c.club_hire ? '<a href="' + hire + '" target="_blank" class="card-link">Club Hire</a>' : '') +
         '</div>' +
       '</div>';
@@ -6169,7 +6255,7 @@ function buildPanel(panel, idx, qData, mapPrefix) {
             'data-cart-name="' + (h.name||'').replace(/"/g,'&quot;') + '" ' +
             'data-cart-sub="' + (h.area||'').replace(/"/g,'&quot;') + '" ' +
             'data-cart-price="Est. ' + fmtPrice(h.price_per_night||0) + '/night" ' +
-            'data-cart-pricenum="' + (h.price_per_night||0) + '">&#43; Cart</button>' +
+            'data-cart-pricenum="' + (h.price_per_night||0) + '">&#43; Add to Trip Cart</button>' +
         '</div>' +
       '</div>';
     });
@@ -6352,7 +6438,7 @@ async function loadActivities(destination, idx) {
         '</div>' +
         (a.price ? '<div style="color:var(--gold);font-weight:600;margin-top:6px;font-size:.9rem">From &#163;' + Math.round(a.price) + '</div>' : '') +
         '<div style="margin-top:10px">' +
-          '<a href="' + a.url + '" target="_blank" rel="noopener" class="card-link" style="display:inline-flex;align-items:center;gap:5px"><i class="ti ti-beach"></i> Visit</a>' +
+          '<a href="' + a.url + '" target="_blank" rel="noopener" class="card-link" style="display:inline-flex;align-items:center;gap:5px"><i class="ti ti-beach"></i> View on Viator</a>' +
         '</div>' +
       '</div>';
     });
@@ -6490,7 +6576,7 @@ function getItinDescriptionText(act) {
 
 function drawSchedule(mountEl, tripId, panelLabel, schedule) {
   var html = '<div class="schedule-toolbar">' +
-      '<span class="schedule-hint"><i class="ti ti-arrows-move"></i> Drag days/activities to reorder, or drag items straight from your Trip Cart below into a day — changes save automatically.</span>' +
+      '<span class="schedule-hint"><i class="ti ti-arrows-move"></i> Drag days/activities to reorder (or use the &uarr;&darr; buttons on touch devices), or drag items straight from your Trip Cart below into a day — changes save automatically.</span>' +
       '<div style="display:flex;align-items:center;gap:14px">' +
         '<span class="schedule-save-note"></span>' +
         '<button type="button" class="schedule-reset-btn" onclick="addScheduleDay(this)"><i class="ti ti-plus"></i> Add Day</button>' +
@@ -6502,6 +6588,10 @@ function drawSchedule(mountEl, tripId, panelLabel, schedule) {
     html += '<div class="itin-day schedule-mode itin-day-doc" draggable="true" data-day-idx="' + dIdx + '">' +
       '<div class="itin-day-header schedule-mode">' +
         '<i class="ti ti-arrows-move day-drag-handle"></i>' +
+        '<div class="itin-day-move-btns" title="Reorder days — the touch-friendly alternative to dragging">' +
+          '<button type="button" class="itin-item-action-btn" title="Move day up" onclick="moveItinDay(this,' + dIdx + ',-1)"' + (dIdx === 0 ? ' disabled' : '') + '><i class="ti ti-chevron-up"></i></button>' +
+          '<button type="button" class="itin-item-action-btn" title="Move day down" onclick="moveItinDay(this,' + dIdx + ',1)"' + (dIdx === schedule.length - 1 ? ' disabled' : '') + '><i class="ti ti-chevron-down"></i></button>' +
+        '</div>' +
         '<div class="itin-day-header-text">' +
           '<div class="itin-day-eyebrow">DAY ' + day.day + '</div>' +
           '<h4>Day ' + day.day + dayTitle + '</h4>' +
@@ -6539,6 +6629,8 @@ function drawSchedule(mountEl, tripId, panelLabel, schedule) {
           (descriptionText ? '<div class="itin-activity-doc-notes">' + escapeHtml(descriptionText) + '</div>' : '') +
         '</div>' +
         '<div class="itin-activity-doc-actions">' +
+          '<button type="button" class="itin-item-action-btn" title="Move up" onclick="moveItinActivity(this,' + dIdx + ',' + aIdx + ',-1)"' + (aIdx === 0 ? ' disabled' : '') + '><i class="ti ti-chevron-up"></i></button>' +
+          '<button type="button" class="itin-item-action-btn" title="Move down" onclick="moveItinActivity(this,' + dIdx + ',' + aIdx + ',1)"' + (aIdx === (day.activities || []).length - 1 ? ' disabled' : '') + '><i class="ti ti-chevron-down"></i></button>' +
           '<select class="itin-move-to-select" title="Move to another day" onchange="moveItinItemToDay(this,' + dIdx + ',' + aIdx + ')">' + moveOptions + '</select>' +
           '<button type="button" class="itin-item-action-btn" title="Edit" onclick="openItinItemModal(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-pencil"></i></button>' +
           '<button type="button" class="itin-item-action-btn" title="Duplicate" onclick="duplicateItinItem(this,' + dIdx + ',' + aIdx + ')"><i class="ti ti-copy"></i></button>' +
@@ -6942,6 +7034,40 @@ function moveItinItemToDay(selectEl, fromDayIdx, actIdx) {
   showToast(item.description + ' moved to Day ' + schedule[targetDayIdx].day);
 }
 
+// Touch-friendly alternative to dragging an activity within a day — native
+// HTML5 drag-and-drop (used by wireScheduleDrag) doesn't fire on touch
+// screens at all, so this is the only way to reorder activities on mobile.
+function moveItinActivity(btnEl, dayIdx, actIdx, direction) {
+  var mountEl = btnEl.closest('.trip-schedule-wrap') || btnEl.closest('#group-schedule-wrap');
+  if (!mountEl || !mountEl._scheduleData || !mountEl._scheduleData[dayIdx]) return;
+  var activities = mountEl._scheduleData[dayIdx].activities || [];
+  var targetIdx = actIdx + direction;
+  if (targetIdx < 0 || targetIdx >= activities.length) return;
+  var tmp = activities[actIdx];
+  activities[actIdx] = activities[targetIdx];
+  activities[targetIdx] = tmp;
+  drawSchedule(mountEl, mountEl._tripId, mountEl._panelLabel, mountEl._scheduleData);
+  saveSchedule(mountEl._tripId, mountEl._panelLabel, mountEl._scheduleData, mountEl.querySelector('.schedule-save-note'));
+}
+
+// Touch-friendly alternative to dragging a whole day — same reasoning as
+// moveItinActivity. Renumbers day.day to match the new order, exactly like
+// commitScheduleFromDOM does after a drag reorder, so "Day 2" always means
+// "second day" regardless of how it got there.
+function moveItinDay(btnEl, dayIdx, direction) {
+  var mountEl = btnEl.closest('.trip-schedule-wrap') || btnEl.closest('#group-schedule-wrap');
+  if (!mountEl || !mountEl._scheduleData) return;
+  var schedule = mountEl._scheduleData;
+  var targetIdx = dayIdx + direction;
+  if (targetIdx < 0 || targetIdx >= schedule.length) return;
+  var tmp = schedule[dayIdx];
+  schedule[dayIdx] = schedule[targetIdx];
+  schedule[targetIdx] = tmp;
+  schedule.forEach(function(d, i) { d.day = i + 1; });
+  drawSchedule(mountEl, mountEl._tripId, mountEl._panelLabel, schedule);
+  saveSchedule(mountEl._tripId, mountEl._panelLabel, schedule, mountEl.querySelector('.schedule-save-note'));
+}
+
 function closeItinDetailView() {
   document.getElementById('itin-detail-modal').classList.remove('open');
 }
@@ -7052,7 +7178,7 @@ function openItinDetailView(dayIdx, actIdx) {
     '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">' +
       voteHtml +
       bookingLinksHtml +
-      (d.place_id ? '<button class="btn btn-ghost btn-sm" onclick="openItinDetailVisitLink(\'' + d.place_id + '\')">Visit <i class="ti ti-external-link"></i></button>' : (d.direct_url ? '<a class="btn btn-ghost btn-sm" href="' + d.direct_url + '" target="_blank" rel="noopener">Visit <i class="ti ti-external-link"></i></a>' : '')) +
+      (d.place_id ? '<button class="btn btn-ghost btn-sm" onclick="openItinDetailVisitLink(\'' + d.place_id + '\')">Website / Maps <i class="ti ti-external-link"></i></button>' : (d.direct_url ? '<a class="btn btn-ghost btn-sm" href="' + d.direct_url + '" target="_blank" rel="noopener">Open Link <i class="ti ti-external-link"></i></a>' : '')) +
     '</div>';
 
   document.getElementById('itin-detail-modal').classList.add('open');
@@ -8420,9 +8546,9 @@ function buildMapSection(panel, idx, mapPrefix) {
       '</div>' +
       '<div class="map-container" id="' + mapId + '" style="display:none;height:400px" data-map-prefix="' + mapPrefix + '" data-map-idx="' + idx + '"></div>' +
       '<div class="map-legend">' +
-        '<div class="legend-item"><div class="legend-dot" style="background:#1B3524"></div> Hotel</div>' +
-        '<div class="legend-item"><div class="legend-dot" style="background:#B08D52"></div> Golf Course</div>' +
-        '<div class="legend-item"><div class="legend-dot" style="background:#8C4A34"></div> Restaurant / Bar</div>' +
+        '<div class="legend-item"><div class="legend-dot" style="background:' + EXPLORE_PIN_COLORS.hotel + '"></div> Hotel</div>' +
+        '<div class="legend-item"><div class="legend-dot" style="background:' + EXPLORE_PIN_COLORS.course + '"></div> Golf Course</div>' +
+        '<div class="legend-item"><div class="legend-dot" style="background:' + EXPLORE_PIN_COLORS.restaurant + '"></div> Restaurant / Bar</div>' +
       '</div>' +
     '</div>' +
   '</div>';
@@ -8531,7 +8657,7 @@ async function initMap(idx, mapPrefix) {
   }
 
   var dest = panel.destination || '';
-  var colors = { hotel: '#1B3524', course: '#B08D52', restaurant: '#8C4A34' };
+  var colors = EXPLORE_PIN_COLORS; // same palette as Explore's map — one standard for the same categories everywhere
   var typeLabels = { hotel: 'Hotel', course: 'Golf Course', restaurant: 'Restaurant / Bar' };
   var mmQData = currentTripQData || {};
   var mmCheckin = (mmQData.dates && mmQData.dates.depart) ? mmQData.dates.depart : '';
@@ -9287,8 +9413,7 @@ async function runExploreSearch(keepCenter) {
     });
     var data = await res.json();
     exploreResults = (data.results || []).map(function(r) {
-      var priceStr = typeof r.price_level === 'number' ? (Array(r.price_level + 1).join('£') || '£') : '';
-      return Object.assign({}, r, { price_display: priceStr, image_url: null, direct_url: null });
+      return Object.assign({}, r, { price_display: priceLevelLabel(r.price_level), image_url: null, direct_url: null });
     });
     renderExploreResults();
     updateExploreMapPins(true);
@@ -9331,7 +9456,7 @@ function renderExploreResults() {
       '<div class="card-links">' +
         '<button class="card-link" style="cursor:pointer;background:var(--green);color:var(--gold);border-color:var(--green)" onclick="addExploreResultToItinerary(' + idx + ')">&#43; Add to Itinerary</button>' +
         (exploreCategory === 'hotel' ? buildExploreFindStayDropdown(r.name, r.vicinity) :
-          '<button class="card-link" style="cursor:pointer;background:none" id="explore-visit-btn-' + idx + '" onclick="openExploreVenueLink(' + idx + ')">Visit &#8599;</button>') +
+          '<button class="card-link" style="cursor:pointer;background:none" id="explore-visit-btn-' + idx + '" onclick="openExploreVenueLink(' + idx + ')">Website / Maps &#8599;</button>') +
       '</div>' +
     '</div>';
   }).join('');
@@ -9532,7 +9657,7 @@ async function updateExploreDriveTimes(items) {
 }
 
 // Hotels specifically get a choice of provider, same as the main AI panel's
-// hotel cards already do (toggleStayMenu) — one generic "Visit" link
+// hotel cards already do (toggleStayMenu) — one generic "Website / Maps" link
 // doesn't make sense for a hotel the way it does for a course or
 // restaurant, since a hotel search rarely has one obvious booking site.
 // Reuses the exact same affiliate-tracked link builders, not a separate,
@@ -9688,7 +9813,7 @@ function buildExploreInfoWindowContent(idx) {
         '<span style="color:#ccc">&middot;</span>' +
         '<a href="' + buildExpediaHotelUrl(r.vicinity || '', r.name, '', '', '2') + '" target="_blank" rel="noopener" style="color:#1a3a2a">Expedia</a>' +
       '</div>'
-    : '<button onclick="openExploreVenueLink(' + idx + ')" style="background:transparent;color:#1a3a2a;border:1px solid #1a3a2a;border-radius:3px;padding:6px 8px;font-size:.75rem;cursor:pointer">Visit</button>';
+    : '<button onclick="openExploreVenueLink(' + idx + ')" style="background:transparent;color:#1a3a2a;border:1px solid #1a3a2a;border-radius:3px;padding:6px 8px;font-size:.75rem;cursor:pointer">Website / Maps</button>';
   return '<div style="font-family:inherit;max-width:280px;margin:-14px -14px -12px">' +
     heroHtml +
     '<div style="padding:0 6px">' +
@@ -9850,6 +9975,7 @@ function switchTripTab(tab) {
   if (tab === 'group') {
     loadTripCart();
     updateGroupVotesTally();
+    renderFinalizeSection();
     // Inject BTT into group planning if we have a panel
     var bttWrap = document.getElementById('group-btt-wrap');
     if (bttWrap && storedPanels && storedPanels[0]) {
@@ -9862,6 +9988,7 @@ function switchTripTab(tab) {
 
 async function openTripDetail(tripId, tripData) {
   activeTripId = tripId;
+  activeTripData = tripData || null;
   showPage('trip');
   switchTripTab('explore');
   seedExploreFromDestination(tripData.destination_type);
@@ -10107,6 +10234,309 @@ async function loadTripMembers(tripId) {
 
 // castVote moved to voting system above
 
+// ── FINALIZE & PAYMENT ──────────────────────────────────────
+// Organiser picks a split method (Even / By Room / Custom) once the
+// itinerary has priced items, and we calculate each confirmed ('Going')
+// member's total/deposit/balance from it. Payment status is tracked but
+// simulated — the organiser marks deposit/fully paid/refunded by hand
+// (see decision #3 in TASKS.md, no real payment processing here).
+// TODO: possible Splitwise integration here — export the per-person
+// totals below to a Splitwise group instead of tracking payment status manually.
+
+function computeScheduleTotal(schedule) {
+  var total = 0;
+  (schedule || []).forEach(function(day) {
+    (day.activities || []).forEach(function(act) {
+      if (act && act.price) total += Number(act.price) || 0;
+    });
+  });
+  return total;
+}
+
+async function renderFinalizeSection() {
+  var el = document.getElementById('finalize-content');
+  if (!el || !activeTripId) return;
+  var scheduleWrap = document.getElementById('group-schedule-wrap');
+  if (!scheduleWrap || !scheduleWrap._scheduleData) {
+    await (renderGroupSchedule() || Promise.resolve());
+    scheduleWrap = document.getElementById('group-schedule-wrap');
+  }
+  var schedule = (scheduleWrap && scheduleWrap._scheduleData) || [];
+  var total = computeScheduleTotal(schedule);
+  var isOrganiser = !!(activeTripData && currentUser && activeTripData.user_id === currentUser.id);
+
+  var tr;
+  try {
+    tr = await sbClient.from('trip_requests').select('payment_split_method, finalized_at, deposit_percent').eq('id', activeTripId).single();
+  } catch (e) { console.error('renderFinalizeSection error:', e); el.innerHTML = '<p class="fs-sm text-muted">Could not load payment status.</p>'; return; }
+
+  if (tr.data && tr.data.finalized_at) {
+    renderPaymentSummary(el, tr.data, isOrganiser);
+    return;
+  }
+
+  if (!isOrganiser) {
+    el.innerHTML = '<p class="fs-sm text-muted">Your trip organiser hasn\'t finalized costs yet.</p>';
+    return;
+  }
+
+  if (total <= 0) {
+    el.innerHTML = '<p class="fs-sm text-muted">Add priced items to your itinerary (courses, hotels, flights) before finalizing costs.</p>';
+    return;
+  }
+
+  el.innerHTML = '<p class="fs-sm" style="margin-bottom:12px">Itinerary total: <strong style="color:var(--green)">' + fmtPrice(total) + '</strong></p>' +
+    '<button class="btn btn-primary" onclick="openFinalizeModal()"><i class="ti ti-receipt"></i> Finalize &amp; Get Costs</button>';
+}
+
+async function openFinalizeModal() {
+  if (!activeTripId || !activeTripData || !currentUser || activeTripData.user_id !== currentUser.id) {
+    showToast('Only the trip organiser can finalize costs.', true);
+    return;
+  }
+  var scheduleWrap = document.getElementById('group-schedule-wrap');
+  var schedule = (scheduleWrap && scheduleWrap._scheduleData) || [];
+  var total = computeScheduleTotal(schedule);
+  if (total <= 0) { showToast('Add priced items to the itinerary first.', true); return; }
+  FINALIZE_STATE.total = total;
+
+  try {
+    var r = await sbClient.from('trip_members').select('*').eq('trip_request_id', activeTripId).eq('status', 'Going');
+    var members = r.data || [];
+    if (!members.length) { showToast('No confirmed (Going) members to split costs across yet.', true); return; }
+    var userIds = members.map(function(m) { return m.user_id; }).filter(Boolean);
+    var nameMap = {};
+    if (userIds.length) {
+      var ur = await sbClient.from('users').select('id, email, name').in('id', userIds);
+      (ur.data || []).forEach(function(u) { nameMap[u.id] = u.name || (u.email ? u.email.split('@')[0] : 'Member'); });
+    }
+    if (currentUser) nameMap[currentUser.id] = currentUser.display_name || nameMap[currentUser.id] || (currentUser.email ? currentUser.email.split('@')[0] : 'You');
+
+    FINALIZE_STATE.members = members.map(function(m, i) {
+      return { id: m.id, user_id: m.user_id, name: nameMap[m.user_id] || 'Member', room: Math.floor(i / 2) + 1, custom: '' };
+    });
+    FINALIZE_STATE.method = 'even';
+
+    document.getElementById('finalize-total-display').textContent = fmtPrice(total);
+    document.getElementById('finalize-method').value = 'even';
+    document.getElementById('finalize-deposit-pct').value = 20;
+    document.getElementById('finalize-due-date').value = '';
+    renderFinalizeMembersEditor();
+    document.getElementById('finalize-modal').classList.add('open');
+  } catch (e) {
+    console.error('openFinalizeModal error:', e);
+    showToast('Could not load group members.', true);
+  }
+}
+
+function closeFinalizeModal() {
+  var m = document.getElementById('finalize-modal');
+  if (m) m.classList.remove('open');
+}
+
+function onFinalizeMethodChange() {
+  FINALIZE_STATE.method = document.getElementById('finalize-method').value;
+  renderFinalizeMembersEditor();
+}
+
+function computeFinalizeShares() {
+  var members = FINALIZE_STATE.members;
+  var total = FINALIZE_STATE.total;
+  var method = FINALIZE_STATE.method;
+  if (method === 'by_room') {
+    var byRoom = {};
+    members.forEach(function(m) { (byRoom[m.room] = byRoom[m.room] || []).push(m); });
+    var roomCount = Object.keys(byRoom).length;
+    var perRoom = roomCount ? total / roomCount : 0;
+    return members.map(function(m) { var occupants = byRoom[m.room].length; return occupants ? perRoom / occupants : 0; });
+  }
+  if (method === 'custom') {
+    return members.map(function(m) { return parseFloat(m.custom) || 0; });
+  }
+  // even
+  var per = members.length ? total / members.length : 0;
+  return members.map(function() { return per; });
+}
+
+function renderFinalizeMembersEditor() {
+  var el = document.getElementById('finalize-members-editor');
+  if (!el) return;
+  var method = FINALIZE_STATE.method;
+  var shares = computeFinalizeShares();
+  el.innerHTML = '';
+  FINALIZE_STATE.members.forEach(function(m, idx) {
+    var row = document.createElement('div');
+    row.className = 'finalize-member-row';
+    var nameEl = document.createElement('div');
+    nameEl.className = 'finalize-member-name';
+    nameEl.textContent = m.name;
+    row.appendChild(nameEl);
+    if (method === 'by_room') {
+      var roomInput = document.createElement('input');
+      roomInput.type = 'number'; roomInput.min = '1'; roomInput.value = m.room;
+      roomInput.title = 'Room number — people sharing a room split that room\'s share of the cost';
+      roomInput.addEventListener('input', function() { m.room = parseInt(roomInput.value, 10) || 1; renderFinalizeMembersEditor(); });
+      row.appendChild(roomInput);
+    } else if (method === 'custom') {
+      var amtInput = document.createElement('input');
+      amtInput.type = 'number'; amtInput.min = '0'; amtInput.step = '0.01';
+      amtInput.value = m.custom;
+      amtInput.placeholder = Math.round(shares[idx] || 0);
+      amtInput.addEventListener('input', function() { m.custom = amtInput.value; renderFinalizeMembersEditor(); });
+      row.appendChild(amtInput);
+    } else {
+      var shareEl = document.createElement('div');
+      shareEl.className = 'finalize-member-share';
+      shareEl.textContent = fmtPrice(shares[idx] || 0);
+      row.appendChild(shareEl);
+    }
+    el.appendChild(row);
+  });
+  var sumEl = document.getElementById('finalize-sum-check');
+  if (method === 'custom') {
+    var sum = FINALIZE_STATE.members.reduce(function(s, m) { return s + (parseFloat(m.custom) || 0); }, 0);
+    var diff = FINALIZE_STATE.total - sum;
+    sumEl.style.display = 'block';
+    sumEl.textContent = 'Custom amounts total ' + fmtPrice(sum) + ' of ' + fmtPrice(FINALIZE_STATE.total) +
+      (Math.abs(diff) > 0.5 ? (diff > 0 ? ' — ' + fmtPrice(diff) + ' unassigned' : ' — ' + fmtPrice(-diff) + ' over') : ' ✓');
+  } else {
+    sumEl.style.display = 'none';
+  }
+}
+
+async function confirmFinalize() {
+  var method = FINALIZE_STATE.method;
+  var depositPct = parseFloat(document.getElementById('finalize-deposit-pct').value) || 0;
+  var dueDate = document.getElementById('finalize-due-date').value || null;
+  var shares = computeFinalizeShares();
+  try {
+    var updates = FINALIZE_STATE.members.map(function(m, idx) {
+      var total = Math.round((shares[idx] || 0) * 100) / 100;
+      var deposit = Math.round(total * depositPct) / 100;
+      var balance = Math.round((total - deposit) * 100) / 100;
+      return sbClient.from('trip_members').update({
+        payment_status: 'Confirmed',
+        total_amount: total,
+        deposit_amount: deposit,
+        balance_amount: balance,
+        due_date: dueDate,
+        room_number: method === 'by_room' ? m.room : null
+      }).eq('id', m.id);
+    });
+    await Promise.all(updates);
+    await sbClient.from('trip_requests').update({
+      payment_split_method: method,
+      deposit_percent: depositPct,
+      finalized_at: new Date().toISOString()
+    }).eq('id', activeTripId);
+    closeFinalizeModal();
+    showToast('Trip finalized — costs are ready to share with your group.');
+    renderFinalizeSection();
+  } catch (e) {
+    console.error('confirmFinalize error:', e);
+    showToast('Could not finalize costs — please try again.', true);
+  }
+}
+
+async function renderPaymentSummary(el, tripRow, isOrganiser) {
+  var r = await sbClient.from('trip_members').select('*').eq('trip_request_id', activeTripId).not('total_amount', 'is', null);
+  var members = r.data || [];
+  var userIds = members.map(function(m) { return m.user_id; }).filter(Boolean);
+  var nameMap = {};
+  if (userIds.length) {
+    var ur = await sbClient.from('users').select('id, email, name').in('id', userIds);
+    (ur.data || []).forEach(function(u) { nameMap[u.id] = u.name || (u.email ? u.email.split('@')[0] : 'Member'); });
+  }
+  if (currentUser) nameMap[currentUser.id] = currentUser.display_name || nameMap[currentUser.id] || (currentUser.email ? currentUser.email.split('@')[0] : 'You');
+
+  var totalCost = members.reduce(function(s, m) { return s + (Number(m.total_amount) || 0); }, 0);
+  var collected = members.reduce(function(s, m) {
+    if (m.payment_status === 'Fully Paid') return s + (Number(m.total_amount) || 0);
+    if (m.payment_status === 'Deposit Paid') return s + (Number(m.deposit_amount) || 0);
+    return s;
+  }, 0);
+  var outstanding = totalCost - collected;
+  var methodLabels = { even: 'Split evenly', by_room: 'Split by room', custom: 'Custom amounts' };
+  var methodLabel = methodLabels[tripRow.payment_split_method] || tripRow.payment_split_method || '';
+
+  members.sort(function(a, b) { return (nameMap[a.user_id] || '').localeCompare(nameMap[b.user_id] || ''); });
+
+  var html = '<div class="finalize-summary-grid">' +
+    '<div><div class="fs-sm text-muted">Total trip cost</div><div class="finalize-summary-val">' + fmtPrice(totalCost) + '</div></div>' +
+    '<div><div class="fs-sm text-muted">Collected so far</div><div class="finalize-summary-val">' + fmtPrice(collected) + '</div></div>' +
+    '<div><div class="fs-sm text-muted">Outstanding</div><div class="finalize-summary-val" style="color:' + (outstanding > 0.5 ? 'var(--brass)' : 'var(--green)') + '">' + fmtPrice(outstanding) + '</div></div>' +
+  '</div>' +
+  '<p class="fs-sm text-muted" style="margin:10px 0 14px">' + escapeHtml(methodLabel) + (tripRow.deposit_percent ? ' • ' + tripRow.deposit_percent + '% deposit' : '') + '</p>' +
+  '<div id="finalize-members-table"></div>' +
+  '<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">' +
+    '<button class="btn btn-ghost btn-sm" onclick="copyFinalizeSummary()"><i class="ti ti-copy"></i> Copy summary to share</button>' +
+    (isOrganiser ? '<button class="btn btn-ghost btn-sm" onclick="openFinalizeModal()"><i class="ti ti-refresh"></i> Re-run split</button>' : '') +
+  '</div>';
+  el.innerHTML = html;
+
+  var tableEl = document.getElementById('finalize-members-table');
+  var statusColors = { 'Confirmed': 'status-pending', 'Deposit Paid': 'status-maybe', 'Fully Paid': 'status-going', 'Cancelled': 'status-no', 'Refunded': 'status-no' };
+  members.forEach(function(m) {
+    var row = document.createElement('div');
+    row.className = 'member-row';
+    var info = document.createElement('div');
+    info.className = 'member-info';
+    var nameEl = document.createElement('div');
+    nameEl.className = 'member-name';
+    nameEl.textContent = nameMap[m.user_id] || 'Member';
+    var detailEl = document.createElement('div');
+    detailEl.className = 'fs-sm text-muted';
+    detailEl.textContent = 'Total ' + fmtPrice(m.total_amount) + ' • Deposit ' + fmtPrice(m.deposit_amount) + ' • Balance ' + fmtPrice(m.balance_amount) + (m.due_date ? ' • Due ' + m.due_date : '');
+    var badge = document.createElement('span');
+    badge.className = 'member-status-badge ' + (statusColors[m.payment_status] || 'status-pending');
+    badge.textContent = m.payment_status || 'Invited';
+    info.appendChild(nameEl);
+    info.appendChild(detailEl);
+    info.appendChild(badge);
+    row.appendChild(info);
+    if (isOrganiser) {
+      var actions = document.createElement('div');
+      actions.className = 'finalize-member-actions';
+      [['Deposit Paid', 'Deposit paid'], ['Fully Paid', 'Fully paid'], ['Refunded', 'Refunded']].forEach(function(pair) {
+        var btn = document.createElement('button');
+        btn.className = 'btn btn-ghost btn-sm';
+        btn.textContent = pair[1];
+        btn.onclick = function() { setMemberPaymentStatus(m.id, pair[0]); };
+        actions.appendChild(btn);
+      });
+      row.appendChild(actions);
+    }
+    tableEl.appendChild(row);
+  });
+}
+
+async function setMemberPaymentStatus(memberId, status) {
+  try {
+    await sbClient.from('trip_members').update({ payment_status: status }).eq('id', memberId);
+    showToast('Marked as ' + status + '.');
+    renderFinalizeSection();
+  } catch (e) {
+    console.error('setMemberPaymentStatus error:', e);
+    showToast('Could not update payment status.', true);
+  }
+}
+
+function copyFinalizeSummary() {
+  var tableEl = document.getElementById('finalize-members-table');
+  if (!tableEl) return;
+  var lines = ['Trip cost summary:'];
+  tableEl.querySelectorAll('.member-row').forEach(function(row) {
+    var name = row.querySelector('.member-name');
+    var detail = row.querySelector('.fs-sm.text-muted');
+    var status = row.querySelector('.member-status-badge');
+    lines.push('- ' + (name ? name.textContent : '') + ': ' + (detail ? detail.textContent : '') + ' (' + (status ? status.textContent : '') + ')');
+  });
+  navigator.clipboard.writeText(lines.join('\n')).then(function() { showToast('Summary copied!'); }).catch(function() {
+    showToast('Copy failed — please select and copy manually.', true);
+  });
+}
+// ── END FINALIZE & PAYMENT ──────────────────────────────────
+
 async function loadChatMessages(tripId) {
   var el = document.getElementById('chat-messages');
   try {
@@ -10268,19 +10698,31 @@ document.getElementById('copy-link-btn').addEventListener('click', function() {
   });
 });
 
-/* === ADMIN === */
-function adminLogin() {
-  var email = document.getElementById('admin-email').value;
-  var pass = document.getElementById('admin-password').value;
-  var msgEl = document.getElementById('admin-login-msg');
-  if (email === 'admin@golftrip.com' && pass === 'admin123') {
-    document.getElementById('admin-login-form').style.display = 'none';
-    document.getElementById('admin-dashboard').style.display = 'block';
-    loadAdminStats();
-  } else {
-    msgEl.textContent = 'Invalid credentials.';
-    msgEl.className = 'auth-msg error';
-    msgEl.style.display = 'block';
+/* === ADMIN ===
+   Access is gated on the is_admin column on the user's row in `users`
+   (see supabase-migrations/005_admin_flag.sql), set manually in Supabase
+   for trusted staff only — never in client JS. Re-checked fresh from the
+   server on every visit to this page rather than trusting a cached flag,
+   so revoking access takes effect immediately. */
+async function checkAdminAccess() {
+  var signinEl = document.getElementById('admin-signin-prompt');
+  var deniedEl = document.getElementById('admin-denied');
+  var dashEl = document.getElementById('admin-dashboard');
+  signinEl.style.display = 'none';
+  deniedEl.style.display = 'none';
+  dashEl.style.display = 'none';
+  if (!currentUser) { signinEl.style.display = 'block'; return; }
+  try {
+    var r = await sbClient.from('users').select('is_admin').eq('id', currentUser.id).single();
+    if (r.data && r.data.is_admin) {
+      dashEl.style.display = 'block';
+      loadAdminStats();
+    } else {
+      deniedEl.style.display = 'block';
+    }
+  } catch (e) {
+    console.error('checkAdminAccess error:', e);
+    deniedEl.style.display = 'block';
   }
 }
 
@@ -10322,6 +10764,74 @@ async function loadAdminStats() {
       tbody.appendChild(tr2);
     });
   });
+
+  loadAdminFunnel();
+}
+
+// TASKS.md #16 — basic funnel visibility: clubs created, members joined
+// per club, trips created per club, over time. Admin-only (gated by
+// checkAdminAccess before loadAdminStats/this ever runs).
+async function loadAdminFunnel() {
+  var tbody = document.getElementById('admin-clubs-table');
+  try {
+    var cr = await sbClient.from('clubs').select('id, name, plan_status, created_at').order('created_at', { ascending: false });
+    var clubs = cr.data || [];
+    renderAdminClubsChart(clubs);
+
+    if (!clubs.length) { tbody.innerHTML = '<tr><td colspan="5">No clubs created yet.</td></tr>'; return; }
+
+    var clubIds = clubs.map(function(c) { return c.id; });
+    var memberCounts = {}, tripCounts = {};
+    var mr = await sbClient.from('club_members').select('club_id').in('club_id', clubIds);
+    (mr.data || []).forEach(function(m) { memberCounts[m.club_id] = (memberCounts[m.club_id] || 0) + 1; });
+    var tr4 = await sbClient.from('trip_requests').select('club_id').in('club_id', clubIds);
+    (tr4.data || []).forEach(function(t) { tripCounts[t.club_id] = (tripCounts[t.club_id] || 0) + 1; });
+
+    tbody.innerHTML = '';
+    clubs.forEach(function(c) {
+      var tr5 = document.createElement('tr');
+      [
+        c.name,
+        c.created_at ? new Date(c.created_at).toLocaleDateString('en-GB') : '—',
+        memberCounts[c.id] || 0,
+        tripCounts[c.id] || 0,
+        c.plan_status === 'active' ? 'Active' : (c.plan_status || '—')
+      ].forEach(function(v) { var td = document.createElement('td'); td.textContent = v; tr5.appendChild(td); });
+      tbody.appendChild(tr5);
+    });
+  } catch (e) {
+    console.error('loadAdminFunnel error:', e);
+    if (tbody) tbody.innerHTML = '<tr><td colspan="5">Could not load club data.</td></tr>';
+  }
+}
+
+// Same minimal single-series bar chart pattern as renderClubTripsChart —
+// one hue, thin rounded bars, direct value labels (6 bars is few enough).
+function renderAdminClubsChart(clubs) {
+  var el = document.getElementById('admin-clubs-chart');
+  if (!el) return;
+  var now = new Date();
+  var months = [];
+  for (var i = 5; i >= 0; i--) {
+    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ key: d.getFullYear() + '-' + d.getMonth(), label: d.toLocaleDateString('en-GB', { month: 'short' }), count: 0 });
+  }
+  clubs.forEach(function(c) {
+    if (!c.created_at) return;
+    var d = new Date(c.created_at);
+    var key = d.getFullYear() + '-' + d.getMonth();
+    var bucket = months.find(function(m) { return m.key === key; });
+    if (bucket) bucket.count++;
+  });
+  var max = Math.max.apply(null, months.map(function(m) { return m.count; }).concat([1]));
+  el.innerHTML = months.map(function(m) {
+    var pct = Math.round((m.count / max) * 100);
+    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end" title="' + m.label + ': ' + m.count + (m.count === 1 ? ' club' : ' clubs') + '">' +
+      '<div class="fs-sm" style="font-weight:600;color:var(--moss)">' + m.count + '</div>' +
+      '<div style="width:100%;max-width:36px;height:' + Math.max(pct, 4) + '%;min-height:4px;background:var(--green);border-radius:4px 4px 2px 2px"></div>' +
+      '<div class="fs-sm text-muted">' + m.label + '</div>' +
+    '</div>';
+  }).join('');
 }
 
 /* === SEASONAL RECOMMENDATIONS === */
@@ -10717,7 +11227,6 @@ function clearVenuePreview() {
   currentVenue = null;
   venueResults = [];
   document.getElementById('venue-preview').style.display = 'none';
-  document.getElementById('venue-trip-results').style.display = 'none';
   document.getElementById('venue-input').value = '';
 }
 
@@ -10773,142 +11282,6 @@ async function buildAroundVenue() {
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = 'Explore this area'; }
   }
-}
-
-function renderVenueResults(venues) {
-  var listEl = document.getElementById('venue-nearby-list');
-  if (!venues.length) {
-    listEl.innerHTML = '<p class="fs-sm text-muted">No nearby venues found.</p>';
-    return;
-  }
-
-  // Build flights card if airport was selected
-  var airport = currentVenue && currentVenue._departureAirport ? currentVenue._departureAirport : '';
-  var airportName = currentVenue && currentVenue._departureAirportName ? currentVenue._departureAirportName : '';
-
-  // Group by type for display sections
-  var courses = venues.filter(function(v) { return v.type === 'course'; });
-  var hotels = venues.filter(function(v) { return v.type === 'hotel'; });
-  var restaurants = venues.filter(function(v) { return v.type === 'restaurant'; });
-  var others = venues.filter(function(v) { return v.type !== 'course' && v.type !== 'hotel' && v.type !== 'restaurant'; });
-
-  function venueCard(v, i) {
-    var typeIcons = { hotel: '<i class="ti ti-bed"></i>', course: '<i class="ti ti-golf"></i>', restaurant: '<i class="ti ti-tools-kitchen-2"></i>', car_hire: '<i class="ti ti-car"></i>', other: '<i class="ti ti-map-pin"></i>' };
-    return '<div class="card" style="padding:16px;margin-bottom:12px">' +
-      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">' +
-        '<div style="flex:1;min-width:0">' +
-          '<h4 style="color:var(--green);font-size:.95rem;margin:0 0 3px">' + (typeIcons[v.type]||'') + ' ' + (v.name || '') + '</h4>' +
-          '<div class="text-muted fs-sm">' + (v.location || '') + (v.distance_km ? ' &nbsp;·&nbsp; <strong>' + v.distance_km + 'km</strong> from anchor' : '') + '</div>' +
-          (v.description ? '<p style="font-size:.83rem;margin-top:6px;color:var(--text)">' + v.description + '</p>' : '') +
-        '</div>' +
-        '<div style="text-align:right;flex-shrink:0">' +
-          (v.rating ? '<div style="color:var(--gold);font-size:.82rem;font-weight:600"><i class="ti ti-star-filled"></i> ' + v.rating + '</div>' : '') +
-          (v.price_display ? '<div style="color:var(--gold);font-size:.82rem;font-weight:600;margin-top:2px">' + v.price_display + '</div>' : '') +
-        '</div>' +
-      '</div>' +
-      '<div class="card-links" style="margin-top:10px">' +
-        '<button class="card-link" data-venue-idx="' + i + '" style="cursor:pointer;background:none;border:1.5px solid var(--gold);color:var(--gold)">&#43; Add to cart</button>' +
-        (v.booking_suggestion ? '<a href="https://www.google.com/search?q=' + encodeURIComponent(v.name + ' ' + (v.location||'')) + '" target="_blank" class="card-link"><i class="ti ti-search"></i> Search</a>' : '') +
-      '</div>' +
-    '</div>';
-  }
-
-  var html = '';
-
-  // Flights card — shown if airport was selected. venueFlightsUrl is wrapped
-  // through Expedia's affiliate tracking (wrapExpediaUrl) — this button was
-  // previously broken (the href was literal unevaluated JS text, not a real
-  // link) and pointed at Google Flights with no commission anyway.
-  if (airport) {
-    var venueFlightsPlain = 'https://www.expedia.co.uk/Flights-Search?trip=oneway&leg1=from:' + encodeURIComponent(airport) + '&mode=search';
-    var venueFlightsUrl = wrapExpediaUrl(venueFlightsPlain);
-    html += '<div class="card" style="padding:16px 20px;margin-bottom:20px;border:1.5px solid var(--gold)">' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
-        '<div>' +
-          '<div style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:3px"><i class="ti ti-plane-departure"></i> Flights</div>' +
-          '<div style="font-size:.92rem;font-weight:500;color:var(--green)">' + airportName + ' → ' + (currentVenue ? currentVenue.location || currentVenue.name : 'Destination') + '</div>' +
-        '</div>' +
-        '<a href="' + venueFlightsUrl + '" target="_blank" class="btn btn-primary btn-sm">Search Flights</a>' +
-      '</div>' +
-      '<p class="fs-sm text-muted" style="margin:0">Find and book the best fares from ' + airportName + ' via GolfTrip — 5% markup included, booked securely.</p>' +
-    '</div>';
-  }
-
-  if (courses.length) {
-    html += '<div class="section-heading" data-icon="&#9971;">Nearby Golf Courses</div>';
-    courses.forEach(function(v) { html += venueCard(v, venues.indexOf(v)); });
-  }
-  if (hotels.length) {
-    html += '<div class="section-heading" data-icon="&#127968;">Nearby Hotels</div>';
-    hotels.forEach(function(v) { html += venueCard(v, venues.indexOf(v)); });
-  }
-  if (restaurants.length) {
-    html += '<div class="section-heading" data-icon="&#127869;">Nearby Restaurants</div>';
-    restaurants.forEach(function(v) { html += venueCard(v, venues.indexOf(v)); });
-  }
-  if (others.length) {
-    html += '<div class="section-heading" data-icon="&#128205;">Other Nearby</div>';
-    others.forEach(function(v) { html += venueCard(v, venues.indexOf(v)); });
-  }
-
-  // Build a pseudo-panel for initMap using the venue data
-  var anchorVenue = currentVenue;
-  var mapPanel = {
-    destination: anchorVenue ? (anchorVenue.location || anchorVenue.name) : 'Venue',
-    courses: venues.filter(function(v) { return v.type === 'course'; }).map(function(v) {
-      return { name: v.name, location: v.location || '', lat: v.lat, lng: v.lng, green_fee: 0, difficulty: '', why_recommended: v.description || '' };
-    }),
-    hotels: venues.filter(function(v) { return v.type === 'hotel'; }).map(function(v) {
-      return { name: v.name, area: v.location || '', lat: v.lat, lng: v.lng, description: v.description || '', why_recommended: '' };
-    }),
-    restaurants: venues.filter(function(v) { return v.type === 'restaurant'; }).map(function(v) {
-      return { name: v.name, type: v.type, description: v.description || '', lat: v.lat, lng: v.lng };
-    })
-  };
-  // Add the anchor venue itself to the appropriate array
-  if (anchorVenue && anchorVenue.lat && anchorVenue.lng) {
-    var anchorEntry = { name: anchorVenue.name + ' ★ (anchor)', location: anchorVenue.location || '', lat: anchorVenue.lat, lng: anchorVenue.lng, description: 'Your anchor venue', why_recommended: 'Your starting point', green_fee: anchorVenue.price || 0, area: anchorVenue.location || '' };
-    if (anchorVenue.type === 'course') mapPanel.courses.unshift(anchorEntry);
-    else if (anchorVenue.type === 'hotel') mapPanel.hotels.unshift(anchorEntry);
-    else if (anchorVenue.type === 'restaurant') mapPanel.restaurants.unshift(anchorEntry);
-  }
-
-  // Add map section
-  storedPanels[99] = mapPanel; // use idx 99 for venue page map
-  html += buildMapSection(mapPanel, 99, 'venue');
-
-  listEl.innerHTML = html;
-  document.getElementById('venue-add-all-wrap').style.display = 'block';
-
-  // Init map after DOM update
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() { initMap(99, 'venue'); });
-  });
-}
-
-function addSingleVenueResult(idx) {
-  var v = venueResults[idx];
-  if (!v) return;
-  tripCart.push({ id: v.type + '|' + v.name, type: v.type, name: v.name, sub: v.location || '', price: v.price_display || '', priceNum: 0, status: 'pending', votes: { yes: 0, no: 0 } });
-  renderCart();
-  saveTripCart();
-  showToast(v.name + ' added to cart');
-}
-
-function addAllVenueResults() {
-  if (currentVenue) {
-    tripCart.push({ id: currentVenue.type + '|' + currentVenue.name, type: currentVenue.type, name: currentVenue.name, sub: currentVenue.location || '', price: currentVenue.price_display || '', priceNum: currentVenue.price || 0, status: 'pending', votes: { yes: 0, no: 0 } });
-  }
-  venueResults.forEach(function(v) {
-    var id = v.type + '|' + v.name;
-    if (!tripCart.find(function(i) { return i.id === id; })) {
-      tripCart.push({ id: id, type: v.type, name: v.name, sub: v.location || '', price: v.price_display || '', priceNum: 0, status: 'pending', votes: { yes: 0, no: 0 } });
-    }
-  });
-  renderCart();
-  saveTripCart();
-  showToast('All venues added to cart');
-  showPage('questionnaire');
 }
 
 function addVenueToCart() {
@@ -11160,174 +11533,6 @@ document.addEventListener('click', function(e) {
 });
 // ── END VENUE AUTOCOMPLETE ───────────────────────────────────
 
-async function saveVenueTrip() {
-  if (!currentUser) { openAuthModal('signin'); showToast('Sign in to save trips.', true); return; }
-  if (!currentVenue) { showToast('No venue to save.', true); return; }
-  var btn = document.getElementById('venue-save-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
-  try {
-    // Convert venue results into the standard panels[] format so the trip
-    // opens identically to a planned trip — same map, chat, booking links, voting
-    var anchorLocation = currentVenue.location || currentVenue.name;
-
-    // Reshape nearby venues into courses/hotels/restaurants arrays
-    var panelCourses = [];
-    var panelHotels = [];
-    var panelRestaurants = [];
-
-    // Add the anchor venue first in its own category
-    if (currentVenue.type === 'course') {
-      panelCourses.push({
-        name: currentVenue.name + ' ★',
-        location: anchorLocation,
-        par: 72,
-        yardage: null,
-        slope_rating: null,
-        course_rating: null,
-        green_fee: currentVenue.price || 0,
-        green_fee_range: currentVenue.price_display || '',
-        designer: '',
-        difficulty: 'Varies',
-        why_recommended: 'Your anchor venue — ' + (currentVenue.description || ''),
-        lat: currentVenue.lat || null,
-        lng: currentVenue.lng || null
-      });
-    } else if (currentVenue.type === 'hotel') {
-      panelHotels.push({
-        name: currentVenue.name + ' ★',
-        area: anchorLocation,
-        description: currentVenue.description || '',
-        why_recommended: 'Your anchor venue',
-        price_per_night: currentVenue.price || 0,
-        price_range: currentVenue.price_display || '',
-        lat: currentVenue.lat || null,
-        lng: currentVenue.lng || null
-      });
-    } else if (currentVenue.type === 'restaurant') {
-      panelRestaurants.push({
-        name: currentVenue.name + ' ★',
-        type: 'Restaurant',
-        description: currentVenue.description || '',
-        rating: currentVenue.rating || null,
-        opentable_available: false,
-        lat: currentVenue.lat || null,
-        lng: currentVenue.lng || null
-      });
-    }
-
-    // Add nearby results
-    venueResults.forEach(function(v) {
-      if (v.type === 'course') {
-        panelCourses.push({
-          name: v.name,
-          location: v.location || anchorLocation,
-          par: 72,
-          yardage: null,
-          slope_rating: null,
-          course_rating: null,
-          green_fee: v.price || 0,
-          green_fee_range: v.price_display || '',
-          designer: '',
-          difficulty: 'Varies',
-          why_recommended: (v.description || '') + (v.distance_km ? ' — ' + v.distance_km + 'km away' : ''),
-          lat: v.lat || null,
-          lng: v.lng || null
-        });
-      } else if (v.type === 'hotel') {
-        panelHotels.push({
-          name: v.name,
-          area: v.location || anchorLocation,
-          description: v.description || '',
-          why_recommended: v.distance_km ? v.distance_km + 'km from ' + currentVenue.name : '',
-          price_per_night: v.price || 0,
-          price_range: v.price_display || '',
-          lat: v.lat || null,
-          lng: v.lng || null
-        });
-      } else if (v.type === 'restaurant') {
-        panelRestaurants.push({
-          name: v.name,
-          type: v.location || 'Restaurant',
-          description: v.description || '',
-          rating: v.rating || null,
-          opentable_available: false,
-          lat: v.lat || null,
-          lng: v.lng || null
-        });
-      }
-    });
-
-    // Build the standard panel object
-    var panel = {
-      label: 'Venue Trip',
-      destination: anchorLocation,
-      description: 'Built around ' + currentVenue.name + '. ' + (currentVenue.description || ''),
-      weather: '',
-      best_time: '',
-      flight_time: '',
-      total_cost: 0,
-      costs: { flights: 0, accommodation: 0, golf: 0, food: 0 },
-      courses: panelCourses,
-      hotels: panelHotels,
-      restaurants: panelRestaurants,
-      flights: {
-        airlines: 'Check Skyscanner',
-        duration_hours: '',
-        frequency: '',
-        departure_times: '',
-        return_times: '',
-        price_range: 'Varies',
-        baggage_note: ''
-      },
-      car_hire: { needed: false, options: [], pickup_location: '' }
-    };
-
-    var parsed = { panels: [panel] };
-
-    // Create trip_request
-    var ins = await sbClient.from('trip_requests').insert({
-      user_id: currentUser.id,
-      departure_airport: (currentVenue && currentVenue._departureAirport) ? currentVenue._departureAirport : 'TBC',
-      travel_dates: JSON.stringify({ type: 'flexible' }),
-      budget: 'flexible',
-      group_size: 1,
-      destination_type: currentVenue.name + ' — ' + anchorLocation,
-      trip_style: 'venue-anchored',
-      notes: 'Built around: ' + currentVenue.name
-    }).select().single();
-
-    if (ins.data) {
-      currentTripRequestId = ins.data.id;
-
-      // Save as standard panels format — opens like any other saved trip
-      await sbClient.from('trip_results').insert({
-        trip_request_id: ins.data.id,
-        ai_response: parsed
-      });
-
-      // Add creator as owner
-      await sbClient.from('trip_members').insert({
-        trip_request_id: ins.data.id,
-        user_id: currentUser.id,
-        role: 'owner',
-        status: 'Going'
-      });
-
-      if (btn) {
-        btn.textContent = '✓ Saved!';
-        btn.style.background = 'var(--green)';
-        btn.style.color = 'var(--gold)';
-        btn.style.border = 'none';
-      }
-      showToast('Trip saved — find it in My Trips');
-    }
-  } catch(e) {
-    console.error('saveVenueTrip error:', e);
-    showToast('Could not save trip. Try again.', true);
-    if (btn) { btn.disabled = false; btn.textContent = '✓ Save This Trip'; }
-  }
-}
-
 // ── END VENUE FEATURE ────────────────────────────────────────
 
 // ── STRIPE PAYMENTS ──────────────────────────────────────────
@@ -11459,6 +11664,68 @@ async function loadClubDashboard() {
     console.error('loadClubDashboard trips error:', e);
     if (tripsTable) tripsTable.innerHTML = '<tr><td colspan="4">Could not load trips.</td></tr>';
   }
+
+  // Trip analytics: most popular destination, trips/month, member engagement
+  try {
+    var destCounts = {};
+    (trips || []).forEach(function(t) {
+      var d = (t.destination_type || '').trim();
+      if (!d) return;
+      var key = d.toLowerCase();
+      if (!destCounts[key]) destCounts[key] = { label: d, count: 0 };
+      destCounts[key].count++;
+    });
+    var topDest = Object.values(destCounts).sort(function(a, b) { return b.count - a.count; })[0];
+    var topDestEl = document.getElementById('cd-top-destination');
+    if (topDestEl) topDestEl.textContent = topDest ? (topDest.label + ' (' + topDest.count + (topDest.count === 1 ? ' trip' : ' trips') + ')') : 'Not enough data yet';
+
+    renderClubTripsChart(trips || []);
+
+    var engagedIds = {};
+    (trips || []).forEach(function(t) { if (t.user_id) engagedIds[t.user_id] = true; });
+    var tripIds = (trips || []).map(function(t) { return t.id; });
+    if (tripIds.length) {
+      var tmRes = await sbClient.from('trip_members').select('user_id').in('trip_request_id', tripIds);
+      (tmRes.data || []).forEach(function(tm) { if (tm.user_id) engagedIds[tm.user_id] = true; });
+    }
+    var memberIds = (members || []).map(function(m) { return m.user_id; }).filter(Boolean);
+    var engagedMemberCount = memberIds.filter(function(id) { return engagedIds[id]; }).length;
+    var engagementEl = document.getElementById('cd-engagement');
+    if (engagementEl) engagementEl.textContent = memberIds.length ? Math.round((engagedMemberCount / memberIds.length) * 100) + '%' : '—';
+  } catch (e) {
+    console.error('loadClubDashboard analytics error:', e);
+  }
+}
+
+// Simple single-series bar chart, last 6 calendar months of trip creation —
+// deliberately minimal per TASKS.md #9 ("simple chart"), one sequential hue,
+// thin rounded bars, direct value labels (six bars is few enough that a
+// label per bar reads as data, not clutter).
+function renderClubTripsChart(trips) {
+  var el = document.getElementById('cd-trips-chart');
+  if (!el) return;
+  var now = new Date();
+  var months = [];
+  for (var i = 5; i >= 0; i--) {
+    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ key: d.getFullYear() + '-' + d.getMonth(), label: d.toLocaleDateString('en-GB', { month: 'short' }), count: 0 });
+  }
+  trips.forEach(function(t) {
+    if (!t.created_at) return;
+    var d = new Date(t.created_at);
+    var key = d.getFullYear() + '-' + d.getMonth();
+    var bucket = months.find(function(m) { return m.key === key; });
+    if (bucket) bucket.count++;
+  });
+  var max = Math.max.apply(null, months.map(function(m) { return m.count; }).concat([1]));
+  el.innerHTML = months.map(function(m) {
+    var pct = Math.round((m.count / max) * 100);
+    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end" title="' + m.label + ': ' + m.count + (m.count === 1 ? ' trip' : ' trips') + '">' +
+      '<div class="fs-sm" style="font-weight:600;color:var(--moss)">' + m.count + '</div>' +
+      '<div style="width:100%;max-width:36px;height:' + Math.max(pct, 4) + '%;min-height:4px;background:var(--green);border-radius:4px 4px 2px 2px"></div>' +
+      '<div class="fs-sm text-muted">' + m.label + '</div>' +
+    '</div>';
+  }).join('');
 }
 
 // Public club portal — /club/:slug. Must work for signed-out visitors,
@@ -11626,17 +11893,51 @@ function closeClubModal() {
   if (modal) modal.style.display = 'none';
 }
 
+var clubOnbState = { clubId: null };
+
 function showClubLinkModal(clubId, clubName) {
-  var heading = document.getElementById('club-link-heading');
-  var linkInput = document.getElementById('club-invite-link');
-  if (heading) heading.textContent = (clubName || 'Your club') + ' is live';
-  if (linkInput) linkInput.value = window.location.origin + '/?join_club=' + clubId;
+  clubOnbState.clubId = clubId;
+  document.getElementById('club-onb-name').textContent = clubName || 'Your club';
+  document.getElementById('club-onb-name-2').textContent = clubName || 'Your club';
+  document.getElementById('club-onb-tagline').value = '';
+  document.getElementById('club-invite-link').value = window.location.origin + '/?join_club=' + clubId;
+  clubOnbGoToStep(1);
   var modal = document.getElementById('club-link-modal');
   if (modal) modal.style.display = 'flex';
 }
 
+function clubOnbGoToStep(step) {
+  [1, 2, 3].forEach(function(i) {
+    document.getElementById('club-onb-step-' + i).style.display = (i === step) ? 'block' : 'none';
+  });
+  document.querySelectorAll('#club-onb-dots .club-onb-dot').forEach(function(dot) {
+    dot.classList.toggle('active', parseInt(dot.getAttribute('data-step'), 10) === step);
+  });
+}
+
+async function clubOnbStep1Next() {
+  var tagline = (document.getElementById('club-onb-tagline').value || '').trim();
+  if (tagline && clubOnbState.clubId) {
+    try { await sbClient.from('clubs').update({ tagline: tagline }).eq('id', clubOnbState.clubId); }
+    catch (e) { console.error('clubOnbStep1Next tagline save error:', e); }
+  }
+  clubOnbGoToStep(2);
+}
+
 function closeClubLinkModal() {
   var modal = document.getElementById('club-link-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+function showClubWelcomeModal(clubName) {
+  document.getElementById('club-welcome-name').textContent = clubName || 'your club';
+  document.getElementById('club-welcome-name-2').textContent = clubName || 'Your club';
+  var modal = document.getElementById('club-welcome-modal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeClubWelcomeModal() {
+  var modal = document.getElementById('club-welcome-modal');
   if (modal) modal.style.display = 'none';
 }
 
@@ -11735,12 +12036,14 @@ async function joinClub(clubId, user) {
       return;
     }
     var existing = await sbClient.from('club_members').select('id').eq('club_id', clubId).eq('user_id', user.id).maybeSingle();
-    if (!existing.data) {
+    var isFirstJoin = !existing.data;
+    if (isFirstJoin) {
       await sbClient.from('club_members').insert({ club_id: clubId, user_id: user.id, role: 'member' });
     }
     await loadUserPlan();
     updateNav(currentUser);
     showToast('You\'re in! ' + club.data.name + ' covers your GolfTrip access.');
+    if (isFirstJoin) showClubWelcomeModal(club.data.name);
     window.history.replaceState({}, '', window.location.pathname);
   } catch (e) {
     console.error('joinClub error:', e);
@@ -12007,6 +12310,20 @@ async function loadSharedTrip(tripId, user) {
         <button class="btn" style="padding:10px 20px;background:transparent;color:var(--brass);border:1px solid var(--brass);font-size:.82rem" onclick="closePricingModal();openClubModal()">I'm a Golf Club — Get GolfTrip for my members</button>
       </div>
     </div>
+    <div class="pricing-faq" style="padding:22px 30px 0;border-top:1px solid rgba(255,255,255,.16);margin-top:22px">
+      <div class="pricing-faq-item">
+        <div class="pricing-faq-q">What happens if I cancel?</div>
+        <div class="pricing-faq-a">You keep Individual access until the end of your current billing period, then drop back to the free plan — nothing you've saved is deleted.</div>
+      </div>
+      <div class="pricing-faq-item">
+        <div class="pricing-faq-q">Do I need a card to try GolfTrip?</div>
+        <div class="pricing-faq-a">No — the free plan already lets you generate and save trips. Upgrade only when you want unlimited generations, PDF export and group planning.</div>
+      </div>
+      <div class="pricing-faq-item">
+        <div class="pricing-faq-q">Can I switch to a club plan later?</div>
+        <div class="pricing-faq-a">Yes — if your golf club sets up GolfTrip, joining via their invite link gives you free access and you can cancel your Individual plan any time.</div>
+      </div>
+    </div>
     <div style="padding:20px 30px 26px;text-align:center;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4)">
       Secure payment via Stripe &nbsp;·&nbsp; Cancel anytime &nbsp;·&nbsp; 7-day money back guarantee
     </div>
@@ -12023,25 +12340,88 @@ async function loadSharedTrip(tripId, user) {
     <input id="club-name-input" type="text" placeholder="Your club's name" style="width:100%;border:1px solid rgba(255,255,255,.28);border-radius:var(--r);background:rgba(255,255,255,.08);color:#fff;padding:11px;font-family:inherit;font-size:.9rem;margin-bottom:16px">
     <button class="btn btn-primary" style="width:100%;padding:12px" onclick="startClubCheckout()" id="checkout-btn-club">Set Up My Club</button>
     <p style="color:rgba(255,255,255,.4);font-size:.7rem;text-align:center;margin-top:14px;text-transform:uppercase;letter-spacing:.1em">Secure payment via Stripe</p>
-  </div>
-</div>
-
-<!-- CLUB LINK MODAL — shown once after a club subscription activates -->
-<div id="club-link-modal" class="glass-scrim" style="display:none;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center;padding:20px">
-  <div class="glass" style="max-width:460px;width:100%;padding:32px;position:relative;color:#fff">
-    <button onclick="closeClubLinkModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:1.15rem;cursor:pointer;color:rgba(255,255,255,.6)">&#215;</button>
-    <div style="color:var(--brass);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.18em;margin-bottom:12px">You're all set</div>
-    <h2 style="color:#fff;font-family:var(--font-display);font-weight:300;letter-spacing:-.02em;font-size:1.4rem;margin-bottom:10px" id="club-link-heading">Your club is live</h2>
-    <p style="color:rgba(255,255,255,.6);font-size:.85rem;margin-bottom:16px">Share this link with your members — anyone who signs up through it gets free GolfTrip access, on you.</p>
-    <div class="invite-link-box">
-      <input type="text" id="club-invite-link" readonly>
-      <button class="btn btn-ghost btn-sm" id="copy-club-link-btn">Copy</button>
+    <div class="pricing-faq" style="margin-top:22px;padding-top:20px;border-top:1px solid rgba(255,255,255,.16)">
+      <div class="pricing-faq-item">
+        <div class="pricing-faq-q">What happens if we cancel?</div>
+        <div class="pricing-faq-a">Members keep free access until the end of the paid year, then fall back to GolfTrip's standard free plan — or can upgrade individually for £4.99/month.</div>
+      </div>
+      <div class="pricing-faq-item">
+        <div class="pricing-faq-q">Can members still use it if the club doesn't renew?</div>
+        <div class="pricing-faq-a">They keep their account and any saved trips, but lose free access on the club — GolfTrip just reverts to the normal free plan for them, same as any other user.</div>
+      </div>
+      <div class="pricing-faq-item">
+        <div class="pricing-faq-q">Is there a per-member charge?</div>
+        <div class="pricing-faq-a">No — one flat £1,000/year fee covers every member who joins through your invite link, however many that ends up being.</div>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- CLUB ONBOARDING MODAL — 3-step guided first-run shown once after a
+     club subscription activates: confirm branding, get the invite link,
+     preview what a member sees. -->
+<div id="club-link-modal" class="glass-scrim" style="display:none;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center;padding:20px">
+  <div class="glass" style="max-width:460px;width:100%;padding:32px;position:relative;color:#fff">
+    <button onclick="closeClubLinkModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:1.15rem;cursor:pointer;color:rgba(255,255,255,.6)">&#215;</button>
+    <div style="display:flex;gap:6px;margin-bottom:16px" id="club-onb-dots">
+      <span class="club-onb-dot active" data-step="1"></span>
+      <span class="club-onb-dot" data-step="2"></span>
+      <span class="club-onb-dot" data-step="3"></span>
+    </div>
+
+    <!-- STEP 1: confirm club name/branding -->
+    <div id="club-onb-step-1">
+      <div style="color:var(--brass);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.18em;margin-bottom:12px">Step 1 of 3 — You're all set</div>
+      <h2 style="color:#fff;font-family:var(--font-display);font-weight:300;letter-spacing:-.02em;font-size:1.4rem;margin-bottom:10px"><span id="club-onb-name"></span> is live</h2>
+      <p style="color:rgba(255,255,255,.6);font-size:.85rem;margin-bottom:16px">Add a quick tagline for your club's public page — you can add a logo and colours anytime from Club Settings.</p>
+      <div class="form-group"><label>Tagline</label><input type="text" id="club-onb-tagline" placeholder="e.g. Golf Travel, Sorted"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="clubOnbStep1Next()">Continue</button>
+    </div>
+
+    <!-- STEP 2: invite link -->
+    <div id="club-onb-step-2" style="display:none">
+      <div style="color:var(--brass);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.18em;margin-bottom:12px">Step 2 of 3 — Invite your members</div>
+      <h2 style="color:#fff;font-family:var(--font-display);font-weight:300;letter-spacing:-.02em;font-size:1.4rem;margin-bottom:10px">Here's your invite link</h2>
+      <p style="color:rgba(255,255,255,.6);font-size:.85rem;margin-bottom:16px">Share this with your members — anyone who signs up through it gets free GolfTrip access, on you.</p>
+      <div class="invite-link-box">
+        <input type="text" id="club-invite-link" readonly>
+        <button class="btn btn-ghost btn-sm" id="copy-club-link-btn">Copy</button>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="clubOnbGoToStep(3)">Continue</button>
+    </div>
+
+    <!-- STEP 3: what a member sees -->
+    <div id="club-onb-step-3" style="display:none">
+      <div style="color:var(--brass);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.18em;margin-bottom:12px">Step 3 of 3 — What members see</div>
+      <h2 style="color:#fff;font-family:var(--font-display);font-weight:300;letter-spacing:-.02em;font-size:1.4rem;margin-bottom:10px">When someone joins your link</h2>
+      <ul style="color:rgba(255,255,255,.75);font-size:.85rem;line-height:1.7;margin:0 0 20px;padding-left:20px">
+        <li>They see a short welcome screen for <strong id="club-onb-name-2"></strong>'s GolfTrip.</li>
+        <li>Free access to plan their own golf trips — no cost to them.</li>
+        <li>They can join any group trips your other members create.</li>
+      </ul>
+      <button class="btn btn-primary" style="width:100%" onclick="closeClubLinkModal()">Got it, take me to my dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- CLUB MEMBER WELCOME MODAL — shown once, the first time someone joins via a club's ?join_club= invite link -->
+<div id="club-welcome-modal" class="glass-scrim" style="display:none;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center;padding:20px">
+  <div class="glass" style="max-width:440px;width:100%;padding:32px;position:relative;color:#fff">
+    <button onclick="closeClubWelcomeModal()" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:1.15rem;cursor:pointer;color:rgba(255,255,255,.6)">&#215;</button>
+    <div style="color:var(--brass);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.18em;margin-bottom:12px">Welcome</div>
+    <h2 style="color:#fff;font-family:var(--font-display);font-weight:300;letter-spacing:-.02em;font-size:1.4rem;margin-bottom:14px">Welcome to <span id="club-welcome-name"></span>'s GolfTrip</h2>
+    <ul style="color:rgba(255,255,255,.75);font-size:.85rem;line-height:1.7;margin:0 0 22px;padding-left:20px">
+      <li>Plan your own golf trips with AI-suggested courses, hotels and restaurants.</li>
+      <li>Join any group trips your fellow members create.</li>
+      <li>All of this is free to you — <span id="club-welcome-name-2"></span> covers your access.</li>
+    </ul>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:8px" onclick="closeClubWelcomeModal();showPage('questionnaire')">Plan My First Trip</button>
+    <button class="btn btn-ghost" style="width:100%" onclick="closeClubWelcomeModal()">I'll look around first</button>
+  </div>
+</div>
+
 <!-- FEEDBACK WIDGET -->
-<button id="feedback-fab" onclick="openFeedbackModal()" style="position:fixed;bottom:22px;right:22px;z-index:900;background:var(--moss-dark);color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:var(--r);padding:11px 18px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;box-shadow:none;font-family:inherit;display:inline-flex;align-items:center;gap:8px"><i class="ti ti-message-circle" style="font-size:1.1em"></i> Feedback</button>
+<button id="feedback-fab" onclick="openFeedbackModal()" style="position:fixed;bottom:22px;right:22px;z-index:900;background:var(--moss-dark);color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:var(--r);padding:11px 18px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;box-shadow:none;font-family:inherit;display:inline-flex;align-items:center;gap:8px"><i class="ti ti-message-circle" style="font-size:1.1em"></i> <span class="feedback-fab-label">Feedback</span></button>
 
 <div id="feedback-modal" class="glass-scrim" style="display:none;position:fixed;inset:0;z-index:1001;align-items:center;justify-content:center;padding:20px">
   <div class="glass" style="max-width:440px;width:100%;padding:32px;position:relative;color:#fff">

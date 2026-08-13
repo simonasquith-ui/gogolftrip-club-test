@@ -994,12 +994,12 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
   <div style="padding:8px 0;border-bottom:1px solid rgba(176,141,82,.18)">
     <div style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);padding:4px 16px 8px">Plan a Trip</div>
     <a href="#" class="nav-mobile-link" style="border-left:2px solid var(--brass);padding-left:13px" onclick="showPage('questionnaire');closeMobileMenu();return false;"><i class="ti ti-users"></i> Build Around My Group</a>
-    <a href="#" class="nav-mobile-link" style="border-left:2px solid rgba(176,141,82,.45);padding-left:13px" onclick="showPage('venue');closeMobileMenu();return false;"><i class="ti ti-golf"></i> Course or Location</a>
+    <a href="#" class="nav-mobile-link" style="border-left:2px solid rgba(176,141,82,.45);padding-left:13px" onclick="showPage('venue');closeMobileMenu();return false;"><i class="ti ti-golf"></i> Build Around a Course or Location</a>
   </div>
   <a href="#" class="nav-mobile-link" onclick="showPage('landing');closeMobileMenu();return false;">Home</a>
   <a href="#" class="nav-mobile-link" onclick="showPage('seasonal');closeMobileMenu();return false;">Destinations</a>
   <a href="#" class="nav-mobile-link" id="nav-mobile-for-clubs" style="color:var(--brass)" onclick="openClubModal();closeMobileMenu();return false;">For Golf Clubs</a>
-  <a href="#" class="nav-mobile-link" onclick="showPage('venue');closeMobileMenu();return false;">Course or Location</a>
+  <a href="#" class="nav-mobile-link" onclick="showPage('venue');closeMobileMenu();return false;">Build Around a Course or Location</a>
   <a href="https://gogolftrip.co.uk/blog/" class="nav-mobile-link">Blog</a>
   <a href="#" class="nav-mobile-link" onclick="showPage('about');closeMobileMenu();return false;">About Us</a>
   <a href="#" class="nav-mobile-link" id="nav-mobile-trips" onclick="showPage('profile');closeMobileMenu();return false;" style="display:none">My Trips</a>
@@ -1060,7 +1060,7 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
         <div class="feature-card"><div class="feature-icon"><i class="ti ti-plane-departure"></i></div><h3>Multi-Airport Support</h3><p>Groups flying from different cities? Add multiple departure airports and we optimise so everyone gets the best deal.</p></div>
         <div class="feature-card"><div class="feature-icon"><i class="ti ti-golf"></i></div><h3>Compare Budget vs Luxury</h3><p>See Budget, Mid-Range and Luxury options side by side for the same destination so you can pick what suits the group.</p></div>
         <div class="feature-card"><div class="feature-icon"><i class="ti ti-users"></i></div><h3>Group Planning Tools</h3><p>Invite society members, share the itinerary, vote on options and coordinate via the built-in group chat.</p></div>
-        <div class="feature-card accent" onclick="showPage('venue')"><div class="feature-icon"><i class="ti ti-golf"></i></div><h3>Course or Location</h3><p>Already found a course you want to play? Drop in the name or link — AI finds nearby hotels, restaurants and flights and builds the trip around it.</p><span class="quiet-link">Try it &#8594;</span></div>
+        <div class="feature-card accent" onclick="showPage('venue')"><div class="feature-icon"><i class="ti ti-golf"></i></div><h3>Build Around a Course or Location</h3><p>Already found a course you want to play? Drop in the name or link — AI finds nearby hotels, restaurants and flights and builds the trip around it.</p><span class="quiet-link">Try it &#8594;</span></div>
         <div class="feature-card"><div class="feature-icon"><i class="ti ti-calendar-event"></i></div><h3>Seasonal Recommendations</h3><p>Get advice on the best time to visit each destination based on weather, course conditions and pricing windows.</p></div>
         <div class="feature-card"><div class="feature-icon"><i class="ti ti-link"></i></div><h3>Direct Booking Links</h3><p>Every course, hotel and flight links directly to Expedia, Booking.com and GolfNow so you can book in one click.</p></div>
       </div>
@@ -1346,7 +1346,7 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
         <button class="btn btn-primary" onclick="showPage('questionnaire')">Build Around My Group <i class="ti ti-users"></i></button>
-        <button class="btn btn-ghost" onclick="showPage('venue')" style="color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.3)">Course or Location</button>
+        <button class="btn btn-ghost" onclick="showPage('venue')" style="color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.3)">Build Around a Course or Location</button>
       </div>
     </div>
   </div>
@@ -1946,6 +1946,11 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
           <div id="explore-return-list"></div>
         </div>
       </div>
+
+      <div id="explore-drive-times-panel" style="display:none;margin-top:16px" class="card">
+        <div class="fs-sm" style="font-weight:600;color:var(--green);margin-bottom:8px"><i class="ti ti-car"></i> Drive times between what you've added</div>
+        <div id="explore-drive-times-list"></div>
+      </div>
     </div>
 
     <div id="td-panel-itinerary" style="display:none">
@@ -2095,7 +2100,7 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
 <div id="page-venue" class="page">
   <div class="page-header">
     <div class="container">
-      <div class="section-label">Course or Location</div>
+      <div class="section-label">Build Around a Course or Location</div>
       <h1>Search a Course or a Location</h1>
       <p style="color:rgba(255,255,255,.75);margin-top:8px;max-width:600px">Search a specific course, or just an area you fancy — e.g. "Malaga" or "Quinta do Lago". Pick your nearest airport and you'll get the full Explore, Itinerary and Group &amp; Booking experience for that place, same as a fully-planned trip.</p>
     </div>
@@ -2111,7 +2116,7 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
         </div>
         <div style="display:flex;gap:8px;margin-top:14px">
           <div style="position:relative;flex:1">
-            <input type="text" id="venue-input" placeholder="Search for a golf course, hotel or restaurant..." style="width:100%;font-size:.95rem" autocomplete="off" oninput="onVenueInputChange(this.value)" onkeydown="onVenueInputKeydown(event)">
+            <input type="text" id="venue-input" placeholder="Enter a city, town, region, or a specific golf course..." style="width:100%;font-size:.95rem" autocomplete="off" oninput="onVenueInputChange(this.value)" onkeydown="onVenueInputKeydown(event)">
             <div id="venue-autocomplete" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1.5px solid var(--line);border-top:none;border-radius:0 0 var(--r,8px) var(--r,8px);box-shadow:0 4px 16px rgba(0,0,0,.08);z-index:50;max-height:280px;overflow-y:auto"></div>
           </div>
           <button class="btn btn-primary" id="venue-search-btn" onclick="searchVenue()">Find</button>
@@ -5625,7 +5630,7 @@ function renderGroupSchedule() {
   }
   // Always render an editable schedule, even with no AI itinerary — it starts
   // with one empty day the group can build on by dragging Trip Cart items in.
-  renderDraggableSchedule(wrap, currentTripRequestId, panel.label || String(idx), panel.itinerary || []);
+  return renderDraggableSchedule(wrap, currentTripRequestId, panel.label || String(idx), panel.itinerary || []);
 }
 
 function buildVotesSummaryHtml(panelLabel) {
@@ -8889,6 +8894,7 @@ async function runExploreSearch(keepCenter) {
       }
       renderExploreFlightColumn('explore-results-list', outboundPrices, originCode, destCode, destination);
       renderExploreFlightColumn('explore-return-list', returnPrices, destCode, originCode, destination);
+      updateExploreCommittedPins(); // map itself is hidden for Flights, but the drive-times panel lives outside it and should stay in sync
     } catch (e) {
       console.error('runExploreSearch (flight) error:', e);
       resultsEl.innerHTML = '<p class="fs-sm text-muted" style="padding:12px 0">Something went wrong searching flights — please try again.</p>';
@@ -8981,7 +8987,7 @@ function renderExploreResults() {
           return '<img loading="lazy" onclick="event.stopPropagation();document.getElementById(\'explore-hero-' + idx + '\').src=this.src.replace(\'maxwidth=100\',\'maxwidth=600\');this.parentElement.querySelectorAll(\'.explore-card-thumb\').forEach(function(t){t.classList.remove(\'active\')});this.classList.add(\'active\')" src="/.netlify/functions/place-photo?ref=' + encodeURIComponent(ref) + '&maxwidth=100" class="explore-card-thumb' + (i === 0 ? ' active' : '') + '" alt="">';
         }).join('') + '</div>'
       : '';
-    return '<div class="course-card explore-result-card" id="explore-card-' + idx + '" onmouseenter="highlightExploreMarker(' + idx + ')" style="margin-bottom:16px">' +
+    return '<div class="course-card explore-result-card" id="explore-card-' + idx + '" onmouseenter="highlightExploreMarker(' + idx + ')" onclick="if(!event.target.closest(\'button,select,.explore-card-thumb\'))showExploreCardOnMap(' + idx + ')" style="margin-bottom:16px;cursor:pointer">' +
       '<div class="card-photo" style="height:170px">' + photoHtml + '</div>' +
       thumbsHtml +
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">' +
@@ -9052,6 +9058,129 @@ function exploreMarkerIcon() {
     anchor: new google.maps.Point(17, 17),
     labelOrigin: new google.maps.Point(21, 24)
   };
+}
+
+// The reverse of clicking a pin (which already scrolled to and highlighted
+// its card) — clicking a card now pans to and opens its pin, so this works
+// both ways rather than just map-to-list.
+function showExploreCardOnMap(idx) {
+  var r = exploreResults[idx];
+  if (!r || !r.lat || !r.lng || !exploreMap) return;
+  var marker = exploreMarkers.filter(function(m) { return m.exploreResultIdx === idx; })[0];
+  if (!marker) return;
+  exploreMap.panTo({ lat: r.lat, lng: r.lng });
+  if (exploreMap.getZoom() < 13) exploreMap.setZoom(13);
+  exploreInfoWindow.setContent(buildExploreInfoWindowContent(idx));
+  exploreInfoWindow.open(exploreMap, marker);
+}
+
+// Reads directly from the trip's actual schedule rather than tracking a
+// separate list — that way it reflects items added via the itinerary editor
+// too, not just via Explore's own "Add to Itinerary" button, and never goes
+// stale if something's edited or removed elsewhere.
+function getExploreCommittedItems() {
+  var mountEl = document.getElementById('group-schedule-wrap');
+  if (!mountEl || !mountEl._scheduleData) return [];
+  var items = [];
+  mountEl._scheduleData.forEach(function(day) {
+    (day.activities || []).forEach(function(act) {
+      var d = act.details || {};
+      if (d.lat && d.lng) {
+        items.push({
+          name: act.description, itemType: act.itemType, lat: d.lat, lng: d.lng,
+          photo_reference: d.photo_reference || (d.photos && d.photos[0]) || null
+        });
+      }
+    });
+  });
+  // Fixed type order (not day/time order) — proximity between "where you're
+  // staying" and "where you're playing/eating" is a spatial question, not a
+  // chronological one, and this is what makes the drive-time chain below
+  // mean something sensible.
+  var order = { course: 0, hotel: 1, restaurant: 2, activity: 3 };
+  items.sort(function(a, b) { return (order[a.itemType] != null ? order[a.itemType] : 9) - (order[b.itemType] != null ? order[b.itemType] : 9); });
+  return items;
+}
+
+function exploreCommittedMarkerIcon(itemType) {
+  var meta = ITIN_TYPE_META[itemType];
+  var iconChar = itemType === 'hotel' ? 'B' : itemType === 'restaurant' ? 'R' : itemType === 'activity' ? 'A' : 'G';
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">' +
+    '<circle cx="15" cy="15" r="13" fill="#c9a84c" stroke="#ffffff" stroke-width="2"/>' +
+    '<text x="15" y="20" font-family="Arial" font-size="13" font-weight="700" fill="#1a3a2a" text-anchor="middle">' + iconChar + '</text>' +
+  '</svg>';
+  return {
+    url: 'data:image/svg+xml,' + encodeURIComponent(svg),
+    scaledSize: new google.maps.Size(30, 30),
+    anchor: new google.maps.Point(15, 15)
+  };
+}
+
+var exploreCommittedMarkers = [];
+var exploreCommittedInfoWindow = null;
+
+function updateExploreCommittedPins() {
+  if (!exploreMap) return;
+  exploreCommittedMarkers.forEach(function(m) { m.setMap(null); });
+  exploreCommittedMarkers = [];
+  var items = getExploreCommittedItems();
+  if (!exploreCommittedInfoWindow) exploreCommittedInfoWindow = new google.maps.InfoWindow();
+  items.forEach(function(item) {
+    var marker = new google.maps.Marker({
+      position: { lat: item.lat, lng: item.lng },
+      map: exploreMap,
+      title: item.name + ' (already in your itinerary)',
+      icon: exploreCommittedMarkerIcon(item.itemType),
+      zIndex: 500 // sit above the numbered browsing pins, since these are the "committed" reference points
+    });
+    marker.addListener('click', function() {
+      var meta = ITIN_TYPE_META[item.itemType];
+      exploreCommittedInfoWindow.setContent(
+        '<div style="font-family:inherit;max-width:200px">' +
+          '<div style="font-weight:600;color:#1a3a2a">' + escapeHtml(item.name) + '</div>' +
+          '<div style="font-size:.75rem;color:#B08D52;font-weight:600;text-transform:uppercase;margin-top:2px">' + (meta ? meta.label : item.itemType) + ' &middot; already in your itinerary</div>' +
+        '</div>'
+      );
+      exploreCommittedInfoWindow.open(exploreMap, marker);
+    });
+    exploreCommittedMarkers.push(marker);
+  });
+  updateExploreDriveTimes(items);
+}
+
+async function updateExploreDriveTimes(items) {
+  var panel = document.getElementById('explore-drive-times-panel');
+  var listEl = document.getElementById('explore-drive-times-list');
+  if (items.length < 2) { panel.style.display = 'none'; return; }
+
+  panel.style.display = 'block';
+  listEl.innerHTML = '<div class="fs-sm text-muted">Checking drive times&#8230;</div>';
+
+  try {
+    var pairs = [];
+    for (var i = 0; i < items.length - 1; i++) pairs.push([items[i], items[i + 1]]);
+    var results = await Promise.all(pairs.map(function(pair) {
+      return fetch('/.netlify/functions/drive-time', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ origin: { lat: pair[0].lat, lng: pair[0].lng }, destination: { lat: pair[1].lat, lng: pair[1].lng } })
+      }).then(function(res) { return res.json(); }).catch(function() { return { error: true }; });
+    }));
+
+    listEl.innerHTML = pairs.map(function(pair, i) {
+      var r = results[i];
+      var driveStr = (r && !r.error) ? r.durationText + ' (' + r.distanceText + ')' : 'Unknown';
+      // A rough, honest nudge rather than a hard rule — "close" varies by
+      // how relaxed the group wants the trip to feel.
+      var isFar = r && r.durationSeconds && r.durationSeconds > 1800; // 30+ min between two things on the same trip is worth a second look
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--off-white)">' +
+        '<span class="fs-sm"><strong>' + escapeHtml(pair[0].name) + '</strong> &#8594; <strong>' + escapeHtml(pair[1].name) + '</strong></span>' +
+        '<span class="fs-sm" style="font-weight:600;' + (isFar ? 'color:#a5793a' : 'color:var(--green)') + '">' + driveStr + (isFar ? ' <i class="ti ti-alert-triangle" title="A bit of a trek — worth double-checking this works for the group"></i>' : '') + '</span>' +
+      '</div>';
+    }).join('');
+  } catch (e) {
+    console.error('updateExploreDriveTimes error:', e);
+    listEl.innerHTML = '<div class="fs-sm text-muted">Could not check drive times right now.</div>';
+  }
 }
 
 function highlightExploreMarker(idx) {
@@ -9199,6 +9328,7 @@ function updateExploreMapPins(recenter) {
   if (!exploreMap) return;
   exploreMarkers.forEach(function(m) { m.setMap(null); });
   exploreMarkers = [];
+  updateExploreCommittedPins(); // independent of the browsing pins being cleared/redrawn above
 
   var overlayEl = document.getElementById('explore-map-overlay-note');
   var plottable = exploreResults.filter(function(r) { return r.lat && r.lng; });
@@ -9229,6 +9359,7 @@ function updateExploreMapPins(recenter) {
       icon: exploreMarkerIcon(),
       label: { text: String(idx + 1), color: '#fff', fontSize: '11px', fontWeight: '600' }
     });
+    marker.exploreResultIdx = idx; // results without coordinates get skipped above, so array position alone can't be trusted to match exploreResults' idx
     marker.addListener('click', function() {
       exploreInfoWindow.setContent(buildExploreInfoWindowContent(idx));
       exploreInfoWindow.open(exploreMap, marker);
@@ -9280,6 +9411,7 @@ function addExploreResultToItinerary(idx) {
   drawSchedule(mountEl, mountEl._tripId, mountEl._panelLabel, schedule);
   saveSchedule(mountEl._tripId, mountEl._panelLabel, schedule, mountEl.querySelector('.schedule-save-note'));
   showToast(r.name + ' added to Day ' + schedule[targetIdx].day);
+  updateExploreCommittedPins();
 }
 
 function switchTripTab(tab) {
@@ -9292,10 +9424,21 @@ function switchTripTab(tab) {
   document.getElementById('td-tab-itin').classList.toggle('active', tab === 'itin');
   document.getElementById('td-tab-group').classList.toggle('active', tab === 'group');
   if (tab === 'explore') {
+    // Committed pins need real schedule data to read from — load it now if
+    // nothing's visited the Itinerary tab yet this session, rather than
+    // showing an empty aggregate view until the user happens to click there.
+    var scheduleWrap = document.getElementById('group-schedule-wrap');
+    var scheduleReady = scheduleWrap && scheduleWrap._scheduleData
+      ? Promise.resolve()
+      : (renderGroupSchedule() || Promise.resolve());
     if (!exploreMap) {
       initExploreMap();
+      scheduleReady.then(updateExploreCommittedPins);
     } else {
-      requestAnimationFrame(function() { if (exploreMap) google.maps.event.trigger(exploreMap, 'resize'); });
+      requestAnimationFrame(function() {
+        if (exploreMap) google.maps.event.trigger(exploreMap, 'resize');
+      });
+      scheduleReady.then(updateExploreCommittedPins);
     }
   }
   if (tab === 'group' && activeTripId) {

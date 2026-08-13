@@ -1,3 +1,4 @@
+const { logApiCall } = require('./_usage-log')
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -36,6 +37,7 @@ exports.handler = async (event) => {
       '&key=' + apiKey +
       (type === 'course' ? '&type=establishment' : '')
 
+    logApiCall('google-places-textsearch', query)
     const response = await fetch(url)
     const data = await response.json()
 

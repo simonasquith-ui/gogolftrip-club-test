@@ -1,4 +1,5 @@
 // netlify/functions/geocode-region.js
+const { logApiCall } = require('./_usage-log')
 // Resolves a general destination/region name (e.g. "Algarve, Portugal") to
 // its actual geographic centre, using Google's Geocoding API — NOT Places
 // Text Search, which is what geocode.js uses for finding a SPECIFIC named
@@ -48,6 +49,7 @@ exports.handler = async (event) => {
       '?address=' + encodeURIComponent(query) +
       '&key=' + apiKey
 
+    logApiCall('google-geocoding', query)
     const response = await fetch(url)
     const data = await response.json()
 

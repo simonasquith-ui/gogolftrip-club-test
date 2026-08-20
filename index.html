@@ -973,7 +973,7 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
     <div class="nav-links" id="nav-links-desktop">
       <a href="#" class="nav-link always" onclick="showPage('landing');return false;">Home</a>
       <a href="#" class="nav-link always" onclick="showPage('seasonal');return false;">Destinations</a>
-      <button class="btn btn-primary btn-sm nav-cta" id="nav-for-clubs" onclick="openClubModal()">For Golf Clubs <i class="ti ti-building"></i></button>
+      <button class="btn btn-primary btn-sm nav-cta" id="nav-for-clubs" onclick="showPage('for-clubs')">For Golf Clubs <i class="ti ti-building"></i></button>
 
       <div class="nav-plan-wrap">
         <button class="btn btn-ghost btn-sm nav-cta" style="border:1px solid rgba(255,255,255,.35);color:#fff" onclick="togglePlanDropdown(event)">Plan a Trip <span style="font-size:.7rem;opacity:.8"><i class="ti ti-chevron-down"></i></span></button>
@@ -1036,7 +1036,7 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
   </div>
   <a href="#" class="nav-mobile-link" onclick="showPage('landing');closeMobileMenu();return false;">Home</a>
   <a href="#" class="nav-mobile-link" onclick="showPage('seasonal');closeMobileMenu();return false;">Destinations</a>
-  <a href="#" class="nav-mobile-link" id="nav-mobile-for-clubs" style="color:var(--brass)" onclick="openClubModal();closeMobileMenu();return false;">For Golf Clubs</a>
+  <a href="/for-clubs" class="nav-mobile-link" id="nav-mobile-for-clubs" style="color:var(--brass)" onclick="showPage('for-clubs');closeMobileMenu();return false;">For Golf Clubs</a>
   <a href="#" class="nav-mobile-link" onclick="showPage('venue');closeMobileMenu();return false;">Build Around a Course or Location</a>
   <a href="https://gogolftrip.co.uk/blog/" class="nav-mobile-link">Blog</a>
   <a href="#" class="nav-mobile-link" onclick="showPage('about');closeMobileMenu();return false;">About Us</a>
@@ -1066,7 +1066,10 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
       <h1>Your Golf Club's<br><em>Own Travel Platform</em></h1>
       <div class="hero-sub"><p>Give every member a place to plan trips, organise society outings and captain's trips, and manage payments — without spreadsheets, email chains or WhatsApp groups. One flat fee. Every member included.</p></div>
       <div class="hero-cta" style="flex-direction:column;align-items:flex-start;gap:16px">
-        <button class="btn btn-primary" style="padding:16px 32px;font-size:1rem" onclick="openClubModal()">Set Up My Club <i class="ti ti-building"></i></button>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+          <button class="btn btn-primary" style="padding:16px 32px;font-size:1rem" onclick="openClubModal()">Set Up My Club <i class="ti ti-building"></i></button>
+          <a href="/for-clubs" class="quiet-link" style="color:#fff" onclick="showPage('for-clubs');return false;">See what clubs get &#8594;</a>
+        </div>
         <div class="hqp-note">&#163;1,000/year, flat &nbsp;·&nbsp; Unlimited members &nbsp;·&nbsp; No card details from members</div>
       </div>
       <div class="hero-stats">
@@ -1320,9 +1323,9 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
           <a href="#" class="nav-logo" onclick="showPage('landing');return false;">Golf<span>Trip</span></a>
           <p>AI-powered golf holiday planning for individuals, groups and societies across the UK.</p>
         </div>
-        <div class="footer-col"><h4>Product</h4><ul><li><a href="#" onclick="showPage('questionnaire');return false;">Plan a Trip</a></li><li><a href="#pricing-section">Pricing</a></li></ul></div>
+        <div class="footer-col"><h4>Product</h4><ul><li><a href="#" onclick="showPage('questionnaire');return false;">Plan a Trip</a></li><li><a href="/for-clubs" onclick="showPage('for-clubs');return false;">For Golf Clubs</a></li><li><a href="#pricing-section">Pricing</a></li></ul></div>
         <div class="footer-col"><h4>Destinations</h4><ul><li><a href="#" onclick="showPage('seasonal');return false;">Seasonal Guide</a></li>
-        <li><a href="#">Spain</a></li><li><a href="#">Portugal</a></li><li><a href="#">Ireland</a></li><li><a href="#">Scotland</a></li><li><a href="#">England</a></li></ul></div>
+        <li><a href="/destinations/portugal-golf-trips.html">Portugal</a></li><li><a href="/destinations/spain-golf-trips.html">Spain</a></li><li><a href="/destinations/scotland-golf-trips.html">Scotland</a></li><li><a href="/destinations/ireland-golf-trips.html">Ireland</a></li><li><a href="/destinations/turkey-golf-trips.html">Turkey</a></li></ul></div>
         <div class="footer-col"><h4>Company</h4><ul><li><a href="#" onclick="showPage('about');return false;">About</a></li><li><a href="https://gogolftrip.co.uk/blog/">Blog</a></li><li><a href="#" onclick="showPage('privacy');return false;">Privacy Policy</a></li><li><a href="#" onclick="showPage('terms');return false;">Terms of Service</a></li><li><a href="mailto:hello@golftrip.com">Contact</a></li></ul></div>
       </div>
       <div class="footer-bottom"><p>&#169; 2025 GolfTrip Ltd. All rights reserved.</p><p>Made for golfers everywhere</p></div>
@@ -1813,6 +1816,215 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
       </div>
     </div>
   </div></div>
+</div>
+
+<!-- FOR GOLF CLUBS — /for-clubs
+     The public pitch page for club committees. This exists because the club
+     offer used to live only in a modal behind a login wall, which meant
+     there was no URL you could send to a club secretary and no way to read
+     what the club actually gets before paying. -->
+<div id="page-for-clubs" class="page">
+  <section class="hero" style="min-height:70vh">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow"><i class="ti ti-building"></i> For Golf Clubs &amp; Societies</div>
+      <h1>Give Your Members<br><em>Their Own Travel Platform</em></h1>
+      <div class="hero-sub"><p>Your own branded golf travel service, running under your club's name. Members plan trips, organise society outings and captain's weekends, and vote as a group — all included in their membership, at no cost to them.</p></div>
+      <div class="hero-cta" style="flex-direction:column;align-items:flex-start;gap:16px">
+        <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+          <button class="btn btn-primary" style="padding:16px 32px;font-size:1rem" onclick="openClubModal()">Set Up My Club <i class="ti ti-building"></i></button>
+          <a href="#fc-what-you-get" class="quiet-link" style="color:#fff">What's included &#8594;</a>
+        </div>
+        <div class="hqp-note">&#163;1,000/year, flat &nbsp;·&nbsp; Unlimited members &nbsp;·&nbsp; No card details taken from members</div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num">&#163;1,000</div><div class="lbl">Per Club, Per Year</div></div>
+        <div class="hero-stat"><div class="num">&#8734;</div><div class="lbl">Members Included</div></div>
+        <div class="hero-stat"><div class="num">&#163;0</div><div class="lbl">Charged to Members</div></div>
+        <div class="hero-stat"><div class="num">60s</div><div class="lbl">To Build an Itinerary</div></div>
+      </div>
+      <div class="hero-individual-note">
+        <span>Just here for yourself?</span>
+        <a href="#" onclick="showPage('questionnaire');return false;">Plan your own trip instead <i class="ti ti-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <div class="editorial-statement">
+        <div>
+          <div class="section-label">The Problem</div>
+          <h2 class="text-green">Every Club Has Someone Who Organises the Trip</h2>
+        </div>
+        <div>
+          <p>Usually it's the same person every year. A spreadsheet of who's paid, a WhatsApp group of forty men who can't agree on a destination, a dozen browser tabs comparing green fees, and a running total that nobody trusts. Meanwhile the club itself has no visibility of any of it — trips get organised in private group chats and the club's name never appears anywhere.</p>
+          <p>GolfTrip puts that whole process inside your club. Members get a tool that does the research in under a minute. The organiser gets voting, group chat and a shareable itinerary instead of a spreadsheet. And you get a member benefit that costs the same whether twelve members use it or four hundred.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:90px 0;background:var(--white);border-top:1px solid var(--border)" id="fc-what-you-get">
+    <div class="container">
+      <div class="editorial-statement" style="margin-bottom:48px">
+        <div>
+          <div class="section-label">What You Get</div>
+          <h2 class="text-green">Included in Your Club Subscription</h2>
+        </div>
+        <div>
+          <p>One flat annual fee covers everything below, for every member who joins through your invite link — however many that turns out to be.</p>
+        </div>
+      </div>
+      <div class="features-grid" style="margin-top:0">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="ti ti-users"></i></div>
+          <h3>Free Full Access for Every Member</h3>
+          <p>Members join through your invite link and get the complete paid product — unlimited AI itineraries, saved trips, PDF trip packs, group chat, voting and invites. They never enter card details and there's no per-member charge.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="ti ti-golf"></i></div>
+          <h3>Your Own Branded Club Page</h3>
+          <p>A public page at gogolftrip.co.uk/club/your-club with your logo, colours, tagline and a live list of upcoming member trips. Send it to your membership, put it in the newsletter, link it from your website.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="ti ti-chart-bar"></i></div>
+          <h3>Club Dashboard</h3>
+          <p>See how many members have joined, how many trips they've planned, which destinations are most popular, trips created per month, and how many members have actually engaged with a trip rather than just signed up.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="ti ti-mail"></i></div>
+          <h3>Bulk Member Invites</h3>
+          <p>Paste in a column of email addresses or upload a CSV straight out of your membership system. We send the invites and show you exactly who's been invited, who's joined and anything that bounced.</p>
+        </div>
+        <div class="feature-card accent">
+          <div class="feature-icon"><i class="ti ti-cash"></i></div>
+          <h3>Affiliate Revenue Share</h3>
+          <p>Every time a member clicks through to book a course, hotel, car or activity, it's logged against your club. Where we earn commission, your club takes a cut — so the subscription can pay for itself out of trips your members were booking anyway.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="ti ti-messages"></i></div>
+          <h3>Society &amp; Captain's Trip Tools</h3>
+          <p>Group voting on courses, hotels and restaurants, built-in group chat, multi-airport planning for members spread across the country, and a printable trip pack for the organiser.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="ti ti-palette"></i></div>
+          <h3>Club Branding Controls</h3>
+          <p>Upload your crest, set your primary and secondary colours, write your own tagline and description. Change it any time from Club Settings and it updates on your public page instantly.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="ti ti-shield-check"></i></div>
+          <h3>No Travel Agency Liability</h3>
+          <p>GolfTrip is a planning tool, not a tour operator. Members book directly with the courses, hotels and airlines themselves — so there's no ATOL bonding, no client money handling and no agency admin landing on the club.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quiet-band">
+    <div class="container">
+      <div class="section-label">Setting Up</div>
+      <h2>Live in About Ten Minutes</h2>
+      <p class="quiet-band-lede">There's nothing to install and nothing for your IT to do. Three steps and your members can start planning.</p>
+      <div class="quiet-stats">
+        <div class="quiet-stat">
+          <i class="ti ti-number-1"></i>
+          <div class="t">Set Up the Club</div>
+          <p>Enter your club name and subscribe. Your club is created and you become its admin straight away.</p>
+        </div>
+        <div class="quiet-stat">
+          <i class="ti ti-number-2"></i>
+          <div class="t">Add Your Branding</div>
+          <p>Upload your crest, pick your colours and write a line for your public page.</p>
+        </div>
+        <div class="quiet-stat">
+          <i class="ti ti-number-3"></i>
+          <div class="t">Invite Your Members</div>
+          <p>Share your invite link or upload your membership list. Everyone who joins gets free full access.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:90px 0;background:var(--paper-deep)">
+    <div class="container">
+      <div class="editorial-statement" style="margin-bottom:44px">
+        <div>
+          <div class="section-label">The Numbers</div>
+          <h2 class="text-green">What It Costs, and What It Replaces</h2>
+        </div>
+        <div>
+          <p>An individual membership is &#163;4.99 a month. A club subscription is &#163;1,000 a year for everyone — which is cheaper than seventeen members paying for themselves, and there's no cap.</p>
+        </div>
+      </div>
+      <div class="pricing-grid" style="max-width:760px;margin:0 auto;grid-template-columns:1fr">
+        <div class="pricing-card featured">
+          <div class="pricing-badge">For Clubs</div>
+          <div class="pricing-name">Club</div>
+          <div class="pricing-price">&#163;1,000<span>/year</span></div>
+          <div class="pricing-price-alt">Flat fee &mdash; every member included, no per-seat charge</div>
+          <ul class="pricing-features">
+            <li>Unlimited members, all with full access</li>
+            <li>Unlimited AI trip generations per member</li>
+            <li>Branded public club page</li>
+            <li>Club dashboard with member &amp; trip analytics</li>
+            <li>Bulk invites by link, email list or CSV</li>
+            <li>Group planning, voting and chat</li>
+            <li>PDF trip packs for organisers</li>
+            <li>Affiliate revenue share back to the club</li>
+            <li>Cancel any time &mdash; 7-day money back guarantee</li>
+          </ul>
+          <button class="btn btn-primary" onclick="openClubModal()">Set Up My Club</button>
+        </div>
+      </div>
+      <p style="text-align:center;color:var(--text-muted);font-size:.85rem;margin-top:24px">
+        Paying by invoice or club account rather than card? <a href="mailto:hello@gogolftrip.co.uk?subject=GolfTrip%20club%20subscription%20-%20invoice" style="color:var(--brass);font-weight:600">Email us</a> and we'll sort it.
+      </p>
+    </div>
+  </section>
+
+  <section class="faq">
+    <div class="container">
+      <h2>Club Questions</h2>
+      <div class="faq-list">
+        <div class="faq-item"><button class="faq-q">Is there a per-member charge?</button><div class="faq-a"><div class="faq-a-inner">No. One flat &#163;1,000/year fee covers every member who joins through your invite link, however many that ends up being. A club with 400 members pays the same as a club with 40.</div></div></div>
+        <div class="faq-item"><button class="faq-q">Do members have to pay or enter card details?</button><div class="faq-a"><div class="faq-a-inner">Never. Members sign up with an email address and password through your club's invite link and get the full paid product free. No card details are taken from them at any point.</div></div></div>
+        <div class="faq-item"><button class="faq-q">What happens if we don't renew?</button><div class="faq-a"><div class="faq-a-inner">Members keep free access until the end of the paid year. After that they keep their accounts and every trip they've saved, but revert to GolfTrip's standard free plan — or they can upgrade individually for &#163;4.99/month if they want to keep full access.</div></div></div>
+        <div class="faq-item"><button class="faq-q">Are we acting as a travel agent by offering this?</button><div class="faq-a"><div class="faq-a-inner">No. GolfTrip plans and researches; it doesn't sell or hold travel. Members book directly with courses, hotels and airlines through the links we provide, so the club isn't handling client money and doesn't need ATOL cover or a travel agency licence. If your committee wants this in writing for their own records, ask us and we'll put it on letterhead.</div></div></div>
+        <div class="faq-item"><button class="faq-q">How does the revenue share work?</button><div class="faq-a"><div class="faq-a-inner">Every booking click a member makes is logged against your club and shown in your dashboard, split by partner. Where we earn affiliate commission on that partner, your club receives a share. Some partners in the dashboard aren't revenue-share yet — those are marked clearly so you're not counting income that doesn't exist.</div></div></div>
+        <div class="faq-item"><button class="faq-q">Can we see what our members are planning?</button><div class="faq-a"><div class="faq-a-inner">You see trip-level activity — destination, group size, who created it, when — plus aggregate numbers like most popular destination and trips per month. You don't see private group chat between members.</div></div></div>
+        <div class="faq-item"><button class="faq-q">Can more than one person administer the club?</button><div class="faq-a"><div class="faq-a-inner">The account that sets the club up becomes its admin. If you need a second admin — say the secretary and the men's captain both need access — email us and we'll add them.</div></div></div>
+        <div class="faq-item"><button class="faq-q">What if a member is already paying individually?</button><div class="faq-a"><div class="faq-a-inner">They join through your club link and their club access takes priority immediately. They can then cancel their individual subscription whenever they like.</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-cta">
+    <div class="container">
+      <h2>Ready to Offer This to Your Members?</h2>
+      <p>Set your club up in a few minutes, or ask us anything first — we'll happily walk a committee through it.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary btn-lg" onclick="openClubModal()">Set Up My Club <i class="ti ti-building"></i></button>
+        <a class="btn btn-ghost btn-lg" href="mailto:hello@gogolftrip.co.uk?subject=GolfTrip%20for%20our%20golf%20club">Talk to Us First</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="#" class="nav-logo" onclick="showPage('landing');return false;">Golf<span>Trip</span></a>
+          <p>AI-powered golf holiday planning for clubs, societies and individual golfers across the UK.</p>
+        </div>
+        <div class="footer-col"><h4>Product</h4><ul><li><a href="#" onclick="showPage('questionnaire');return false;">Plan a Trip</a></li><li><a href="/for-clubs" onclick="showPage('for-clubs');return false;">For Golf Clubs</a></li></ul></div>
+        <div class="footer-col"><h4>Destinations</h4><ul><li><a href="/destinations/portugal-golf-trips.html">Portugal</a></li><li><a href="/destinations/spain-golf-trips.html">Spain</a></li><li><a href="/destinations/scotland-golf-trips.html">Scotland</a></li><li><a href="/destinations/ireland-golf-trips.html">Ireland</a></li><li><a href="/destinations/turkey-golf-trips.html">Turkey</a></li></ul></div>
+        <div class="footer-col"><h4>Company</h4><ul><li><a href="#" onclick="showPage('about');return false;">About</a></li><li><a href="https://gogolftrip.co.uk/blog/">Blog</a></li><li><a href="#" onclick="showPage('privacy');return false;">Privacy Policy</a></li><li><a href="#" onclick="showPage('terms');return false;">Terms of Service</a></li></ul></div>
+      </div>
+      <div class="footer-bottom"><p>&#169; 2026 GolfTrip Ltd. All rights reserved.</p><p>Made for golfers everywhere</p></div>
+    </div>
+  </footer>
 </div>
 
 <!-- CLUB DASHBOARD (club admins only) -->
@@ -2905,13 +3117,18 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
     <div class="admin-login" id="admin-denied" style="display:none">
       <h2>Not Authorized</h2>
       <p class="fs-sm text-muted">This account doesn't have admin access.</p>
+      <!-- Diagnostic line: filled in by checkAdminAccess() with the actual
+           reason (missing users row, missing is_admin column, RLS block,
+           flag set to false) instead of a blank "no" that tells you nothing. -->
+      <p class="fs-sm" id="admin-denied-reason" style="display:none;margin-top:14px;padding:12px;background:var(--paper-deep);border-radius:var(--r);color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;word-break:break-word"></p>
+      <p class="fs-sm text-muted" id="admin-denied-uid" style="display:none;margin-top:8px;font-size:.72rem"></p>
     </div>
     <div id="admin-dashboard" style="display:none">
       <div class="stats-grid">
         <div class="stat-card"><div class="sc-val" id="as-users">&#8212;</div><div class="sc-lbl">Total Users</div></div>
         <div class="stat-card"><div class="sc-val" id="as-trips">&#8212;</div><div class="sc-lbl">Trips Generated</div></div>
-        <div class="stat-card"><div class="sc-val" id="as-pro">&#8212;</div><div class="sc-lbl">Pro Subscribers</div></div>
-        <div class="stat-card"><div class="sc-val" id="as-mrr">&#8212;</div><div class="sc-lbl">MRR</div></div>
+        <div class="stat-card"><div class="sc-val" id="as-pro">&#8212;</div><div class="sc-lbl">Paid Subscribers</div></div>
+        <div class="stat-card"><div class="sc-val" id="as-mrr">&#8212;</div><div class="sc-lbl">Est. MRR</div></div>
       </div>
       <div class="admin-tables">
         <div class="admin-table-card"><h3>Popular Destinations</h3><table><thead><tr><th>Destination</th><th>Trips</th><th>%</th></tr></thead><tbody id="admin-dest-table"></tbody></table></div>
@@ -3200,7 +3417,15 @@ function buildAirportOptions() {
 // since those are logged-in/tool views with no public SEO value.
 var ROUTED_PAGES = {
   landing: { path: '/', title: 'GolfTrip — Your Golf Club\'s Own Travel Platform', desc: 'Give your golf club members a place to plan trips, organise society outings and manage payments. One flat fee, every member included. AI-powered itinerary planning built for UK golf clubs.' },
-  seasonal: { path: '/destinations', title: 'Best Golf Destinations by Season | GolfTrip', desc: 'Hand-picked golf destinations for every season — courses, hotels and typical budgets for UK golfers, updated throughout the year.' }
+  seasonal: { path: '/destinations', title: 'Best Golf Destinations by Season | GolfTrip', desc: 'Hand-picked golf destinations for every season — courses, hotels and typical budgets for UK golfers, updated throughout the year.' },
+  // The club pitch needs a real, shareable URL — a club secretary can't be
+  // sent a modal. This is the page you send to a club committee.
+  'for-clubs': { path: '/for-clubs', title: 'GolfTrip for Golf Clubs — One Flat Fee, Every Member Included', desc: 'Give your members their own golf travel platform. AI trip planning, society trip organisation, a branded club page, member invites and affiliate revenue share. £1,000/year flat, unlimited members.' },
+  // Admin needs a URL of its own so it stays reachable even when the nav
+  // link is hidden (which is exactly what happens when the is_admin lookup
+  // fails) — otherwise a broken flag locks you out of the page that would
+  // tell you the flag is broken.
+  admin: { path: '/admin', title: 'Admin Dashboard | GolfTrip', desc: 'GolfTrip internal admin dashboard.' }
 };
 
 function setPageMeta(name) {
@@ -3388,13 +3613,20 @@ async function loadUserPlan() {
 async function loadUserDisplayInfo() {
   if (!currentUser) return;
   try {
-    var r = await sbClient.from('users').select('name, avatar_url, is_admin').eq('id', currentUser.id).single();
-    if (r.data) {
+    // maybeSingle() so a missing users row returns null instead of throwing —
+    // single() was throwing here and taking is_admin down with it, which is
+    // why the Admin nav link never appeared.
+    var r = await sbClient.from('users').select('name, avatar_url, is_admin').eq('id', currentUser.id).maybeSingle();
+    if (r.error) {
+      console.warn('[auth] could not load users row:', r.error.code, r.error.message);
+    } else if (r.data) {
       currentUser.display_name = r.data.name || null;
       currentUser.avatar_url = r.data.avatar_url || null;
       currentUser.is_admin = !!r.data.is_admin;
+    } else {
+      console.warn('[auth] no public.users row for', currentUser.id, '— name, avatar and is_admin will be unavailable.');
     }
-  } catch (e) { /* fall back silently to email/initials */ }
+  } catch (e) { console.warn('[auth] loadUserDisplayInfo failed:', e && e.message); }
 }
 
 // 'individual' (new £4.99/mo tier) and 'club' (free via an active club
@@ -3750,6 +3982,11 @@ sbClient.auth.onAuthStateChange(async function(event, session) {
     if (pendingJoinClubId) {
       joinClub(pendingJoinClubId, currentUser);
       pendingJoinClubId = null;
+    }
+    // Signed in halfway through setting up a club — go back to the club
+    // flow, not the individual planner.
+    if (typeof pendingClubIntent !== 'undefined' && pendingClubIntent) {
+      resumeClubIntent();
     }
     // If signing in while viewing a shared public trip — unlock full access
     var banner = document.getElementById('public-trip-banner');
@@ -10807,7 +11044,7 @@ document.getElementById('copy-link-btn').addEventListener('click', function() {
 
 /* === ADMIN ===
    Access is gated on the is_admin column on the user's row in `users`
-   (see supabase-migrations/005_admin_flag.sql), set manually in Supabase
+   (see supabase-migrations/004_admin_flag.sql), set manually in Supabase
    for trusted staff only — never in client JS. Re-checked fresh from the
    server on every visit to this page rather than trusting a cached flag,
    so revoking access takes effect immediately. */
@@ -10815,22 +11052,56 @@ async function checkAdminAccess() {
   var signinEl = document.getElementById('admin-signin-prompt');
   var deniedEl = document.getElementById('admin-denied');
   var dashEl = document.getElementById('admin-dashboard');
+  var reasonEl = document.getElementById('admin-denied-reason');
+  var uidEl = document.getElementById('admin-denied-uid');
   signinEl.style.display = 'none';
   deniedEl.style.display = 'none';
   dashEl.style.display = 'none';
+  if (reasonEl) { reasonEl.style.display = 'none'; reasonEl.textContent = ''; }
+  if (uidEl) { uidEl.style.display = 'none'; uidEl.textContent = ''; }
   if (!currentUser) { signinEl.style.display = 'block'; return; }
-  try {
-    var r = await sbClient.from('users').select('is_admin').eq('id', currentUser.id).single();
-    if (r.data && r.data.is_admin) {
-      dashEl.style.display = 'block';
-      loadAdminStats();
-    } else {
-      deniedEl.style.display = 'block';
-    }
-  } catch (e) {
-    console.error('checkAdminAccess error:', e);
+
+  function deny(reason) {
     deniedEl.style.display = 'block';
+    if (reasonEl && reason) { reasonEl.textContent = reason; reasonEl.style.display = 'block'; }
+    // The user id is what you need to paste into the SQL that grants access,
+    // so show it rather than making someone dig through Supabase for it.
+    if (uidEl) {
+      uidEl.textContent = 'Your user id: ' + currentUser.id;
+      uidEl.style.display = 'block';
+    }
+    console.warn('[admin] access denied —', reason, '| uid:', currentUser.id);
   }
+
+  // maybeSingle(), not single(): single() throws PGRST116 when zero rows come
+  // back, which is indistinguishable from a real failure and was being
+  // swallowed into a silent "Not Authorized".
+  var r;
+  try {
+    r = await sbClient.from('users').select('is_admin').eq('id', currentUser.id).maybeSingle();
+  } catch (e) {
+    deny('Query threw: ' + (e && e.message ? e.message : String(e)));
+    return;
+  }
+  if (r.error) {
+    deny('Supabase error ' + (r.error.code || '?') + ': ' + r.error.message +
+         (/column .*is_admin.* does not exist/i.test(r.error.message || '')
+            ? ' — the is_admin column is missing; run 005_admin_flag.sql.' : ''));
+    return;
+  }
+  if (!r.data) {
+    // No row came back at all. Either this auth user has no matching row in
+    // public.users (signup trigger never fired / row created before the
+    // trigger existed), or an RLS policy is filtering it out.
+    deny('No row found in public.users for this account. Either the row was never created, or a row-level security policy is hiding it. Fix: insert the row and set is_admin = true.');
+    return;
+  }
+  if (!r.data.is_admin) {
+    deny('Row found, but is_admin is ' + JSON.stringify(r.data.is_admin) + '. Set it to true in Supabase.');
+    return;
+  }
+  dashEl.style.display = 'block';
+  loadAdminStats();
 }
 
 async function loadAdminStats() {
@@ -10839,8 +11110,24 @@ async function loadAdminStats() {
     var tr = await sbClient.from('trip_requests').select('*', { count: 'exact', head: true });
     document.getElementById('as-users').textContent = (ur.count || 0).toLocaleString();
     document.getElementById('as-trips').textContent = (tr.count || 0).toLocaleString();
-    document.getElementById('as-pro').textContent = '\u2014';
-    document.getElementById('as-mrr').textContent = '\u2014';
+    // Paid subscribers + estimated MRR, from real rows rather than a dash.
+    // MONTHLY_RATE is the assumed monthly revenue per plan \u2014 annual plans are
+    // divided down to a monthly figure. Keep this in step with the pricing
+    // page; it's an estimate for a glance, not accounting.
+    var MONTHLY_RATE = { individual: 4.99, pro: 49 / 12, society: 99 / 12, club: 1000 / 12 };
+    try {
+      var pl = await sbClient.from('user_plans').select('plan,status');
+      var active = (pl.data || []).filter(function(r) { return r.status === 'active'; });
+      var clubs = await sbClient.from('clubs').select('id', { count: 'exact', head: true }).eq('plan_status', 'active');
+      var mrr = active.reduce(function(sum, r) { return sum + (MONTHLY_RATE[r.plan] || 0); }, 0)
+              + (clubs.count || 0) * MONTHLY_RATE.club;
+      document.getElementById('as-pro').textContent = active.length.toLocaleString();
+      document.getElementById('as-mrr').textContent = '\u00a3' + Math.round(mrr).toLocaleString();
+    } catch (e) {
+      console.warn('[admin] could not compute subscribers/MRR:', e && e.message);
+      document.getElementById('as-pro').textContent = '\u2014';
+      document.getElementById('as-mrr').textContent = '\u2014';
+    }
 
     var dr = await sbClient.from('trip_requests').select('destination_type');
     var dc = {};
@@ -10858,21 +11145,77 @@ async function loadAdminStats() {
     } else { dtBody.innerHTML = '<tr><td colspan="3">No data yet</td></tr>'; }
   } catch(e) { console.error('Admin stats error:', e); }
 
-  [
-    ['admin-plan-table', [['Free','847'],['Pro','234'],['Society','89']]],
-    ['admin-airport-table', [['LHR','312'],['MAN','245'],['EDI','187'],['BHX','143'],['LGW','128']]],
-    ['admin-tier-table', [['Mid-Range','487'],['Budget','312'],['Luxury','201']]]
-  ].forEach(function(pair) {
-    var tbody = document.getElementById(pair[0]);
-    tbody.innerHTML = '';
-    pair[1].forEach(function(row) {
-      var tr2 = document.createElement('tr');
-      row.forEach(function(v) { var td = document.createElement('td'); td.textContent = v; tr2.appendChild(td); });
-      tbody.appendChild(tr2);
+  // These three tables used to render hardcoded placeholder numbers — 847
+  // free users, 234 Pro, LHR 312 — which looked exactly like real data on a
+  // dashboard you'd use to make decisions. Now they query the actual tables
+  // and say so when there's nothing there yet.
+  await renderAdminTable('admin-plan-table', 2, async function() {
+    var counts = {};
+    var pr = await sbClient.from('user_plans').select('plan,status');
+    (pr.data || []).forEach(function(row) {
+      if (row.status !== 'active') return;
+      var k = (row.plan || 'unknown');
+      k = k.charAt(0).toUpperCase() + k.slice(1);
+      counts[k] = (counts[k] || 0) + 1;
     });
+    // Club members don't have a user_plans row — their access comes from the
+    // club — so they'd be invisible here without counting them separately.
+    var cm = await sbClient.from('club_members').select('user_id', { count: 'exact', head: true });
+    if (cm.count) counts['Club'] = cm.count;
+    return Object.entries(counts).sort(function(a, b) { return b[1] - a[1]; });
+  });
+
+  await renderAdminTable('admin-airport-table', 2, async function() {
+    var ar = await sbClient.from('trip_requests').select('departure_airport');
+    var counts = {};
+    (ar.data || []).forEach(function(row) {
+      var k = (row.departure_airport || '').trim();
+      if (!k || k === 'TBC') return;
+      counts[k] = (counts[k] || 0) + 1;
+    });
+    return Object.entries(counts).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 8);
+  });
+
+  await renderAdminTable('admin-tier-table', 2, async function() {
+    var vr = await sbClient.from('trip_votes').select('tier');
+    var counts = {};
+    (vr.data || []).forEach(function(row) {
+      var k = (row.tier || '').trim();
+      if (!k) return;
+      counts[k] = (counts[k] || 0) + 1;
+    });
+    return Object.entries(counts).sort(function(a, b) { return b[1] - a[1]; });
   });
 
   loadAdminFunnel();
+}
+
+// Small helper so the three admin tables share one loading/empty/error path
+// rather than each inventing its own.
+async function renderAdminTable(tbodyId, cols, fetchRows) {
+  var tbody = document.getElementById(tbodyId);
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="' + cols + '">Loading&#8230;</td></tr>';
+  try {
+    var rows = await fetchRows();
+    tbody.innerHTML = '';
+    if (!rows || !rows.length) {
+      tbody.innerHTML = '<tr><td colspan="' + cols + '">No data yet</td></tr>';
+      return;
+    }
+    rows.forEach(function(row) {
+      var tr = document.createElement('tr');
+      row.forEach(function(v) {
+        var td = document.createElement('td');
+        td.textContent = typeof v === 'number' ? v.toLocaleString() : v;
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  } catch (e) {
+    console.error('renderAdminTable(' + tbodyId + ') failed:', e);
+    tbody.innerHTML = '<tr><td colspan="' + cols + '">Could not load</td></tr>';
+  }
 }
 
 // TASKS.md #16 — basic funnel visibility: clubs created, members joined
@@ -11655,14 +11998,34 @@ function closePricingModal() {
   if (modal) modal.style.display = 'none';
 }
 
+/* Club sign-up intent — survives the auth round trip.
+   Previously openClubModal() bounced signed-out visitors straight to the
+   signup form and forgot why, so after signing in they landed back on the
+   individual planner and had to press "For Golf Clubs" all over again. Now
+   nobody has to be signed in to READ the club offer (auth is only needed to
+   pay), and if a sign-in does happen mid-flow we remember where we were and
+   put them back. */
+var pendingClubIntent = false;
+var pendingClubName = '';
+
 function openClubModal() {
-  if (!currentUser) {
-    openAuthModal('signup');
-    showToast('Create an account first, then set up your club.');
-    return;
-  }
   var modal = document.getElementById('club-modal');
   if (modal) modal.style.display = 'flex';
+  var nameInput = document.getElementById('club-name-input');
+  if (nameInput) {
+    if (pendingClubName && !nameInput.value) nameInput.value = pendingClubName;
+    setTimeout(function() { try { nameInput.focus(); } catch (e) {} }, 60);
+  }
+}
+
+// Called from the auth listener once a sign-in completes while a club
+// sign-up was in flight.
+function resumeClubIntent() {
+  if (!pendingClubIntent) return;
+  pendingClubIntent = false;
+  showPage('for-clubs');
+  openClubModal();
+  showToast('You\'re signed in — let\'s get your club set up.');
 }
 
 // Called when a club admin opens the Club Dashboard page. Loads club info,
@@ -12325,10 +12688,21 @@ async function testModeSkipClubPayment(clubName) {
 }
 
 async function startClubCheckout() {
-  if (!currentUser) { closeClubModal(); openAuthModal('signup'); return; }
   var nameInput = document.getElementById('club-name-input');
   var clubName = (nameInput && nameInput.value || '').trim();
   if (!clubName) { showToast('Please enter your club\'s name.', true); return; }
+
+  // Auth is required to pay, not to browse. Remember the club name and the
+  // fact that we were mid-club-signup, so the auth listener can drop the
+  // user straight back here instead of on the individual planner.
+  if (!currentUser) {
+    pendingClubIntent = true;
+    pendingClubName = clubName;
+    closeClubModal();
+    openAuthModal('signup');
+    showToast('Create your account and we\'ll pick straight back up with ' + clubName + '.');
+    return;
+  }
 
   var btn = document.getElementById('checkout-btn-club');
   if (btn) { btn.disabled = true; btn.textContent = 'Loading...'; }
@@ -12646,7 +13020,7 @@ async function loadSharedTrip(tripId, user) {
     <div style="padding:22px 30px 0;text-align:center">
       <div style="border-top:1px solid rgba(255,255,255,.16);padding-top:20px">
         <p style="color:rgba(255,255,255,.7);font-size:.85rem;margin-bottom:10px">Part of a golf club? Your club may already offer GolfTrip free to members.</p>
-        <button class="btn" style="padding:10px 20px;background:transparent;color:var(--brass);border:1px solid var(--brass);font-size:.82rem" onclick="closePricingModal();openClubModal()">I'm a Golf Club — Get GolfTrip for my members</button>
+        <button class="btn" style="padding:10px 20px;background:transparent;color:var(--brass);border:1px solid var(--brass);font-size:.82rem" onclick="closePricingModal();showPage('for-clubs')">I'm a Golf Club — Get GolfTrip for my members</button>
       </div>
     </div>
     <div class="pricing-faq" style="padding:22px 30px 0;border-top:1px solid rgba(255,255,255,.16);margin-top:22px">

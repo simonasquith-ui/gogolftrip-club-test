@@ -15,3 +15,46 @@
   from = "/club/*"
   to = "/index.html"
   status = 200
+# ═══════════════════════════════════════════════════════════════════════════
+# APPEND this to the BOTTOM of the existing netlify.toml in the CLUB repo.
+#
+# Do NOT replace the whole file. Your netlify.toml already contains build and
+# function config (timeouts and so on) for functions I can't see, and
+# overwriting it would drop them. Just paste this block at the end.
+# ═══════════════════════════════════════════════════════════════════════════
+
+# ── SPA ROUTES ─────────────────────────────────────────────────────────────
+# index.html pushes real URLs via history.pushState, but Netlify knew nothing
+# about them — so a direct visit, a refresh, or a shared link to any of these
+# returned Netlify's 404 page instead of the app. These rewrites (status 200,
+# not 301) serve index.html at those paths and let the app's own router pick
+# the page from window.location.pathname.
+#
+# Netlify serves real files before consulting redirects, so these cannot
+# shadow anything in /destinations/ or /blog/. Deliberately explicit rather
+# than a catch-all: a catch-all turns every genuine typo into the homepage and
+# quietly hides broken internal links.
+
+[[redirects]]
+  from = "/for-clubs"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin"
+  to = "/index.html"
+  status = 200
+
+# The seasonal destinations guide. Matches /destinations exactly —
+# /destinations/portugal-golf-trips.html is a real file and is served as one.
+[[redirects]]
+  from = "/destinations"
+  to = "/index.html"
+  status = 200
+
+# Public club portals: /club/:slug. Without this, the "View Public Page"
+# button in the club dashboard leads to a 404.
+[[redirects]]
+  from = "/club/*"
+  to = "/index.html"
+  status = 200

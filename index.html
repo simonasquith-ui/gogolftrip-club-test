@@ -1839,12 +1839,44 @@ footer{background:var(--moss-dark);border-top:1px solid rgba(255,255,255,.08);pa
       <div id="cd-trips-chart" style="display:flex;align-items:flex-end;gap:14px;height:120px;padding-top:20px"></div>
     </div>
 
+    <div class="admin-table-card" style="margin-bottom:24px">
+      <div class="flex-between" style="margin-bottom:4px">
+        <h3 style="margin-bottom:0">Revenue &amp; ROI</h3>
+      </div>
+      <p class="fs-sm text-muted" style="margin-bottom:16px">Every time a member clicks through to book a course, hotel, car or activity, it's logged here. This is what your club's affiliate revenue share is calculated from.</p>
+      <div class="stats-grid" style="margin-bottom:20px">
+        <div class="stat-card"><div class="sc-val" id="cd-clicks-total">&#8212;</div><div class="sc-lbl">Booking Clicks (All Time)</div></div>
+        <div class="stat-card"><div class="sc-val" id="cd-clicks-month">&#8212;</div><div class="sc-lbl">Booking Clicks (This Month)</div></div>
+        <div class="stat-card"><div class="sc-val" id="cd-clicks-tracked-pct">&#8212;</div><div class="sc-lbl">On Revenue-Share Partners</div></div>
+      </div>
+      <div id="cd-affiliate-chart" style="display:flex;align-items:flex-end;gap:14px;height:100px;padding-top:16px;margin-bottom:20px"></div>
+      <table><thead><tr><th>Partner</th><th>Clicks</th><th>Status</th></tr></thead><tbody id="cd-affiliate-table"><tr><td colspan="3">Loading&#8230;</td></tr></tbody></table>
+      <p class="fs-sm text-muted" style="margin-top:12px">"Revenue-share partner" means we're already earning commission there today and your club gets a cut. GolfNow and Leading Courses tee-time bookings show up here too, but aren't revenue-share partners yet &mdash; that's in progress.</p>
+    </div>
+
     <div class="profile-card" style="margin-bottom:24px">
       <h3>Invite Members</h3>
       <p class="fs-sm text-muted" style="margin-bottom:12px">Anyone who signs up through this link gets free GolfTrip access — on the club, no per-member charge.</p>
       <div class="invite-link-box">
         <input type="text" id="cd-invite-link" readonly>
         <button class="btn btn-ghost btn-sm" id="cd-copy-link-btn">Copy</button>
+      </div>
+
+      <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+        <h4 style="margin-bottom:4px">Invite Your Whole Membership</h4>
+        <p class="fs-sm text-muted" style="margin-bottom:12px">Paste in email addresses (one per line, or comma-separated), or upload a CSV export from your membership system — we'll pull out anything that looks like an email address automatically.</p>
+        <textarea id="cd-bulk-emails-input" rows="4" placeholder="jane@example.com, tom@example.com&#10;or paste a whole column from a spreadsheet..." style="width:100%;font-family:inherit;padding:10px;border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px"></textarea>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">
+          <label class="btn btn-ghost btn-sm" style="cursor:pointer" for="cd-bulk-csv-input">Upload CSV Instead</label>
+          <input type="file" id="cd-bulk-csv-input" accept=".csv,text/csv,.txt" style="display:none">
+          <button class="btn btn-primary btn-sm" id="cd-bulk-send-btn" onclick="sendBulkClubInvites()">Send Invites</button>
+        </div>
+        <div class="fs-sm" id="cd-bulk-status" style="margin-bottom:4px"></div>
+      </div>
+
+      <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+        <h4 style="margin-bottom:8px">Pending Invites</h4>
+        <table><thead><tr><th>Email</th><th>Invited</th><th>Status</th></tr></thead><tbody id="cd-pending-invites-table"><tr><td colspan="3">Loading&#8230;</td></tr></tbody></table>
       </div>
     </div>
 
@@ -5240,7 +5272,13 @@ function buildExpediaHotelUrl(destination, hotelName, checkinIso, checkoutIso, a
 // already used for wrapExpediaUrl) if that's what's actually approved.
 var VRBO_CJ = { domain: 'tkqlhce.com', pid: '101847347', lid: '14347549' };
 function wrapVrboUrl(plainUrl) {
-  return 'https://www.' + VRBO_CJ.domain + '/click-' + VRBO_CJ.pid + '-' + VRBO_CJ.lid + '?url=' + encodeURIComponent(plainUrl);
+  // sid= is CJ's sub-ID field — pass the club's slug through so CJ's own
+  // reporting can be filtered per club once we're reconciling actual
+  // commission for revenue-share payouts, not just our own click log above.
+  // Verify "sid" is the exact param name in the CJ account before relying
+  // on it for real payout math — some CJ programs use a different key.
+  var sid = userClub && userClub.slug ? '&sid=' + encodeURIComponent(userClub.slug) : '';
+  return 'https://www.' + VRBO_CJ.domain + '/click-' + VRBO_CJ.pid + '-' + VRBO_CJ.lid + '?url=' + encodeURIComponent(plainUrl) + sid;
 }
 function buildVrboUrl(destination, adults, checkinIso, checkoutIso) {
   var plain = 'https://www.vrbo.com/search?destination=' + encodeURIComponent(destination || '') +
@@ -5273,10 +5311,11 @@ var BOOKING_CJ_LINKS = {
 };
 function wrapBookingUrl(destination, plainUrl) {
   var destLower = (destination || '').toLowerCase();
+  var sid = userClub && userClub.slug ? '&sid=' + encodeURIComponent(userClub.slug) : '';
   for (var country in BOOKING_CJ_LINKS) {
     if (destLower.indexOf(country) !== -1) {
       var link = BOOKING_CJ_LINKS[country];
-      return 'https://www.' + link.domain + '/click-' + BOOKING_CJ_PID + '-' + link.lid + '?url=' + encodeURIComponent(plainUrl);
+      return 'https://www.' + link.domain + '/click-' + BOOKING_CJ_PID + '-' + link.lid + '?url=' + encodeURIComponent(plainUrl) + sid;
     }
   }
   return plainUrl;
@@ -5444,6 +5483,74 @@ function buildDestTeeTimes(destination, playDate) {
   return buildTeeTimes('', destination, playDate).url;
 }
 // ── END GOLF BOOKING LINK HELPER ────────────────────────────
+
+// ── AFFILIATE CLICK TRACKING (club ROI dashboard) ───────────────────────
+// Single delegated listener, not per-render-site hooks — every one of the
+// ~15 places that build a booking <a href> stays untouched. We just watch
+// every click on the page, and if it lands on an <a> whose target domain
+// matches a known booking partner, we log one row to affiliate_clicks
+// tagged with the current user's club (if any). This is fire-and-forget:
+// it never blocks or delays the actual navigation, and a failed/slow
+// insert never breaks the click.
+//
+// `tracked: true` means Simon currently earns real commission on that
+// domain today (CJ for Booking.com/Vrbo, Viator's own affiliate program,
+// Expedia). `tracked: false` means the link is live and useful to the
+// golfer but NOT yet monetized (GolfNow and Leading Courses have no
+// partner program approved yet — see comments above buildTeeTimes). Both
+// get logged, so once GolfNow/Leading Courses approval lands, historical
+// click volume is already there instead of starting from zero.
+var AFFILIATE_DOMAINS = [
+  { match: 'golfnow.', provider: 'GolfNow', tracked: false },
+  { match: 'leadingcourses.com', provider: 'Leading Courses', tracked: false },
+  { match: 'kqzyfj.com', provider: 'Booking.com', tracked: true },
+  { match: 'jdoqocy.com', provider: 'Booking.com', tracked: true },
+  { match: 'anrdoezrs.net', provider: 'Booking.com', tracked: true },
+  { match: 'dpbolvw.net', provider: 'Booking.com', tracked: true },
+  { match: 'booking.com', provider: 'Booking.com', tracked: false }, // plain, un-wrapped fallback for countries with no CJ deep link yet
+  { match: 'tkqlhce.com', provider: 'Vrbo', tracked: true },
+  { match: 'vrbo.com', provider: 'Vrbo', tracked: false },
+  { match: 'expedia.com', provider: 'Expedia', tracked: true },
+  { match: 'expedia.co.uk', provider: 'Expedia', tracked: false },
+  { match: 'viator.com', provider: 'Viator', tracked: true },
+  { match: 'opentable.', provider: 'OpenTable', tracked: false },
+  { match: 'google.com/travel/flights', provider: 'Google Flights', tracked: false }
+];
+
+function matchAffiliateDomain(href) {
+  var lower = (href || '').toLowerCase();
+  for (var i = 0; i < AFFILIATE_DOMAINS.length; i++) {
+    if (lower.indexOf(AFFILIATE_DOMAINS[i].match) !== -1) return AFFILIATE_DOMAINS[i];
+  }
+  return null;
+}
+
+// Best-effort club attribution: the logged-in user's own club if they're a
+// member of one. If they're browsing signed out (e.g. on a public
+// /club/:slug portal) we still log the click with club_id null so it shows
+// up in platform-wide totals, just not in any one club's dashboard.
+function logAffiliateClick(provider, tracked, href) {
+  try {
+    if (!sbClient) return;
+    sbClient.from('affiliate_clicks').insert({
+      club_id: userClub ? userClub.id : null,
+      trip_id: currentTripRequestId || null,
+      user_id: currentUser ? currentUser.id : null,
+      provider: provider,
+      item_type: tracked ? 'tracked' : 'untracked',
+      item_name: href.slice(0, 500)
+    }).then(function() {}, function(e) { console.warn('affiliate click log failed:', e && e.message); });
+  } catch (e) { console.warn('affiliate click log error:', e && e.message); }
+}
+
+document.addEventListener('click', function(e) {
+  var link = e.target.closest('a[href]');
+  if (!link) return;
+  var match = matchAffiliateDomain(link.getAttribute('href'));
+  if (!match) return;
+  logAffiliateClick(match.provider, match.tracked, link.getAttribute('href'));
+}, true); // capture phase — fires even if a card's own onclick elsewhere calls stopPropagation
+// ── END AFFILIATE CLICK TRACKING ─────────────────────────────
 
 function fmtPrice(gbp) {
   if (isNaN(gbp) || gbp === null || gbp === undefined) return '';
@@ -11665,6 +11772,9 @@ async function loadClubDashboard() {
     if (tripsTable) tripsTable.innerHTML = '<tr><td colspan="4">Could not load trips.</td></tr>';
   }
 
+  loadClubAffiliateStats();
+  loadPendingInvites();
+
   // Trip analytics: most popular destination, trips/month, member engagement
   try {
     var destCounts = {};
@@ -11727,6 +11837,235 @@ function renderClubTripsChart(trips) {
     '</div>';
   }).join('');
 }
+
+// Revenue & ROI card — pulls from affiliate_clicks (see AFFILIATE CLICK
+// TRACKING block above buildDestTeeTimes). RLS scopes this to the admin's
+// own club, so no club_id filter needed beyond what the policy already
+// enforces — but we filter explicitly anyway so this fails safe/empty
+// rather than silently trusting RLS alone.
+async function loadClubAffiliateStats() {
+  if (!userClub) return;
+  var totalEl = document.getElementById('cd-clicks-total');
+  var monthEl = document.getElementById('cd-clicks-month');
+  var pctEl = document.getElementById('cd-clicks-tracked-pct');
+  var table = document.getElementById('cd-affiliate-table');
+  try {
+    var res = await sbClient.from('affiliate_clicks')
+      .select('provider, item_type, clicked_at')
+      .eq('club_id', userClub.id)
+      .order('clicked_at', { ascending: false })
+      .limit(5000);
+    var clicks = res.data || [];
+    if (totalEl) totalEl.textContent = clicks.length;
+
+    var now = new Date();
+    var monthCount = clicks.filter(function(c) {
+      var d = new Date(c.clicked_at);
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    }).length;
+    if (monthEl) monthEl.textContent = monthCount;
+
+    var trackedCount = clicks.filter(function(c) { return c.item_type === 'tracked'; }).length;
+    if (pctEl) pctEl.textContent = clicks.length ? Math.round((trackedCount / clicks.length) * 100) + '%' : '\u2014';
+
+    var byProvider = {};
+    clicks.forEach(function(c) {
+      if (!byProvider[c.provider]) byProvider[c.provider] = { count: 0, tracked: c.item_type === 'tracked' };
+      byProvider[c.provider].count++;
+    });
+    var providers = Object.keys(byProvider).sort(function(a, b) { return byProvider[b].count - byProvider[a].count; });
+    if (table) {
+      if (!providers.length) {
+        table.innerHTML = '<tr><td colspan="3">No booking clicks logged yet.</td></tr>';
+      } else {
+        table.innerHTML = providers.map(function(p) {
+          var row = byProvider[p];
+          return '<tr><td>' + p + '</td><td>' + row.count + '</td><td>' +
+            (row.tracked ? '<span style="color:var(--green)">Revenue-share partner</span>' : '<span class="text-muted">Not yet monetized</span>') +
+            '</td></tr>';
+        }).join('');
+      }
+    }
+
+    renderClubAffiliateChart(clicks);
+  } catch (e) {
+    console.error('loadClubAffiliateStats error:', e);
+    if (table) table.innerHTML = '<tr><td colspan="3">Could not load booking activity.</td></tr>';
+  }
+}
+
+function renderClubAffiliateChart(clicks) {
+  var el = document.getElementById('cd-affiliate-chart');
+  if (!el) return;
+  var now = new Date();
+  var months = [];
+  for (var i = 5; i >= 0; i--) {
+    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ key: d.getFullYear() + '-' + d.getMonth(), label: d.toLocaleDateString('en-GB', { month: 'short' }), count: 0 });
+  }
+  clicks.forEach(function(c) {
+    if (!c.clicked_at) return;
+    var d = new Date(c.clicked_at);
+    var key = d.getFullYear() + '-' + d.getMonth();
+    var bucket = months.find(function(m) { return m.key === key; });
+    if (bucket) bucket.count++;
+  });
+  var max = Math.max.apply(null, months.map(function(m) { return m.count; }).concat([1]));
+  el.innerHTML = months.map(function(m) {
+    var pct = Math.round((m.count / max) * 100);
+    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end" title="' + m.label + ': ' + m.count + ' clicks">' +
+      '<div class="fs-sm" style="font-weight:600;color:var(--brass)">' + m.count + '</div>' +
+      '<div style="width:100%;max-width:36px;height:' + Math.max(pct, 4) + '%;min-height:4px;background:var(--brass);border-radius:4px 4px 2px 2px"></div>' +
+      '<div class="fs-sm text-muted">' + m.label + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── BULK MEMBER INVITES ──────────────────────────────────────
+// Pulls anything that looks like an email out of pasted text OR an
+// uploaded CSV/txt file — deliberately not a real CSV column parser,
+// since club membership exports vary wildly in shape and a plain regex
+// scan is more forgiving than assuming a specific column layout.
+var EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+function parseInviteEmails(text) {
+  var found = (text || '').match(EMAIL_REGEX) || [];
+  var seen = {};
+  var out = [];
+  found.forEach(function(e) {
+    var lower = e.toLowerCase();
+    if (!seen[lower]) { seen[lower] = true; out.push(lower); }
+  });
+  return out;
+}
+
+document.getElementById('cd-bulk-csv-input') && document.getElementById('cd-bulk-csv-input').addEventListener('change', function(e) {
+  var file = e.target.files && e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(evt) {
+    var box = document.getElementById('cd-bulk-emails-input');
+    if (box) box.value = evt.target.result;
+  };
+  reader.readAsText(file);
+});
+
+// Sends one invite at a time through a small concurrency pool (5 at once)
+// rather than one giant server call — more resilient to a single bad
+// email or a slow Resend response, and gives real progress feedback
+// instead of a single spinner for a whole membership list.
+async function sendBulkClubInvites() {
+  if (!userClub) return;
+  var box = document.getElementById('cd-bulk-emails-input');
+  var statusEl = document.getElementById('cd-bulk-status');
+  var btn = document.getElementById('cd-bulk-send-btn');
+  var emails = parseInviteEmails(box ? box.value : '');
+  if (!emails.length) {
+    if (statusEl) statusEl.textContent = 'No valid email addresses found — check the pasted text or CSV.';
+    return;
+  }
+
+  // Don't re-invite people who are already members or already have a
+  // pending invite — cheap check against what we already loaded.
+  var existingRes = await sbClient.from('club_invites').select('email').eq('club_id', userClub.id);
+  var alreadyInvited = {};
+  (existingRes.data || []).forEach(function(r) { alreadyInvited[r.email.toLowerCase()] = true; });
+  var memberEmails = {};
+  try {
+    var memberRows = await sbClient.from('club_members').select('user_id').eq('club_id', userClub.id);
+    var ids = (memberRows.data || []).map(function(m) { return m.user_id; }).filter(Boolean);
+    if (ids.length) {
+      var users = await sbClient.from('users').select('email').in('id', ids);
+      (users.data || []).forEach(function(u) { if (u.email) memberEmails[u.email.toLowerCase()] = true; });
+    }
+  } catch (e) { /* non-fatal — worst case we send a duplicate invite */ }
+
+  var toSend = emails.filter(function(e) { return !alreadyInvited[e] && !memberEmails[e]; });
+  var skipped = emails.length - toSend.length;
+  if (!toSend.length) {
+    if (statusEl) statusEl.textContent = 'Everyone on that list is already a member or already invited.';
+    return;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+  var clubRes = await sbClient.from('clubs').select('name, tagline, primary_color').eq('id', userClub.id).single();
+  var club = clubRes.data || {};
+  var inviteUrl = window.location.origin + '/?join_club=' + userClub.id;
+
+  var sent = 0, failed = 0, i = 0;
+  var CONCURRENCY = 5;
+  async function worker() {
+    while (i < toSend.length) {
+      var email = toSend[i++];
+      try {
+        var res = await fetch('/.netlify/functions/send-club-invite', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            toEmail: email,
+            clubName: club.name || userClub.name,
+            clubTagline: club.tagline || '',
+            primaryColor: club.primary_color || '#1a3a2a',
+            inviteUrl: inviteUrl
+          })
+        });
+        var ok = res.ok;
+        await sbClient.from('club_invites').insert({
+          club_id: userClub.id, email: email, status: ok ? 'sent' : 'failed'
+        });
+        if (ok) sent++; else failed++;
+      } catch (e) {
+        failed++;
+        try { await sbClient.from('club_invites').insert({ club_id: userClub.id, email: email, status: 'failed' }); } catch (e2) {}
+      }
+      if (statusEl) statusEl.textContent = 'Sending... ' + (sent + failed) + ' / ' + toSend.length;
+    }
+  }
+  var workers = [];
+  for (var w = 0; w < CONCURRENCY; w++) workers.push(worker());
+  await Promise.all(workers);
+
+  if (btn) { btn.disabled = false; btn.textContent = 'Send Invites'; }
+  if (statusEl) {
+    statusEl.textContent = sent + ' invite' + (sent === 1 ? '' : 's') + ' sent' +
+      (failed ? ', ' + failed + ' failed' : '') +
+      (skipped ? ' (' + skipped + ' skipped — already members or already invited)' : '') + '.';
+  }
+  if (box) box.value = '';
+  loadPendingInvites();
+}
+
+async function loadPendingInvites() {
+  if (!userClub) return;
+  var table = document.getElementById('cd-pending-invites-table');
+  try {
+    var invitesRes = await sbClient.from('club_invites').select('email, status, created_at').eq('club_id', userClub.id).order('created_at', { ascending: false }).limit(500);
+    var invites = invitesRes.data || [];
+
+    var memberEmails = {};
+    var memberRows = await sbClient.from('club_members').select('user_id').eq('club_id', userClub.id);
+    var ids = (memberRows.data || []).map(function(m) { return m.user_id; }).filter(Boolean);
+    if (ids.length) {
+      var users = await sbClient.from('users').select('email').in('id', ids);
+      (users.data || []).forEach(function(u) { if (u.email) memberEmails[u.email.toLowerCase()] = true; });
+    }
+
+    var pending = invites.filter(function(inv) { return !memberEmails[inv.email.toLowerCase()]; });
+    if (table) {
+      if (!pending.length) {
+        table.innerHTML = '<tr><td colspan="3">No pending invites &mdash; everyone invited has joined, or you haven\'t sent any yet.</td></tr>';
+      } else {
+        table.innerHTML = pending.map(function(inv) {
+          var statusLabel = inv.status === 'failed' ? '<span style="color:#b00">Failed to send</span>' : '<span class="text-muted">Awaiting sign-up</span>';
+          return '<tr><td>' + inv.email + '</td><td>' + new Date(inv.created_at).toLocaleDateString('en-GB') + '</td><td>' + statusLabel + '</td></tr>';
+        }).join('');
+      }
+    }
+  } catch (e) {
+    console.error('loadPendingInvites error:', e);
+    if (table) table.innerHTML = '<tr><td colspan="3">Could not load invites.</td></tr>';
+  }
+}
+// ── END BULK MEMBER INVITES ──────────────────────────────────
 
 // Public club portal — /club/:slug. Must work for signed-out visitors,
 // which is why it reads currentClubPortalId rather than userClub (a
